@@ -85,6 +85,7 @@ def build() -> Path:
             .replace("{{HEADER}}", site_header())
             .replace("{{NAV}}", nav_script())
             .replace("{{AUTHOR}}", html.escape(src.get("author", "")))
+            .replace("{{INIT}}", "".join(f'<span class="v">{t}</span>' for t in payload["initLines"]))  # the first paint is the original poem
             .replace("{{SEED}}", html.escape(src.get("poem", "")))
             .replace("{{CONSERVED}}", html.escape(conserved_note))
             .replace("{{DATA}}", json.dumps(payload, ensure_ascii=False))
@@ -131,8 +132,8 @@ _TEMPLATE = r"""<!doctype html>
 <main>
 
   <section id="poem">
-    <p class="dims" id="dims" aria-live="off"></p>
-    <div class="verse" id="poemtext"></div>
+    <p class="dims" id="dims" aria-live="off">Poema original</p>
+    <div class="verse" id="poemtext">{{INIT}}</div>
   </section>
   <section id="metode" class="sec"><h2 class="label">Metodologia</h2>
     <div class="prose">

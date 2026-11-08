@@ -161,7 +161,7 @@ _TEMPLATE = r"""<!doctype html>
       <p class="stat"><span id="ns">0</span> etapes · <span id="km">0</span> km</p>
       <p class="stat">Gran Sortida <span id="dep">—</span></p>
     </div>
-    <div class="mapbox"><svg class="map" id="svg" role="img" aria-label="Mapa d'Europa amb els recorreguts del Tour de França" preserveAspectRatio="xMidYMid meet">
+    <div class="mapbox"><svg class="map" id="svg" viewBox="0 0 1000 1264" role="img" aria-label="Mapa d'Europa amb els recorreguts del Tour de França" preserveAspectRatio="xMidYMid meet">
       <g class="land" id="land"></g>
       <g id="routes"></g>
     </svg></div>

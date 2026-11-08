@@ -205,15 +205,26 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 .is-embedded .head .sub { margin-top: 0; }
 .is-embedded .page { padding: 0 0 8px; }
 .is-embedded .page > nav { position: static; }
+.is-embedded .page > nav:not(:has(a[data-sec])) { display: none; }   /* no tabs, no bar: hidden from the first paint */
 .is-embedded .sec { margin-top: clamp(20px, 3vw, 32px); }
 .is-embedded .sec > .label:first-child { margin-bottom: 0; cursor: pointer; }
 .is-embedded .sec > .label:first-child::after { content: "▸"; margin-left: .6em; color: var(--accent); }
-.is-embedded .sec.open > .label:first-child::after { content: "▾"; }
+.is-embedded .sec.open > .label:first-child::after { transform: rotate(90deg); }
 .is-embedded .sec.open > .label:first-child { margin-bottom: clamp(20px, 3vw, 32px); }
-.is-embedded .sec:not(.open) > :not(.label) { display: none; }
-.is-embedded .fold:not([data-keep]):not(.unfolded) { max-height: var(--fold, 40rem); overflow: hidden; }
+.is-embedded .sec:not(.open) > :not(.label):not(.secbody) { display: none; }   /* closed from the first paint, before the script wraps it */
+.is-embedded .fold[data-keep="1"]:not(.unfolded) > :nth-child(n+2), .is-embedded .fold[data-keep="2"]:not(.unfolded) > :nth-child(n+3), .is-embedded .fold[data-keep="3"]:not(.unfolded) > :nth-child(n+4) { display: none; }
+.is-embedded .secbody { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.3, .7, .2, 1); }
+.is-embedded .sec.open > .secbody { grid-template-rows: 1fr; }
+.is-embedded .secin { min-height: 0; overflow: hidden; opacity: 0; transition: opacity .3s ease; }
+.is-embedded .sec.open .secin { opacity: 1; transition-delay: .1s; }
+.is-embedded .sec > .label:first-child { transition: margin-bottom .4s cubic-bezier(.3, .7, .2, 1); }
+.is-embedded .sec > .label:first-child::after { display: inline-block; transition: transform .3s ease; }
+.is-embedded .fold:not([data-keep]):not(.unfolded) { max-height: var(--fold, 40rem); overflow: hidden; transition: max-height .5s cubic-bezier(.3, .7, .2, 1); }
+.rise > * { animation: rise .45s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 .foldmore { display: block; width: 100%; margin: 0; padding: 14px 0 0; text-align: left; background: none; border: 0; border-top: 1px solid var(--rule); font: 600 .875rem/1.4 var(--sans); color: inherit; cursor: pointer; }
 .foldmore::after { content: " ▾"; color: var(--accent); }
+.foldmore { transition: color .2s ease; }
 .foldmore:hover { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -266,8 +277,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <main>
 
   <section id="poem">
-    <p class="dims" id="dims" aria-live="off"></p>
-    <div class="verse" id="poemtext"></div>
+    <p class="dims" id="dims" aria-live="off">Poema original</p>
+    <div class="verse" id="poemtext"><span class="v">Res no és mesquí</span><span class="v">ni cap hora és isarda,</span><span class="v">ni és fosca la ventura de la nit.</span><span class="v">I la rosada és clara</span><span class="v">que el sol surt i s&#x27;ullprèn</span><span class="v">i té delit del bany:</span><span class="v">que s&#x27;emmiralla el llit de tota cosa feta.</span><span class="v">Res no és mesquí,</span><span class="v">i tot ric com el vi i la galta colrada.</span><span class="v">I l&#x27;onada del mar sempre riu,</span><span class="v">Primavera d&#x27;hivern - Primavera d&#x27;istiu.</span><span class="v">I tot és Primavera:</span><span class="v">i tota fulla verda eternament.</span><span class="v">Res no és mesquí,</span><span class="v">perquè els dies no passen;</span><span class="v">i no arriba la mort ni si l&#x27;heu demanada.</span><span class="v">I si l&#x27;heu demanada us dissimula un clot</span><span class="v">perquè per tornar a néixer necessiteu morir.</span><span class="v">I no som mai un plor</span><span class="v">sinó un somriure fi</span><span class="v">que es dispersa com grills de taronja.</span><span class="v">Res no és mesquí,</span><span class="v">perquè la cançó canta en cada bri de cosa.</span><span class="v">- Avui, demà i ahir</span><span class="v">s&#x27;esfullarà una rosa:</span><span class="v">i a la verge més jove li vindrà llet al pit.</span></div>
   </section>
   <section id="metode" class="sec"><h2 class="label">Metodologia</h2>
     <div class="prose">
@@ -390,17 +401,24 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
     [].slice.call(document.querySelectorAll('.sec > .label:first-child')).forEach(function (h) {
       var sec = h.parentNode;
       h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
-      function flip() { var on = sec.classList.toggle('open'); h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+      var body = document.createElement('div'), inner = document.createElement('div');   // body opens and closes smoothly
+      body.className = 'secbody'; inner.className = 'secin'; body.inert = true;
+      while (h.nextSibling) inner.appendChild(h.nextSibling);
+      body.appendChild(inner); sec.appendChild(body);
+      function flip() { var on = sec.classList.toggle('open'); body.inert = !on; h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
       h.addEventListener('click', flip);
       h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
     });
     [].slice.call(document.querySelectorAll('.fold')).forEach(function (f) {
       var b = document.createElement('button');
-      var keep = parseInt(f.getAttribute('data-keep'), 10);
-      var rest = keep ? [].slice.call(f.children).slice(keep) : [];
-      rest.forEach(function (c) { c.hidden = true; });   // fold by whole items (poems, stanzas)
+      var keep = parseInt(f.getAttribute('data-keep'), 10);   // items past `keep` are hidden by the stylesheet, so nothing jumps
       b.type = 'button'; b.className = 'foldmore'; b.textContent = 'Continua';
-      b.addEventListener('click', function () { rest.forEach(function (c) { c.hidden = false; }); f.classList.add('unfolded'); b.remove(); });
+      b.addEventListener('click', function () {
+        b.remove();
+        if (keep) { f.classList.add('unfolded', 'rise'); return; }
+        f.style.maxHeight = f.scrollHeight + 'px';   // grow to the full height, then release the cap
+        setTimeout(function () { f.classList.add('unfolded'); f.style.maxHeight = ''; }, 520);
+      });
       f.parentNode.insertBefore(b, f.nextSibling);
     });
     if (nav && !document.querySelector('.subnav a[data-sec]')) nav.hidden = true;

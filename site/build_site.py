@@ -48,6 +48,7 @@ STATIC_DIR = SITE_DIR / "static"
 BOOK_DIR = SITE_DIR.parent / "book"
 DESIGN_DIR = REPO_ROOT / "shared" / "design"
 SOCIAL_DIR = REPO_ROOT / "social"
+FRAME_HEIGHTS = SITE_DIR / "frame_heights.json"  # from scripts/measure_frames.py
 
 SITE_TITLE = "La causa científica"
 SITE_AUTHOR = "Miquel Duran-Frigola"
@@ -334,6 +335,7 @@ def build(out_dir: Path) -> None:
     (out_dir / "index.html").write_text(
         index_tmpl.render(
             poems=poems,
+            heights=json.loads(FRAME_HEIGHTS.read_text(encoding="utf-8")) if FRAME_HEIGHTS.exists() else {},
             root="",
             page_title=SITE_TITLE,
             page_description=SITE_INTRO,

@@ -40,17 +40,24 @@
     [].slice.call(document.querySelectorAll('.sec > .label:first-child')).forEach(function (h) {
       var sec = h.parentNode;
       h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
-      function flip() { var on = sec.classList.toggle('open'); h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+      var body = document.createElement('div'), inner = document.createElement('div');   // body opens and closes smoothly
+      body.className = 'secbody'; inner.className = 'secin'; body.inert = true;
+      while (h.nextSibling) inner.appendChild(h.nextSibling);
+      body.appendChild(inner); sec.appendChild(body);
+      function flip() { var on = sec.classList.toggle('open'); body.inert = !on; h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
       h.addEventListener('click', flip);
       h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
     });
     [].slice.call(document.querySelectorAll('.fold')).forEach(function (f) {
       var b = document.createElement('button');
-      var keep = parseInt(f.getAttribute('data-keep'), 10);
-      var rest = keep ? [].slice.call(f.children).slice(keep) : [];
-      rest.forEach(function (c) { c.hidden = true; });   // fold by whole items (poems, stanzas)
+      var keep = parseInt(f.getAttribute('data-keep'), 10);   // items past `keep` are hidden by the stylesheet, so nothing jumps
       b.type = 'button'; b.className = 'foldmore'; b.textContent = 'Continua';
-      b.addEventListener('click', function () { rest.forEach(function (c) { c.hidden = false; }); f.classList.add('unfolded'); b.remove(); });
+      b.addEventListener('click', function () {
+        b.remove();
+        if (keep) { f.classList.add('unfolded', 'rise'); return; }
+        f.style.maxHeight = f.scrollHeight + 'px';   // grow to the full height, then release the cap
+        setTimeout(function () { f.classList.add('unfolded'); f.style.maxHeight = ''; }, 520);
+      });
       f.parentNode.insertBefore(b, f.nextSibling);
     });
     if (nav && !document.querySelector('.subnav a[data-sec]')) nav.hidden = true;

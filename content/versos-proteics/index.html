@@ -205,15 +205,26 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 .is-embedded .head .sub { margin-top: 0; }
 .is-embedded .page { padding: 0 0 8px; }
 .is-embedded .page > nav { position: static; }
+.is-embedded .page > nav:not(:has(a[data-sec])) { display: none; }   /* no tabs, no bar: hidden from the first paint */
 .is-embedded .sec { margin-top: clamp(20px, 3vw, 32px); }
 .is-embedded .sec > .label:first-child { margin-bottom: 0; cursor: pointer; }
 .is-embedded .sec > .label:first-child::after { content: "▸"; margin-left: .6em; color: var(--accent); }
-.is-embedded .sec.open > .label:first-child::after { content: "▾"; }
+.is-embedded .sec.open > .label:first-child::after { transform: rotate(90deg); }
 .is-embedded .sec.open > .label:first-child { margin-bottom: clamp(20px, 3vw, 32px); }
-.is-embedded .sec:not(.open) > :not(.label) { display: none; }
-.is-embedded .fold:not([data-keep]):not(.unfolded) { max-height: var(--fold, 40rem); overflow: hidden; }
+.is-embedded .sec:not(.open) > :not(.label):not(.secbody) { display: none; }   /* closed from the first paint, before the script wraps it */
+.is-embedded .fold[data-keep="1"]:not(.unfolded) > :nth-child(n+2), .is-embedded .fold[data-keep="2"]:not(.unfolded) > :nth-child(n+3), .is-embedded .fold[data-keep="3"]:not(.unfolded) > :nth-child(n+4) { display: none; }
+.is-embedded .secbody { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.3, .7, .2, 1); }
+.is-embedded .sec.open > .secbody { grid-template-rows: 1fr; }
+.is-embedded .secin { min-height: 0; overflow: hidden; opacity: 0; transition: opacity .3s ease; }
+.is-embedded .sec.open .secin { opacity: 1; transition-delay: .1s; }
+.is-embedded .sec > .label:first-child { transition: margin-bottom .4s cubic-bezier(.3, .7, .2, 1); }
+.is-embedded .sec > .label:first-child::after { display: inline-block; transition: transform .3s ease; }
+.is-embedded .fold:not([data-keep]):not(.unfolded) { max-height: var(--fold, 40rem); overflow: hidden; transition: max-height .5s cubic-bezier(.3, .7, .2, 1); }
+.rise > * { animation: rise .45s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 .foldmore { display: block; width: 100%; margin: 0; padding: 14px 0 0; text-align: left; background: none; border: 0; border-top: 1px solid var(--rule); font: 600 .875rem/1.4 var(--sans); color: inherit; cursor: pointer; }
 .foldmore::after { content: " ▾"; color: var(--accent); }
+.foldmore { transition: color .2s ease; }
 .foldmore:hover { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -300,7 +311,7 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
   </ul></nav>
   <main>
     
-    <section class="entry" id="poem-salvat-res-no-es-mesqui" hidden>
+    <section class="entry" id="poem-salvat-res-no-es-mesqui">
       <h2 class="ptitle">Res no és mesquí</h2>
       <p class="pauthor">Joan Salvat-Papasseit</p>
       <div class="split">
@@ -521,16 +532,22 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
       if(!el || !d || !window.$3Dmol) return;
       var conts = [].slice.call(el.querySelectorAll('.viewer'));
       var viewers = [];
-      d.pdbs.forEach(function(pdb, idx){
-        var c = conts[idx]; if(!c) return;
-        var v = $3Dmol.createViewer(c, {backgroundColor:BG});
-        v.setBackgroundColor(BG, 0);
-        v.addModel(pdb, 'pdb');
-        v.setStyle({}, {cartoon:{color:GREY}});
-        v.zoomTo(); v.render(); v.resize(); v.render();
-        if(!REDUCED) v.spin('y', 0.5);
-        viewers.push(v);
-      });
+      var made = 0;
+      (function make(){   // one viewer per task, so the page never freezes while the structures build
+        var idx = made++, pdb = d.pdbs[idx], c = conts[idx];
+        if(pdb === undefined){ if(REDUCED) paint(); return; }
+        if(active && active.id !== id) return;
+        if(c){
+          var v = $3Dmol.createViewer(c, {backgroundColor:BG});
+          v.setBackgroundColor(BG, 0);
+          v.addModel(pdb, 'pdb');
+          v.setStyle({}, {cartoon:{color:GREY}});
+          v.zoomTo(); v.render(); v.resize(); v.render();
+          if(!REDUCED) v.spin('y', 0.5);
+          viewers.push(v);
+        }
+        setTimeout(make, 0);
+      })();
 
       var wd = [], res = [];
       el.querySelectorAll('.wd').forEach(function(s){ wd[+s.dataset.w] = s; });
@@ -600,7 +617,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
     window.addEventListener('resize', function(){
       if(active){ active.viewers.forEach(function(v){ try{ v.resize(); v.render(); }catch(e){} }); }
     });
-    show(location.hash ? location.hash.slice(1) : DEFAULT_ID);
+    if(location.hash) show(location.hash.slice(1));
+    else setTimeout(function(){ show(DEFAULT_ID); }, 250);   // the poem is already on the page; the 3D follows once it has painted
   })();
 </script>
 <script>
@@ -645,17 +663,24 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
     [].slice.call(document.querySelectorAll('.sec > .label:first-child')).forEach(function (h) {
       var sec = h.parentNode;
       h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
-      function flip() { var on = sec.classList.toggle('open'); h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+      var body = document.createElement('div'), inner = document.createElement('div');   // body opens and closes smoothly
+      body.className = 'secbody'; inner.className = 'secin'; body.inert = true;
+      while (h.nextSibling) inner.appendChild(h.nextSibling);
+      body.appendChild(inner); sec.appendChild(body);
+      function flip() { var on = sec.classList.toggle('open'); body.inert = !on; h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
       h.addEventListener('click', flip);
       h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
     });
     [].slice.call(document.querySelectorAll('.fold')).forEach(function (f) {
       var b = document.createElement('button');
-      var keep = parseInt(f.getAttribute('data-keep'), 10);
-      var rest = keep ? [].slice.call(f.children).slice(keep) : [];
-      rest.forEach(function (c) { c.hidden = true; });   // fold by whole items (poems, stanzas)
+      var keep = parseInt(f.getAttribute('data-keep'), 10);   // items past `keep` are hidden by the stylesheet, so nothing jumps
       b.type = 'button'; b.className = 'foldmore'; b.textContent = 'Continua';
-      b.addEventListener('click', function () { rest.forEach(function (c) { c.hidden = false; }); f.classList.add('unfolded'); b.remove(); });
+      b.addEventListener('click', function () {
+        b.remove();
+        if (keep) { f.classList.add('unfolded', 'rise'); return; }
+        f.style.maxHeight = f.scrollHeight + 'px';   // grow to the full height, then release the cap
+        setTimeout(function () { f.classList.add('unfolded'); f.style.maxHeight = ''; }, 520);
+      });
       f.parentNode.insertBefore(b, f.nextSibling);
     });
     if (nav && !document.querySelector('.subnav a[data-sec]')) nav.hidden = true;

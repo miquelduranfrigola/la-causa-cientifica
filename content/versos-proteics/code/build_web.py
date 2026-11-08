@@ -197,6 +197,7 @@ def build() -> Path:
 
     data_out: dict = {}
     entries = "".join(_entry(s, glob, meta, data_out, embedded) for s in catalog) + _rubric_section()
+    entries = entries.replace(f'id="{default}" hidden', f'id="{default}"', 1)  # shown from the first paint, so nothing jumps
 
     page = (_TEMPLATE
             .replace("{{DESIGN}}", design_css())
@@ -309,16 +310,22 @@ _TEMPLATE = r"""<!doctype html>
       if(!el || !d || !window.$3Dmol) return;
       var conts = [].slice.call(el.querySelectorAll('.viewer'));
       var viewers = [];
-      d.pdbs.forEach(function(pdb, idx){
-        var c = conts[idx]; if(!c) return;
-        var v = $3Dmol.createViewer(c, {backgroundColor:BG});
-        v.setBackgroundColor(BG, 0);
-        v.addModel(pdb, 'pdb');
-        v.setStyle({}, {cartoon:{color:GREY}});
-        v.zoomTo(); v.render(); v.resize(); v.render();
-        if(!REDUCED) v.spin('y', 0.5);
-        viewers.push(v);
-      });
+      var made = 0;
+      (function make(){   // one viewer per task, so the page never freezes while the structures build
+        var idx = made++, pdb = d.pdbs[idx], c = conts[idx];
+        if(pdb === undefined){ if(REDUCED) paint(); return; }
+        if(active && active.id !== id) return;
+        if(c){
+          var v = $3Dmol.createViewer(c, {backgroundColor:BG});
+          v.setBackgroundColor(BG, 0);
+          v.addModel(pdb, 'pdb');
+          v.setStyle({}, {cartoon:{color:GREY}});
+          v.zoomTo(); v.render(); v.resize(); v.render();
+          if(!REDUCED) v.spin('y', 0.5);
+          viewers.push(v);
+        }
+        setTimeout(make, 0);
+      })();
 
       var wd = [], res = [];
       el.querySelectorAll('.wd').forEach(function(s){ wd[+s.dataset.w] = s; });
@@ -388,7 +395,8 @@ _TEMPLATE = r"""<!doctype html>
     window.addEventListener('resize', function(){
       if(active){ active.viewers.forEach(function(v){ try{ v.resize(); v.render(); }catch(e){} }); }
     });
-    show(location.hash ? location.hash.slice(1) : DEFAULT_ID);
+    if(location.hash) show(location.hash.slice(1));
+    else setTimeout(function(){ show(DEFAULT_ID); }, 250);   // the poem is already on the page; the 3D follows once it has painted
   })();
 </script>
 {{NAV}}

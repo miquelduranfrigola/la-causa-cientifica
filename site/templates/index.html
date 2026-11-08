@@ -19,7 +19,9 @@
   {% for poem in poems %}
   <section class="piece" id="{{ poem.slug }}" aria-labelledby="t-{{ poem.slug }}">
     <h2 class="ptitle" id="t-{{ poem.slug }}"><span class="n">{{ '%02d' % poem.number }}</span>{{ poem.title }}</h2>
-    <iframe class="live" src="{{ poem.slug }}/" title="{{ poem.title }}" loading="lazy" scrolling="no"></iframe>
+    {% set h = heights.get(poem.slug) %}
+    <iframe class="live" data-src="{{ poem.slug }}/" title="{{ poem.title }}" scrolling="no"{% if h %} style="--h-wide:{{ h.wide }}px;--h-narrow:{{ h.narrow }}px"{% endif %}></iframe>
+    <noscript><p class="more-link"><a class="textlink" href="{{ poem.slug }}/">Obre la peça</a></p></noscript>
   </section>
   {% endfor %}
   <div class="wrap">{% include "footer.html" %}</div>
@@ -50,17 +52,27 @@
   var links = [].slice.call(document.querySelectorAll('.index a'));
   var dialog = document.getElementById('book');
   var settled = false;
+  html.classList.add('js');
+
+  /* A piece loads when it is about a screen away, never all at once: until then the frame holds its measured height. */
+  function load(fr) { if (fr.dataset.src) { fr.src = fr.dataset.src; delete fr.dataset.src; } }
+  if ('IntersectionObserver' in window) {
+    var seen = new IntersectionObserver(function (es) {
+      es.forEach(function (en) { if (en.isIntersecting) { load(en.target); seen.unobserve(en.target); } });
+    }, { rootMargin: '100% 0px' });
+    frames.forEach(function (fr) { seen.observe(fr); });
+  } else frames.forEach(load);
 
   /* Each piece is a frame as tall as its content: the piece reports its height as it changes. */
   function sendHeight(fr) { try { fr.contentWindow.postMessage({ lcc: 'vh', px: window.innerHeight }, '*'); } catch (e) {} }
-  frames.forEach(function (fr) { fr.addEventListener('load', function () { sendHeight(fr); }); });
+  frames.forEach(function (fr) { fr.addEventListener('load', function () { sendHeight(fr); fr.classList.add('ready'); }); });
   window.addEventListener('resize', function () { frames.forEach(sendHeight); });
 
   /* Open at the piece named in the address; the frames above it settle first, so keep going until the reader moves. */
   function goHash() {
     var id = decodeURIComponent(location.hash.replace(/^#/, ''));
     var el = id && document.getElementById(id);
-    if (el && el.classList.contains('piece')) el.scrollIntoView();
+    if (el && el.classList.contains('piece')) el.scrollIntoView({ behavior: 'instant' });
   }
   ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
     window.addEventListener(ev, function () { settled = true; }, { once: true, passive: true });
@@ -74,7 +86,10 @@
     sections.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line) cur = i; });
     links.forEach(function (a, i) { if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
     var on = links[cur];
-    if (on && on.scrollIntoView && html.scrollWidth <= window.innerWidth) { var bar = on.closest('.index'); bar.scrollLeft = on.offsetLeft - 24; }
+    if (on && html.scrollWidth <= window.innerWidth) {   // glide the index only once the reader moves; at load it must not scroll
+      var bar = on.closest('.index'), x = Math.max(0, on.offsetLeft - 24);
+      if (Math.abs(bar.scrollLeft - x) > 1) bar.scrollTo({ left: x, behavior: settled ? 'smooth' : 'instant' });
+    }
   }
   window.addEventListener('scroll', mark, { passive: true });
   window.addEventListener('resize', mark);
@@ -85,7 +100,7 @@
     var line = document.querySelector('.index').offsetHeight + 8, cur = 0;
     sections.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line + 4) cur = i; });
     var n = Math.max(0, Math.min(sections.length - 1, cur + d));
-    sections[n].scrollIntoView();
+    sections[n].scrollIntoView({ behavior: 'smooth' });
   }
   document.addEventListener('keydown', function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey || dialog.open) return;

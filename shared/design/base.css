@@ -173,15 +173,26 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 .is-embedded .head .sub { margin-top: 0; }
 .is-embedded .page { padding: 0 0 8px; }
 .is-embedded .page > nav { position: static; }
+.is-embedded .page > nav:not(:has(a[data-sec])) { display: none; }   /* no tabs, no bar: hidden from the first paint */
 .is-embedded .sec { margin-top: clamp(20px, 3vw, 32px); }
 .is-embedded .sec > .label:first-child { margin-bottom: 0; cursor: pointer; }
 .is-embedded .sec > .label:first-child::after { content: "▸"; margin-left: .6em; color: var(--accent); }
-.is-embedded .sec.open > .label:first-child::after { content: "▾"; }
+.is-embedded .sec.open > .label:first-child::after { transform: rotate(90deg); }
 .is-embedded .sec.open > .label:first-child { margin-bottom: clamp(20px, 3vw, 32px); }
-.is-embedded .sec:not(.open) > :not(.label) { display: none; }
-.is-embedded .fold:not([data-keep]):not(.unfolded) { max-height: var(--fold, 40rem); overflow: hidden; }
+.is-embedded .sec:not(.open) > :not(.label):not(.secbody) { display: none; }   /* closed from the first paint, before the script wraps it */
+.is-embedded .fold[data-keep="1"]:not(.unfolded) > :nth-child(n+2), .is-embedded .fold[data-keep="2"]:not(.unfolded) > :nth-child(n+3), .is-embedded .fold[data-keep="3"]:not(.unfolded) > :nth-child(n+4) { display: none; }
+.is-embedded .secbody { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.3, .7, .2, 1); }
+.is-embedded .sec.open > .secbody { grid-template-rows: 1fr; }
+.is-embedded .secin { min-height: 0; overflow: hidden; opacity: 0; transition: opacity .3s ease; }
+.is-embedded .sec.open .secin { opacity: 1; transition-delay: .1s; }
+.is-embedded .sec > .label:first-child { transition: margin-bottom .4s cubic-bezier(.3, .7, .2, 1); }
+.is-embedded .sec > .label:first-child::after { display: inline-block; transition: transform .3s ease; }
+.is-embedded .fold:not([data-keep]):not(.unfolded) { max-height: var(--fold, 40rem); overflow: hidden; transition: max-height .5s cubic-bezier(.3, .7, .2, 1); }
+.rise > * { animation: rise .45s ease both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 .foldmore { display: block; width: 100%; margin: 0; padding: 14px 0 0; text-align: left; background: none; border: 0; border-top: 1px solid var(--rule); font: 600 .875rem/1.4 var(--sans); color: inherit; cursor: pointer; }
 .foldmore::after { content: " ▾"; color: var(--accent); }
+.foldmore { transition: color .2s ease; }
 .foldmore:hover { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
