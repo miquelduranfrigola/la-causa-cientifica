@@ -127,9 +127,40 @@ pre { margin: 0; overflow-x: auto; }
   .title { font-size: clamp(1.75rem, 5vw, 2.5rem); }
 }
 
-/* ---------- Opened outside the shell ---------- */
-.standalone { display: none; padding: 14px var(--edge); border-bottom: 1px solid var(--rule); font: 400 .875rem/1.4 var(--sans); }
-.is-top .standalone { display: block; }
+/* ---------- Masthead (every page) ---------- */
+.mast {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px var(--edge) 14px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+}
+.mast .word { font-size: 1.375rem; font-weight: 500; letter-spacing: -.005em; line-height: 1.2; }
+.mast nav { display: flex; gap: 24px; font: 400 .875rem/1.4 var(--sans); }
+.mast nav a { border-bottom: 1px solid transparent; padding: 2px 0; }
+.mast nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+.mast a { position: relative; }
+.mast a::after { content: ""; position: absolute; inset: -12px -8px; }   /* 44px touch targets */
+@media (max-width: 640px) {
+  .mast { padding-top: 14px; padding-bottom: 10px; gap: 12px; }
+  .mast .word { font-size: 1.125rem; white-space: nowrap; }
+  .mast nav { gap: 14px; font-size: .8125rem; white-space: nowrap; }
+}
+@media (max-width: 380px) { .mast nav a:first-child { display: none; } }   /* the wordmark already links home */
+
+/* ---------- One scrolling page: sticky index, stacked sections, the way on ---------- */
+html { scroll-behavior: smooth; }
+.page > nav { position: sticky; top: 0; z-index: 5; background: var(--paper); }
+section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
+.sec { margin-top: clamp(56px, 8vw, 104px); }
+.sec > .label:first-child { margin: 0 0 clamp(20px, 3vw, 32px); padding-top: 12px; border-top: 1px solid var(--rule); }
+.next { margin-top: clamp(64px, 9vw, 120px); padding-top: 12px; border-top: 1px solid var(--rule); font: 400 .875rem/1.4 var(--sans); }
+.next a { display: block; }
+.next .t { display: block; margin-top: 8px; font: 400 clamp(1.5rem, 3.4vw, 2.5rem)/1.1 var(--serif); letter-spacing: -.015em; }
+.next .k { display: block; }
+.next a:hover .t { color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -138,7 +169,7 @@ pre { margin: 0; overflow-x: auto; }
 /* ---------- Print: just the piece, in ink on white ---------- */
 @media print {
   html, body { background: #fff; }
-  .subnav, .standalone { display: none !important; }
+  .subnav, .mast, .next { display: none !important; }
   .page { padding: 0; }
   .head { padding-top: 0; }
   body { font-size: 11pt; }
@@ -146,13 +177,10 @@ pre { margin: 0; overflow-x: auto; }
 }
 
 /* Al llibre: facsimile of the printed page, flat, with a hairline edge, and its citation. */
-.book{ padding-top:clamp(24px,4vw,40px); }
 .leaves{ display:grid; gap:clamp(32px,5vw,64px); }
 .leaf{ margin:0; display:grid; grid-template-columns:minmax(0,26rem) minmax(0,1fr); gap:clamp(24px,4vw,56px); align-items:start; }
 .leaf img{ display:block; width:100%; height:auto; border:1px solid var(--rule); background:#fff; }
 .leaf figcaption{ font-size:1.125rem; line-height:1.5; max-width:var(--measure-prose); }
-.leaf .label, .leaf .ref{ display:block; font-family:var(--sans); font-size:.8125rem; line-height:1.4; }
-.leaf .label{ font-weight:600; }
-.leaf .ref{ margin-bottom:1.25rem; }
+.leaf .ref{ display:block; margin-bottom:1.25rem; font:400 .8125rem/1.4 var(--sans); }
 .leaf figcaption p{ margin:0 0 .75em; text-wrap:pretty; }
 @media (max-width: 760px){ .leaf{ grid-template-columns:minmax(0,1fr); } }

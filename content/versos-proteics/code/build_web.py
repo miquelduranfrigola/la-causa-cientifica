@@ -32,7 +32,7 @@ from pipeline import poem_chunks, to_sequence  # noqa: E402
 
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 
 POEMS_DIR = POEM_ROOT / "data" / "poems"
 
@@ -161,7 +161,7 @@ def _rubric_section() -> str:
     escapes = "".join(f'<span class="map"><b class="code">{html.escape(k)}</b> → {v}</span>'
                       for k, v in PAIRS.items())
     return f"""
-    <section class="entry" id="rubric" hidden>
+    <section class="sec" id="rubric"><h2 class="label">Metodologia</h2>
       <div class="prose">
         <p>Cada lletra que ja és un codi d’aminoàcid es mapa a si mateixa;
         la resta s’escapa amb <b class="code">{ESCAPE}</b> seguida d’un aminoàcid.</p>
@@ -192,16 +192,15 @@ def build() -> Path:
 
     menu = [f'<li><a data-sec="poem-{s}" href="#poem-{s}">{html.escape(title_of(s).replace(chr(39), "’"))}</a></li>'
             for s in catalog]
-    menu.append('<li><a data-sec="rubric" href="#rubric">Metodologia</a></li>')
-    default = f"poem-{catalog[0]}" if catalog else "rubric"
+    menu.append('<li><a href="#rubric">Metodologia</a></li>')
+    default = f"poem-{catalog[0]}" if catalog else ""
 
     data_out: dict = {}
-    entries = _rubric_section() + "".join(
-        _entry(s, glob, meta, data_out, embedded) for s in catalog)
+    entries = "".join(_entry(s, glob, meta, data_out, embedded) for s in catalog) + _rubric_section()
 
     page = (_TEMPLATE
             .replace("{{DESIGN}}", design_css())
-            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{HEADER}}", site_header())
             .replace("{{DEFAULT}}", default)
             .replace("{{MENU}}", "\n".join(menu))
             .replace("{{ENTRIES}}", entries)
@@ -209,7 +208,7 @@ def build() -> Path:
             .replace("{{NAV}}", nav_script())
             .replace("{{DATA}}", json.dumps(data_out, ensure_ascii=False)))
     out = POEM_ROOT / "index.html"
-    page = add_book_tab(page, POEM_ROOT.name, section_class="entry")
+    page = add_book_section(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 
@@ -268,7 +267,7 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">Versos proteics</h1>

@@ -2,7 +2,7 @@
 
 The design of **La causa científica**: a small literary press that publishes poems which happen to have code.
 
-This file is the single source of truth. Every page (the shell and each poem's `index.html`), every social card and every future piece follows it. If something here is wrong or missing, change this file first, then the code.
+This file is the single source of truth. Every page (the home, the About page and each piece's `index.html`), every social card and every future piece follows it. If something here is wrong or missing, change this file first, then the code.
 
 **Reference:** Fitzcarraldo Editions. Typographic, quiet, rigorous. **Anti-reference:** a tech product, an AI tool, a blog template.
 
@@ -119,35 +119,35 @@ Text on paper meets 4.5:1 contrast. Figures look like printed plates: ink and th
 - **Scale up:** root font size is 100% below 1800px, 112.5% from 1800px, 131.25% from 2300px. Because everything is in rem, the whole design grows.
 - **Breakpoints** (content adapts; nothing is hidden):
   - up to 380px: the masthead drops the duplicate "Peces" link.
-  - up to 640px: compact masthead, two-column piece bar, smaller numeral column.
+  - up to 640px: compact masthead, smaller numeral column, the home legend stacks into rows.
   - up to 640px: the title block is compact (title `clamp(2rem, 9.5vw, 2.75rem)`, smaller author and descriptor lines).
   - up to 760px: the piece's menu wraps; verses wrap with a hanging indent instead of scrolling; multi-column layouts stack to one column.
-  - landscape phones (height up to 520px): the masthead is hidden inside a piece and the title block shrinks.
-- **Phones in a piece:** the masthead tucks away when scrolling down and returns on scroll up (the iframe reports scroll direction to the shell).
+  - landscape phones (height up to 520px): the title block shrinks.
 - Vertical rhythm in multiples of 8px; use `clamp()` for large gaps.
 
 ### Components (shared vocabulary in `shared/design/base.css`)
 
-`.page` container · `.head` title block (`.title`, `.sub` plain descriptor; no author byline, the author is named once in the shell) · `.subnav` text menu of views (current: accent + 1px underline) · `.verse` poem text (`.v` line, `.br` stanza gap) · `.prose` running text · `.label` small bold grotesque heading · `.how` "Com està fet" section (hairline above) · `.code` / `pre` machine text · `.fig` + `.cap` figure and caption · `.hair` rule · `.standalone` bar shown only when a page is opened outside the shell.
+`.page` container · `.head` title block (`.title`, `.sub` plain descriptor; no author byline, the author is named once in the shell) · `.subnav` the sticky index of a piece (current section: accent + 1px underline) · `.verse` poem text (`.v` line, `.br` stanza gap) · `.prose` running text · `.label` small bold grotesque heading · `.sec` a stacked section with its `.label` heading under a hairline · `.next` the "Peça següent" ending · `.mast` the masthead · `.code` / `pre` machine text · `.fig` + `.cap` figure and caption · `.hair` rule.
 
-### Shell (home, about, piece)
+### Site pages (home, about, piece)
 
-- **Masthead:** wordmark left (links home), "Peces" and "Sobre el llibre" right, one rule under.
-- **Home:** one short Catalan intro, then the catalogue: per row a blue numeral, a large serif title and the roman one-line `summary:`; hairlines between rows. Hover and focus turn the title blue. Catalogue links are real URLs (`slug/`) that the page routes by hash.
-- **About ("Sobre el llibre"):** the cover photograph beside the back-cover text, one pull quote, a link to the publisher's catalogue; then "Sobre aquest web" (a few plain paragraphs) and the keyboard shortcuts.
-- **Piece view:** a bar (`← Totes les peces`, `03 / 06`, `← Anterior  Següent →`) above the piece's iframe. The piece fills the window; the browser Back button steps through pieces.
+- **Masthead:** the same on every page: wordmark left (links home), "Peces" and "Sobre el llibre" right, one rule under. It is part of the page and scrolls away; only the piece's index is sticky.
+- **Home:** one short Catalan intro, then a drawn legend of the three things every piece has (the piece, how it is made, where it sits in the book: lines of verse, a stepping row, a page with one yellow line), then the catalogue: per row a blue numeral, a large serif title and the roman one-line `summary:`; hairlines between rows. Hover and focus turn the title blue.
+- **About ("Sobre el llibre"):** the cover photograph beside the back-cover text, one pull quote, a link to the publisher's catalogue; then "Sobre aquest web" (a few plain paragraphs).
+- **A piece is a plain page** (`/<slug>/`), not a frame: the masthead, the title block, one scrolling page and, at the end, "Peça següent" (or "Torna a la llista" after the last).
 - **Footer:** author and GitHub link on a rule.
 
 ### Piece pages
 
-1. Title block: the piece's name, the author, one plain line describing it.
-2. The text menu of views (for example "El poema / Metodologia"), the current one in accent.
-3. The poem or main view. Methodology and code come last, under a hairline.
-4. If a piece has sub-poems (as *Versos proteics* does), each gets its own large heading under the page title.
+1. Title block: the piece's name and one plain line describing it (no byline).
+2. The sticky index: `El poema · Metodologia · Al llibre` (names follow the piece), each a jump link; the section in view is in accent. Nothing hides behind a click.
+3. One scrolling page: the poem or main figure first, then **Metodologia** (animated, and it plays only while it is on screen), then **Al llibre** (the facsimile with its marked sentences and its citation). Each stacked section starts with a `.label` heading under a hairline.
+4. Only genuinely separate poems stay as tabs (*Versos proteics* has one tab per poem); its method and book section still sit below the open poem.
+5. The yellow `--marker` is used for the book highlighter and its legend only.
 
 ### Keyboard and links
 
-`j` / `k` next and previous piece · `←` / `→` previous and next view inside a piece · `Esc` back to the index. Keys pressed inside a piece are forwarded to the shell by `shared/design/nav.html`. A skip link jumps to the content. Everything is also reachable with Tab and plain links. Opening a poem's own URL redirects into the shell.
+`j` / `k` next and previous piece · `Esc` back to the list (read from `<link rel="next|prev|up">`; `←` / `→` only switch tabs where a page has them). The shortcuts are not advertised on the site. A skip link jumps to the content. Everything is also reachable with Tab and plain links, and every page is a real URL.
 
 ### Copy
 
@@ -168,7 +168,7 @@ Generated, never hand-made: `python scripts/make_social.py` renders HTML cards i
 
 ### Adding or changing a piece
 1. Run `python scripts/new_poem.py "Títol"`. Fill `metadata.yml` including `summary:` (and `excerpt:` if you want a verse card). The scaffold includes a working `code/build_web.py`.
-2. Extend that page, built from the shared pieces: `design_css()`, `nav_script()` and `standalone_bar()` from `shared/design/inline.py`, in a `_TEMPLATE` string with `{{DESIGN}}`, `{{STANDALONE}}`, `{{NAV}}`. See `content/llangardaix-extingit/code/build_web.py` for the smallest example.
+2. Extend that page, built from the shared pieces: `design_css()`, `nav_script()` and `site_header()` from `shared/design/inline.py`, in a `_TEMPLATE` string with `{{DESIGN}}`, `{{HEADER}}`, `{{NAV}}`. See `content/llangardaix-extingit/code/build_web.py` for the smallest example.
 3. Rebuild the page (`code/build_web.py`), the site (`python site/build_site.py`) and, if titles changed, the social cards.
 
 ### Automatic guard
@@ -184,9 +184,9 @@ Generated, never hand-made: `python scripts/make_social.py` renders HTML cards i
 - [ ] Works with `prefers-reduced-motion` and without hover.
 - [ ] No external requests; the file works opened from disk.
 - [ ] Catalan glyphs render (`l·l`, `ŀ`, `« »`, accents); apostrophes are ’.
-- [ ] Back button, `j`/`k`/`Esc` and the previous/next links behave inside the shell.
+- [ ] Back button, `j`/`k`/`Esc` and the "Peça següent" link work.
 - [ ] No console errors, and `python scripts/check_design.py` passes.
-- [ ] Lighthouse accessibility is 100 for the shell and for each piece, in its animated state too.
+- [ ] Lighthouse accessibility is 100 for the home, About and each piece, in its animated state too.
 
 ### Where things live
-`shared/design/` tokens, base, fonts, nav script, inliner · `site/` shell templates and build · `content/<slug>/code/build_web.py` each piece · `scripts/make_social.py` and `social/` the share cards · `CONVENTIONS.md` the repo-level contract.
+`shared/design/` tokens, base, fonts, nav script, inliner · `site/` page templates and build · `content/<slug>/code/build_web.py` each piece · `scripts/make_social.py` and `social/` the share cards · `CONVENTIONS.md` the repo-level contract.

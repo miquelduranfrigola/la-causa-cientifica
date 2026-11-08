@@ -15,7 +15,7 @@ POEM_ROOT = Path(__file__).resolve().parent.parent
 REPO = POEM_ROOT.parent.parent
 RESULTS = POEM_ROOT / "results"
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 
 LINE_WIDTH = 60
 
@@ -49,15 +49,15 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">Llangardaix extingit</h1>
     <p class="sub">Genoma mitocondrial inferit de l’avantpassat de <i>Podarcis muralis</i> i <i>Varanus salvator</i></p>
   </header>
   <nav><ul class="subnav">
-    <li><a data-sec="obra" class="on" href="#obra">El genoma</a></li>
-    <li><a data-sec="meto" href="#meto">Metodologia</a></li>
+    <li><a class="on" href="#obra">El genoma</a></li>
+    <li><a href="#meto">Metodologia</a></li>
   </ul></nav>
 <main>
 
@@ -68,24 +68,13 @@ _TEMPLATE = r"""<!doctype html>
 <pre class="seq" id="seq" data-seq="{{RAW}}">{{SEQ}}</pre>
     </div>
   </section>
-  <section id="meto" hidden style="margin-top:clamp(24px,4vw,40px)">
+  <section id="meto" class="sec"><h2 class="label">Metodologia</h2>
     <div class="prose">{{METHOD}}</div>
   </section>
 </main>
 </div>
 <script>
 (function(){
-  var links=[].slice.call(document.querySelectorAll('[data-sec]'));
-  var secs=[].slice.call(document.querySelectorAll('section[id]'));
-  function show(id){
-    if(!document.getElementById(id)) id='obra';
-    secs.forEach(function(s){ s.hidden = s.id!==id; });
-    links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
-    if (typeof wrapSeq === 'function') wrapSeq();  // the genome may have been resized while hidden
-  }
-  links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); show(a.dataset.sec); window.scrollTo(0,0); }); });
-  show('obra');
-
   /* Re-wrap the genome to the width available (multiples of 10 bases, at most 60),
      so it never scrolls sideways on a phone. */
   var pre = document.getElementById('seq'), raw = pre.getAttribute('data-seq'), last = 0;
@@ -124,7 +113,7 @@ def build() -> Path:
     wrapped = "\n".join(textwrap.wrap(seq, LINE_WIDTH))
     page = (
         _TEMPLATE.replace("{{DESIGN}}", design_css())
-        .replace("{{STANDALONE}}", standalone_bar())
+        .replace("{{HEADER}}", site_header())
         .replace("{{LEN}}", f"{len(seq):,}".replace(",", "."))
         .replace("{{SEQ}}", wrapped)
         .replace("{{RAW}}", seq)
@@ -132,7 +121,7 @@ def build() -> Path:
         .replace("{{NAV}}", nav_script())
     )
     out = POEM_ROOT / "index.html"
-    page = add_book_tab(page, POEM_ROOT.name)
+    page = add_book_section(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 

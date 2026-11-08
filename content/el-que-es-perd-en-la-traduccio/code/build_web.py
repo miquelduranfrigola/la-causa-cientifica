@@ -28,7 +28,7 @@ HERE = Path(__file__).resolve().parent
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 from languages import NAMES, chain  # noqa: E402
 
 DATA = POEM_ROOT / "data"
@@ -96,13 +96,13 @@ def build() -> Path:
     chain_json = json.dumps([[c, NAMES[c]] for c in chain()], ensure_ascii=False)
     page = (_TEMPLATE
             .replace("{{DESIGN}}", design_css())
-            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{HEADER}}", site_header())
             .replace("{{POEMS}}", poems)
             .replace("{{METHOD}}", _method_entry())
             .replace("{{CHAIN}}", chain_json)
             .replace("{{NAV}}", nav_script()))
     out = POEM_ROOT / "index.html"
-    page = add_book_tab(page, POEM_ROOT.name)
+    page = add_book_section(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 
@@ -138,15 +138,15 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">El que es perd en la traducció</h1>
     <p class="sub"><i>Veinte poemas de amor y una canción desesperada</i>, de Pablo Neruda, despoetitzat amb 104 traduccions automàtiques</p>
   </header>
   <nav><ul class="subnav">
-    <li><a data-sec="poemes" class="on" href="#poemes">Els poemes</a></li>
-    <li><a data-sec="meto" href="#meto">Metodologia</a></li>
+    <li><a class="on" href="#poemes">Els poemes</a></li>
+    <li><a href="#meto">Metodologia</a></li>
   </ul></nav>
 <main>
 
@@ -154,7 +154,7 @@ _TEMPLATE = r"""<!doctype html>
     <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
     {{POEMS}}
   </section>
-  <section id="meto" hidden style="margin-top:clamp(24px,4vw,40px)">
+  <section id="meto" class="sec"><h2 class="label">Metodologia</h2>
     {{METHOD}}
   </section>
 </main>
@@ -162,8 +162,6 @@ _TEMPLATE = r"""<!doctype html>
 <script>
   var CHAIN = {{CHAIN}};           // [[code, name], ...] es ... es
   (function(){
-    var links = [].slice.call(document.querySelectorAll('[data-sec]'));
-    var secs = [].slice.call(document.querySelectorAll('section[id]'));
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Sweep a highlight through the 104-language chain, looping while on screen.
@@ -193,16 +191,13 @@ _TEMPLATE = r"""<!doctype html>
     function gridStart(){ if(running || reduce || !chips.length) return; running = true; gridCycle(); }
     function gridStop(){ running = false; clearTimeout(timer); gridReset(); }
 
-    function show(id){
-      if(!document.getElementById(id)) id = 'poemes';
-      secs.forEach(function(s){ s.hidden = s.id !== id; });
-      links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec === id); });
-      if(id === 'meto') gridStart(); else gridStop();
-    }
-    links.forEach(function(a){
-      a.addEventListener('click', function(e){ e.preventDefault(); show(a.dataset.sec); window.scrollTo(0,0); });
-    });
-    show('poemes');
+    // The method animates while it is on screen.
+    var meto = document.getElementById('meto');
+    if('IntersectionObserver' in window && meto){
+      new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting) gridStart(); else gridStop(); });
+      }, {threshold: .25}).observe(meto);
+    } else { gridStart(); }
   })();
 </script>
 {{NAV}}

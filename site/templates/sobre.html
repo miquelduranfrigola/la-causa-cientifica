@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre el llibre — {{ site_title }}{% endblock %}
+
+{% block body %}
+<a class="skip" href="#main">Salta al contingut</a>
+{% set current = 'about' %}{% include "masthead.html" %}
+<main id="main" tabindex="-1">
+  <div class="wrap about">
+    {% include "about.html" %}
+    {% include "footer.html" %}
+  </div>
+</main>
+{% endblock %}

@@ -4,6 +4,7 @@
   --ink: #111111;
   --accent: #1d2fd1;
   --rule: #111111;
+  --marker: #ffe228;   /* the book highlighter: used only for marked passages and its legend */
 
   --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
   --sans: 'Hanken Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;

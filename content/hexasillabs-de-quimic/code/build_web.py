@@ -32,7 +32,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 POEM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(POEM))
 sys.path.insert(0, os.path.join(REPO, "shared", "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 
 OUT = os.path.join(POEM, "index.html")
 
@@ -148,10 +148,10 @@ def build():
     if missing:
         print("SENSE ESTRUCTURA:", missing)
     page = (_TEMPLATE.replace("{{DESIGN}}", design_css())
-            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{HEADER}}", site_header())
             .replace("{{STANZAS}}", "".join(stanzas))
             .replace("{{NAV}}", nav_script()))
-    page = add_book_tab(page, os.path.basename(POEM))
+    page = add_book_section(page, os.path.basename(POEM))
     with open(OUT, "w", encoding="utf-8") as fh:
         fh.write(page)
     return OUT
@@ -194,15 +194,15 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">Hexasíl·labs de químic</h1>
     <p class="sub">Una vida en vuit edats, dita amb noms de molècules</p>
   </header>
   <nav><ul class="subnav">
-    <li><a data-sec="poema" class="on" href="#poema">El poema</a></li>
-    <li><a data-sec="metode" href="#metode">Metodologia</a></li>
+    <li><a class="on" href="#poema">El poema</a></li>
+    <li><a href="#metode">Metodologia</a></li>
   </ul></nav>
 <main>
 
@@ -211,7 +211,7 @@ _TEMPLATE = r"""<!doctype html>
     {{STANZAS}}
   </section>
 
-  <section id="metode" hidden>
+  <section id="metode" class="sec"><h2 class="label">Metodologia</h2>
     <div class="prose">
       <p>Cada vers és el nom d'una molècula real, en català, i un
         hexasíl·lab (sis síl·labes fins a l'última tònica). Cada estrofa —del fetus
@@ -226,19 +226,6 @@ _TEMPLATE = r"""<!doctype html>
 
 <script>
 (function(){
-  var links = [].slice.call(document.querySelectorAll('[data-sec]'));
-  var secs = [].slice.call(document.querySelectorAll('section[id]'));
-  function show(id){
-    if(!document.getElementById(id)) id = 'poema';
-    secs.forEach(function(s){ s.hidden = s.id !== id; });
-    links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec === id); });
-  }
-  links.forEach(function(a){
-    a.addEventListener('click', function(e){ e.preventDefault();
-      history.replaceState(null, '', '#' + a.dataset.sec); show(a.dataset.sec); window.scrollTo(0, 0); });
-  });
-  show(location.hash.slice(1) || 'poema');
-
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   [].slice.call(document.querySelectorAll('.stanza')).forEach(function(st, si){
     var slides = [].slice.call(st.querySelectorAll('.slide'));

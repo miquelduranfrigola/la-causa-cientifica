@@ -22,7 +22,7 @@ POEM_ROOT = Path(__file__).resolve().parent.parent
 HERE = Path(__file__).resolve().parent
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 
 POS_CA = {"N": "nom", "V": "verb", "A": "adjectiu", "R": "adverbi"}
 EDIT_CA = {"substitution": "substitució", "deletion": "deleció", "insertion": "inserció"}
@@ -82,7 +82,7 @@ def build() -> Path:
 
     page = (_TEMPLATE
             .replace("{{DESIGN}}", design_css())
-            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{HEADER}}", site_header())
             .replace("{{NAV}}", nav_script())
             .replace("{{AUTHOR}}", html.escape(src.get("author", "")))
             .replace("{{SEED}}", html.escape(src.get("poem", "")))
@@ -92,7 +92,7 @@ def build() -> Path:
             .replace("{{EDIT}}", json.dumps(EDIT_CA, ensure_ascii=False)))
     out = POEM_ROOT / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
-    page = add_book_tab(page, POEM_ROOT.name)
+    page = add_book_section(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 
@@ -117,15 +117,15 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">Poema malalt</h1>
     <p class="sub">L’evolució d’un poema de {{AUTHOR}}, <span style="font-style:normal">«{{SEED}}»</span>, a força de mutacions</p>
   </header>
   <nav><ul class="subnav">
-    <li><a data-sec="poem" class="on" href="#poem">El poema</a></li>
-    <li><a data-sec="metode" href="#metode">Metodologia</a></li>
+    <li><a class="on" href="#poem">El poema</a></li>
+    <li><a href="#metode">Metodologia</a></li>
   </ul></nav>
 <main>
 
@@ -133,7 +133,7 @@ _TEMPLATE = r"""<!doctype html>
     <p class="dims" id="dims" aria-live="off"></p>
     <div class="verse" id="poemtext"></div>
   </section>
-  <section id="metode" hidden>
+  <section id="metode" class="sec"><h2 class="label">Metodologia</h2>
     <div class="prose">
       <p>El poema és un genoma i cada paraula, un gen. A cada pas, una
         paraula muta per una sola lletra —substitució, inserció o deleció—, tal com
@@ -149,8 +149,6 @@ _TEMPLATE = r"""<!doctype html>
 <script>
   var DATA = {{DATA}};
   (function(){
-    var links = [].slice.call(document.querySelectorAll('[data-sec]'));
-    var entries = [].slice.call(document.querySelectorAll('section[id]'));
     var N = DATA.steps.length, timer = null, s = 0;
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Adaptive pace: whole loop ~90s regardless of how many mutations there are.
@@ -204,19 +202,13 @@ _TEMPLATE = r"""<!doctype html>
       timer = setTimeout(loop, dur);
     }
 
-    function show(id){
-      if(!document.getElementById(id)) id = 'poem';
-      entries.forEach(function(e){ e.hidden = e.id !== id; });
-      links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
-      if(timer){ clearTimeout(timer); timer=null; }
-      if(id==='poem'){ fit(); s=0; if(reduce){ s=N; paint(); } else { loop(); } }
-      window.scrollTo({top:0});
-    }
-    links.forEach(function(a){
-      a.addEventListener('click', function(ev){ ev.preventDefault();
-        history.replaceState(null,'','#'+a.dataset.sec); show(a.dataset.sec); });
-    });
-    show((location.hash||'#poem').slice(1) || 'poem');
+    // The poem mutates while it is on screen.
+    function start(){ if(timer) return; fit(); s=0; if(reduce){ s=N; paint(); } else { loop(); } }
+    function pause(){ if(timer){ clearTimeout(timer); timer=null; } }
+    var poemSec = document.getElementById('poem');
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting) start(); else pause(); }); }, {threshold: .1}).observe(poemSec);
+    } else { start(); }
   })();
 </script>
 {{NAV}}

@@ -1,6 +1,6 @@
 {% if cover_w %}<div class="book-head">{% else %}<div class="book-head no-cover">{% endif %}
   {% if cover_w %}<figure class="cover">
-    <img src="static/cover.webp" width="{{ cover_w }}" height="{{ cover_h }}" alt="Coberta del llibre La causa científica, de Miquel Duran">
+    <img src="{{ root }}static/cover.webp" width="{{ cover_w }}" height="{{ cover_h }}" alt="Coberta del llibre La causa científica, de Miquel Duran">
   </figure>{% endif %}
   <div class="book-text">
     <h1 class="title">Sobre el llibre</h1>
@@ -20,11 +20,3 @@
   <p>El codi no és una il·lustració, sinó part del procés. Hi ha poemes que es pleguen com a proteïnes, un que muta com un tumor i un altre que és el genoma reconstruït d’un llangardaix extingit.</p>
   <p>Tot és obert. Els textos, les dades i el codi són <a class="textlink" href="{{ repo_url }}" target="_blank" rel="noopener">al repositori</a>. Cada pàgina és autocontinguda i no demana res a cap servei extern.</p>
 </div>
-
-<h2 class="label keys-label">Dreceres de teclat</h2>
-<dl class="keys">
-  <div><dt>j</dt><dd>peça següent</dd></div>
-  <div><dt>k</dt><dd>peça anterior</dd></div>
-  <div><dt>← →</dt><dd>vistes dins d’una peça</dd></div>
-  <div><dt>Esc</dt><dd>tornar a la llista</dd></div>
-</dl>

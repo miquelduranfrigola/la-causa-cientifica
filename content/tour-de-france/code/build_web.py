@@ -25,7 +25,7 @@ from pathlib import Path
 POEM_ROOT = Path(__file__).resolve().parent.parent
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 
 ROUTES = POEM_ROOT / "results" / "routes.json"
 GEOJSON = POEM_ROOT / "data" / "europe.geojson"
@@ -61,11 +61,11 @@ def build() -> Path:
             .replace("{{ROUTES}}", json.dumps(routes, ensure_ascii=False, separators=(",", ":")))
             .replace("{{GEO}}", json.dumps(geo, ensure_ascii=False, separators=(",", ":")))
             .replace("{{DESIGN}}", design_css())
-            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{HEADER}}", site_header())
             .replace("{{NAV}}", nav_script()))
 
     out = POEM_ROOT / "index.html"
-    page = add_book_tab(page, POEM_ROOT.name)
+    page = add_book_section(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 
@@ -111,15 +111,15 @@ _TEMPLATE = r"""<!doctype html>
   section[hidden]{ display:none; }
   @media (max-width:600px){ .mapbox{ margin:0 -16px; } .readout{ padding-top:16px; } .tl{ order:3; flex-basis:100%; } .controls{ justify-content:space-between; } }
   @media (min-width:56rem) and (min-aspect-ratio:5/4){   /* landscape desktop: figure beside readout and controls */
-    #map:not([hidden]){ display:grid; grid-template-columns:minmax(15rem,22rem) minmax(0,1fr); grid-template-rows:auto auto 1fr; gap:0 clamp(32px,5vw,80px); align-items:start; }
+    #map{ display:grid; grid-template-columns:minmax(15rem,22rem) minmax(0,1fr); grid-template-rows:auto auto 1fr; gap:0 clamp(32px,5vw,80px); align-items:start; }
     .readout{ grid-column:1; grid-row:1; flex-direction:column; align-items:flex-start; gap:8px; padding-top:clamp(8px,2vw,24px); }
-    .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:1rem; }
+    .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:calc(var(--nav-h,56px) + 1rem); }
     svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); }
-    .controls{ grid-column:1; grid-row:2; position:static; flex-direction:column; align-items:stretch; margin-top:16px; }
+    .controls{ grid-column:1; grid-row:2; position:relative; flex-direction:column; align-items:stretch; margin-top:16px; }
     .controls .tl{ flex-basis:auto; }
     .play{ align-self:flex-start; }
   }
-  @media (max-height:32rem){ .controls{ position:static; } svg.map{ max-height:none; } }
+  @media (max-height:32rem){ .controls{ position:relative; } svg.map{ max-height:none; } }
   @media (prefers-reduced-motion:reduce){ .draw{ transition:none; } }
   @media (pointer:coarse){   /* finger-sized controls */
     .play{ min-height:44px; padding:10px 20px; }
@@ -132,16 +132,16 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">Tour de França</h1>
     <p class="sub">{{NYEARS}} edicions, de {{FIRST}} a {{LAST}}, traçades etapa a etapa</p>
   </header>
   <nav><ul class="subnav">
-    <li><a data-sec="map" class="on" href="#map">El mapa</a></li>
-    <li><a data-sec="poem" href="#poem">El poema</a></li>
-    <li><a data-sec="method" href="#method">Metodologia</a></li>
+    <li><a class="on" href="#map">El mapa</a></li>
+    <li><a href="#poem">El poema</a></li>
+    <li><a href="#method">Metodologia</a></li>
   </ul></nav>
 <main>
 
@@ -166,11 +166,11 @@ _TEMPLATE = r"""<!doctype html>
     </div>
   </section>
 
-  <section id="poem" hidden style="margin-top:clamp(24px,4vw,40px)">
+  <section id="poem" class="sec"><h2 class="label">El poema</h2>
     <div class="verse">{{POEM}}</div>
   </section>
 
-  <section id="method" hidden style="margin-top:clamp(24px,4vw,40px)">
+  <section id="method" class="sec"><h2 class="label">Metodologia</h2>
     <div class="prose">
       <p>Cada dia de cada Tour, de {{FIRST}} a {{LAST}} ({{NSTAGES}} etapes en
          total), es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
@@ -312,20 +312,12 @@ _TEMPLATE = r"""<!doctype html>
     });
 
     // ---- views (text menu) ----
-    var links = [].slice.call(document.querySelectorAll('[data-sec]'));
-    var secs = [].slice.call(document.querySelectorAll('section[id]'));
-    function route(id){
-      if(!document.getElementById(id)) id = 'map';
-      secs.forEach(function(s){ s.hidden = s.id !== id; });
-      links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec === id); });
-      if(id !== 'map') stop();
+    // Playback pauses once the map has scrolled out of view.
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(es){ if(!es[0].isIntersecting) stop(); }).observe(document.getElementById('map'));
     }
-    links.forEach(function(a){ a.addEventListener('click', function(ev){
-      ev.preventDefault(); route(a.dataset.sec); window.scrollTo(0,0);
-    }); });
 
     showYear(0, false);
-    route('map');
   })();
 </script>
 {{NAV}}

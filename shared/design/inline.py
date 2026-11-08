@@ -26,27 +26,25 @@ def design_css() -> str:
 
 
 def nav_script() -> str:
-    """Return the ``<script>`` that wires keyboard navigation with the shell."""
+    """Return the ``<script>`` with the keyboard shortcuts and the sticky-index behaviour."""
     return (HERE / "nav.html").read_text(encoding="utf-8")
 
 
-def standalone_bar() -> str:
-    """Return the small bar shown only when a page is opened outside the shell."""
+def site_header() -> str:
+    """Return the masthead shared by every piece (links are relative to ``/<slug>/``)."""
     return (
-        '<div class="standalone"><a href="../index.html">← La causa científica</a></div>'
-        "<script>try{if(window.top===window)document.documentElement.classList.add('is-top')}"
-        "catch(e){document.documentElement.classList.add('is-top')}</script>"
+        '<header class="mast"><a class="word" href="../">La causa científica</a>'
+        '<nav aria-label="Principal"><a href="../">Peces</a><a href="../sobre/">Sobre el llibre</a></nav></header>'
     )
 
 
-def add_book_tab(page: str, slug: str, *, section_class: str = "") -> str:
-    """Add the "Al llibre" view (facsimile of the printed page) to a finished page.
+def add_book_section(page: str, slug: str) -> str:
+    """Add the "Al llibre" section (facsimile of the printed page) to a finished page.
 
     Reads ``book/pages/<slug>.json`` (written by ``scripts/make_book_pages.py``).
-    Without it the page is returned unchanged, so a piece shows the tab only once
-    its book page exists. The tab joins the piece's ``.subnav`` as its last link
-    and a ``section#llibre`` before ``</main>``; the piece's own view switcher
-    (``[data-sec]`` links, ``section[id]``) then handles it like any other view.
+    Without it the page is returned unchanged, so a piece shows the section only once
+    its book page exists. The section joins the page as its last block, with a link to it as
+    the last entry of the piece's sticky ``.subnav``.
     """
     import base64
     import html
@@ -66,12 +64,13 @@ def add_book_tab(page: str, slug: str, *, section_class: str = "") -> str:
         figures.append(
             f'<figure class="leaf"><img src="data:image/webp;base64,{data}" width="{it["width"]}" '
             f'height="{it["height"]}" alt="{html.escape(alt)}" loading="lazy">'
-            f'<figcaption><span class="label">Al llibre</span>'
-            f'<span class="ref">La causa científica, p.&nbsp;{it["page"]}</span>{quote}</figcaption></figure>'
+            f'<figcaption><span class="ref">La causa científica, p.&nbsp;{it["page"]}</span>{quote}</figcaption></figure>'
         )
-    classes = f"view book {section_class}".strip()
-    section = f'<section id="llibre" class="{classes}" hidden><div class="leaves">{"".join(figures)}</div></section>\n'
-    link = '<li><a data-sec="llibre" href="#llibre">Al llibre</a></li>\n  '
+    section = (
+        '<section id="llibre" class="sec book"><h2 class="label">Al llibre</h2>'
+        f'<div class="leaves">{"".join(figures)}</div></section>\n'
+    )
+    link = '<li><a href="#llibre">Al llibre</a></li>\n  '
     if "</ul></nav>" not in page or "</main>" not in page:
         raise ValueError("page has no .subnav or <main> to attach the book view to")
     page = page.replace("</ul></nav>", link + "</ul></nav>", 1)

@@ -1,0 +1,4 @@
+<footer class="next">
+  {% if nxt %}<a href="{{ root_up }}{{ nxt.slug }}/" rel="next"><span class="k">Peça següent</span><span class="t">{{ nxt.title }}</span></a>
+  {% else %}<a href="{{ root_up }}"><span class="k">Has vist totes les peces</span><span class="t">Torna a la llista</span></a>{% endif %}
+</footer>

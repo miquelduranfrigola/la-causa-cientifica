@@ -4,8 +4,9 @@
 The single source of truth is each ``content/<slug>/`` folder: this reads every
 ``metadata.yml``. A piece with a ``page:`` key is served from its self-contained
 ``index.html`` verbatim; otherwise ``poem.md`` is rendered. The home page is a
-catalogue; a piece opens in an iframe under a slim bar (see DESIGN.md). Authors
-never edit HTML.
+catalogue with a drawn legend; a piece is a plain page at ``<slug>/`` with the
+masthead, prev/next links and a "next piece" ending added (see DESIGN.md); the
+About page is ``sobre/``. Authors never edit HTML.
 
 Poetry-aware rendering (the important part)
 -------------------------------------------
@@ -196,15 +197,21 @@ def discover_poems() -> list[Poem]:
     return poems
 
 
-def share_head(poem: Poem, poem_url: str) -> str:
-    """Return the link-preview tags (and a redirect into the shell) for a poem page."""
+def share_head(poem: Poem, poem_url: str, prev: Poem | None, nxt: Poem | None) -> str:
+    """Return the link-preview tags and the prev/next/up links for a piece page."""
     title = html.escape(f"{poem.title} — {SITE_TITLE}", quote=True)
     desc = html.escape(poem.summary or SITE_INTRO, quote=True)
     image = f"{poem_url}og.png"
+    links = '<link rel="up" href="../">\n'
+    if prev:
+        links += f'<link rel="prev" href="../{prev.slug}/">\n'
+    if nxt:
+        links += f'<link rel="next" href="../{nxt.slug}/">\n'
     return (
         f'<meta name="description" content="{desc}">\n'
         f'<link rel="canonical" href="{poem_url}">\n'
         '<link rel="icon" href="../favicon.svg" type="image/svg+xml">\n'
+        '<meta name="theme-color" content="#fbfbf9">\n'
         f'<meta property="og:site_name" content="{SITE_TITLE}">\n'
         '<meta property="og:type" content="article">\n'
         '<meta property="og:locale" content="ca_ES">\n'
@@ -218,7 +225,7 @@ def share_head(poem: Poem, poem_url: str) -> str:
         f'<meta name="twitter:title" content="{title}">\n'
         f'<meta name="twitter:description" content="{desc}">\n'
         f'<meta name="twitter:image" content="{image}">\n'
-        f"<script>try{{if(window.top===window)location.replace('../#{poem.slug}')}}catch(e){{}}</script>\n"
+        + links
     )
 
 
@@ -244,7 +251,7 @@ def write_crawler_files(out_dir: Path, poems: list[Poem], env: Environment, comm
     (out_dir / "robots.txt").write_text(
         f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8"
     )
-    urls = [f"{SITE_URL}/"] + [f"{SITE_URL}/{p.slug}/" for p in poems]
+    urls = [f"{SITE_URL}/", f"{SITE_URL}/sobre/"] + [f"{SITE_URL}/{p.slug}/" for p in poems]
     entries = "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
     (out_dir / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -252,7 +259,7 @@ def write_crawler_files(out_dir: Path, poems: list[Poem], env: Environment, comm
         f"{entries}\n</urlset>\n",
         encoding="utf-8",
     )
-    lines = [f"# {SITE_TITLE}", "", f"> {SITE_INTRO}", "", "## Peces", ""]
+    lines = [f"# {SITE_TITLE}", "", f"> {SITE_INTRO}", "", f"- [Sobre el llibre]({SITE_URL}/sobre/)", "", "## Peces", ""]
     lines += [f"- [{p.title}]({SITE_URL}/{p.slug}/): {p.summary}".rstrip(": ") for p in poems]
     lines += ["", "## Codi", "", f"- [Repositori a GitHub]({REPO_URL}): textos, dades i codi en Python de totes les peces", ""]
     (out_dir / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
@@ -276,7 +283,7 @@ def build(out_dir: Path) -> None:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True)
 
-    # Static assets: the shell's own CSS plus the shared design layer.
+    # Static assets: the site's own CSS plus the shared design layer.
     if STATIC_DIR.exists():
         shutil.copytree(STATIC_DIR, out_dir / "static")
     for name in ("fonts.css", "tokens.css", "base.css"):
@@ -318,15 +325,10 @@ def build(out_dir: Path) -> None:
         "repo_url": REPO_URL,
         **book_context(),
     }
-    poems_json = json.dumps(
-        [{"slug": p.slug, "title": p.title} for p in poems], ensure_ascii=False
-    ).replace("</", "<\\/")
-
     index_tmpl = env.get_template("index.html")
     (out_dir / "index.html").write_text(
         index_tmpl.render(
             poems=poems,
-            poems_json=poems_json,
             root="",
             page_title=SITE_TITLE,
             page_description=SITE_INTRO,
@@ -337,8 +339,25 @@ def build(out_dir: Path) -> None:
         encoding="utf-8",
     )
 
+    about_dir = out_dir / "sobre"
+    about_dir.mkdir()
+    (about_dir / "index.html").write_text(
+        env.get_template("sobre.html").render(
+            root="../",
+            page_title=f"Sobre el llibre — {SITE_TITLE}",
+            page_description=SITE_INTRO,
+            page_url=f"{SITE_URL}/sobre/",
+            page_image=f"{SITE_URL}/og.png",
+            **common,
+        ),
+        encoding="utf-8",
+    )
+
     poem_tmpl = env.get_template("poem.html")
-    for poem in poems:
+    next_tmpl = env.get_template("next.html")
+    for i, poem in enumerate(poems):
+        prev = poems[i - 1] if i > 0 else None
+        nxt = poems[i + 1] if i + 1 < len(poems) else None
         poem_out = out_dir / poem.slug
         poem_out.mkdir(parents=True, exist_ok=True)
         card = SOCIAL_DIR / "og" / f"{poem.slug}.png"
@@ -349,18 +368,25 @@ def build(out_dir: Path) -> None:
         shutil.copyfile(card, poem_out / "og.png")
         poem_url = f"{SITE_URL}/{poem.slug}/"
         if poem.page_src is not None:
-            # Serve the poem's self-contained page, adding only link-preview tags and a
-            # redirect so a shared poem link opens inside the full site.
+            # Serve the piece's self-contained page, adding the link-preview tags, the
+            # prev/next links and the "next piece" ending.
             page = poem.page_src.read_text(encoding="utf-8")
-            tags = share_head(poem, poem_url)
             if "<head>" not in page:
                 raise SystemExit(f"{poem.page_src}: no <head> to add share tags to")
-            (poem_out / "index.html").write_text(page.replace("<head>", "<head>\n" + tags, 1), encoding="utf-8")
+            page = page.replace("<head>", "<head>\n" + share_head(poem, poem_url, prev, nxt), 1)
+            page = re.sub(r"<title>[^<]*</title>", f"<title>{html.escape(poem.title)} — {SITE_TITLE}</title>", page, count=1)
+            ending = next_tmpl.render(nxt=nxt, root_up="../")
+            page, n = re.subn(r"(</main>\s*)(</div>)", lambda m: m.group(1) + ending + m.group(2), page, count=1)
+            if n != 1:
+                raise SystemExit(f"{poem.page_src}: expected '</main></div>' to place the next-piece ending")
+            (poem_out / "index.html").write_text(page, encoding="utf-8")
         else:
             (poem_out / "index.html").write_text(
                 poem_tmpl.render(
                     poem=poem,
+                    nxt=nxt,
                     root="../",
+                    root_up="../",
                     page_title=f"{poem.title} — {SITE_TITLE}",
                     page_description=poem.summary or SITE_INTRO,
                     page_url=poem_url,

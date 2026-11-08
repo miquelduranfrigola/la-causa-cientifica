@@ -1,7 +1,8 @@
 """Build this poem's self-contained web page -> index.html (poem-folder root).
 
 A starting point in the shared editorial design (see DESIGN.md): a title block, a
-text menu with two views ("El poema" and "Metodologia") and the poem set as verse.
+sticky index (``El poema``, ``Metodologia``, and ``Al llibre`` once the book page
+exists) and one scrolling page: the poem set as verse, then its method.
 The shared CSS, fonts and keyboard script are inlined from shared/design/, so the
 page needs no external requests. Replace the content as the piece needs; add the
 piece's own figures and interactions to the page CSS below, never design rules.
@@ -25,7 +26,7 @@ import yaml
 POEM_ROOT = Path(__file__).resolve().parent.parent
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_section, design_css, nav_script, site_header  # noqa: E402
 
 _TEMPLATE = r"""<!doctype html>
 <html lang="ca">
@@ -35,39 +36,25 @@ _TEMPLATE = r"""<!doctype html>
 <title>{{TITLE}}</title>
 <style>
 {{DESIGN}}
-  section[hidden]{ display:none; }
-  .view{ padding-top:clamp(24px,4vw,40px); }
+  #poem{ padding-top:clamp(24px,4vw,40px); }
 </style>
 </head>
 <body>
-{{STANDALONE}}
+{{HEADER}}
 <div class="page">
   <header class="head">
     <h1 class="title">{{TITLE}}</h1>
     <p class="sub">{{SUMMARY}}</p>
   </header>
   <nav><ul class="subnav">
-    <li><a data-sec="poem" class="on" href="#poem">El poema</a></li>
-    <li><a data-sec="method" href="#method">Metodologia</a></li>
+    <li><a class="on" href="#poem">El poema</a></li>
+    <li><a href="#method">Metodologia</a></li>
   </ul></nav>
 <main>
-  <section id="poem" class="view"><div class="verse">{{VERSE}}</div></section>
-  <section id="method" class="view" hidden><div class="prose">{{METHOD}}</div></section>
+  <section id="poem"><div class="verse">{{VERSE}}</div></section>
+  <section id="method" class="sec"><h2 class="label">Metodologia</h2><div class="prose">{{METHOD}}</div></section>
 </main>
 </div>
-<script>
-(function(){
-  var links=[].slice.call(document.querySelectorAll('[data-sec]'));
-  var secs=[].slice.call(document.querySelectorAll('section[id]'));
-  function show(id){
-    secs.forEach(function(s){ s.hidden = s.id!==id; });
-    links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
-  }
-  links.forEach(function(a){ a.addEventListener('click', function(e){
-    e.preventDefault(); show(a.dataset.sec); window.scrollTo(0,0); }); });
-  show('poem');
-})();
-</script>
 {{NAV}}
 </body>
 </html>
@@ -96,7 +83,7 @@ def build() -> Path:
     poem = (POEM_ROOT / "poem.md").read_text(encoding="utf-8")
     page = (
         _TEMPLATE.replace("{{DESIGN}}", design_css())
-        .replace("{{STANDALONE}}", standalone_bar())
+        .replace("{{HEADER}}", site_header())
         .replace("{{NAV}}", nav_script())
         .replace("{{TITLE}}", html.escape(meta["title"]))
         .replace("{{SUMMARY}}", html.escape(meta.get("summary", "")))
@@ -104,7 +91,7 @@ def build() -> Path:
         .replace("{{METHOD}}", prose(meta.get("description")))
     )
     out = POEM_ROOT / "index.html"
-    page = add_book_tab(page, POEM_ROOT.name)
+    page = add_book_section(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 
