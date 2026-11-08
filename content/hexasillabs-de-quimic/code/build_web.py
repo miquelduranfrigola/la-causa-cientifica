@@ -1,19 +1,18 @@
 """Assemble the self-contained "Hexasíl·labs de químic" web page (HTML).
 
-Reads as a standalone poem, in the visual language of the sibling "Versos proteics"
-gallery (Space Mono on a cream ground). The poem runs down the page as stanzas —
-the life stage only whispered (a small faint label). Each stanza has ONE animation
-panel on its left that cycles through that stanza's four molecules (fading); the
-matching verse lights up, and each verse's gloss sits in a clear parallel column to
-its right.
+Editorial look (DESIGN.md, shared/design/ inlined, no external requests): serif
+title block, an italic descriptor, a text menu ("El poema" / "Metodologia") and the
+poem running down the page as eight stanzas. Each stanza has ONE plate on its left
+that cycles through its four molecules (fading, ink only); the matching verse turns
+blue and each verse's gloss (italic) sits in a parallel column to its right.
 
 Each verse is a hexasyllable and each stanza rhymes with its own suffix; at Mort the
 metre deliberately collapses into short mineral words. Structures are drawn with RDKit
-(CoordGen) and inlined as SVG, resolved from PubChem (English name / CID) or a SMILES
-override. No external requests. Writes index.html (poem-folder root).
+(CoordGen) in ink and inlined as SVG, resolved from PubChem (English name / CID) or a
+SMILES override. Writes index.html (poem-folder root).
 
-Run (needs rdkit + Node on PATH, e.g. conda env ai2050dd):
-  conda run -n ai2050dd python code/build_web.py
+Run (needs rdkit + network for PubChem):
+  python code/build_web.py
 """
 from __future__ import annotations
 
@@ -21,6 +20,7 @@ import html
 import json
 import os
 import re
+import sys
 import urllib.parse
 import urllib.request
 
@@ -31,7 +31,9 @@ from rdkit.Chem.Draw import rdMolDraw2D
 HERE = os.path.dirname(os.path.abspath(__file__))
 POEM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(POEM))
-FONT_CSS = os.path.join(REPO, "shared", "vendor", "spacemono.css")
+sys.path.insert(0, os.path.join(REPO, "shared", "design"))
+from inline import design_css, nav_script, standalone_bar  # noqa: E402
+
 OUT = os.path.join(POEM, "index.html")
 
 STAGES = [
@@ -114,15 +116,9 @@ def mol_svg(smiles, px=360):
     opt.minFontSize = 15
     opt.maxFontSize = 24
     opt.additionalAtomLabelPadding = 0.08
-    opt.setAtomPalette({
-        -1: (0.16, 0.16, 0.16),
-        7: (0.13, 0.34, 0.77), 8: (0.78, 0.20, 0.16),
-        16: (0.72, 0.56, 0.10), 17: (0.20, 0.52, 0.28),
-        9: (0.20, 0.52, 0.28), 35: (0.55, 0.28, 0.16),
-        53: (0.45, 0.25, 0.60), 15: (0.80, 0.45, 0.10),
-        11: (0.50, 0.40, 0.35), 20: (0.40, 0.42, 0.45), 19: (0.55, 0.45, 0.20),
-        24: (0.35, 0.45, 0.40), 25: (0.55, 0.35, 0.45), 26: (0.62, 0.34, 0.20),
-    })
+    # Printed plate: every atom label in ink (the page's one blue is reserved for the active verse).
+    ink = (0.067, 0.067, 0.067)
+    opt.setAtomPalette({k: ink for k in (-1, 6, 7, 8, 9, 11, 15, 16, 17, 19, 20, 24, 25, 26, 35, 53)})
     rdMolDraw2D.PrepareAndDrawMolecule(d, mol)
     d.FinishDrawing()
     return re.sub(r"<\?xml[^>]*\?>\s*", "", d.GetDrawingText()).strip()
@@ -136,7 +132,7 @@ def build():
             svg = mol_svg(smiles_for(m))
             if not svg:
                 missing.append(m["ca"])
-            slides.append(f'<div class="slide" data-k="{k}">{svg or "<div class=nostruct>—</div>"}</div>')
+            slides.append(f'<div class="slide" data-k="{k}">{svg or "<span>—</span>"}</div>')
             lines.append(f'<div class="line" data-k="{k}">'
                          f'<span class="name">{html.escape(m["ca"])}</span>'
                          f'<span class="gloss">{html.escape(m["g"])}</span></div>')
@@ -151,150 +147,114 @@ def build():
 
     if missing:
         print("SENSE ESTRUCTURA:", missing)
-    font_css = open(FONT_CSS, encoding="utf-8").read()
-    page = _TEMPLATE.replace("{{FONT}}", font_css).replace("{{STANZAS}}", "".join(stanzas))
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    nav = open(os.path.join(REPO, "shared", "vendor", "menu-nav.html"), encoding="utf-8").read()
-    open(OUT, "w", encoding="utf-8").write(page + nav)
+    page = (_TEMPLATE.replace("{{DESIGN}}", design_css())
+            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{STANZAS}}", "".join(stanzas))
+            .replace("{{NAV}}", nav_script()))
+    with open(OUT, "w", encoding="utf-8") as fh:
+        fh.write(page)
     return OUT
 
 
-_TEMPLATE = r"""<title>Hexasíl·labs de químic</title>
+_TEMPLATE = r"""<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hexasíl·labs de químic</title>
 <style>
-{{FONT}}
-  :root{
-    --ground:#f0ebe6; --ink:#282828; --muted:#8f887d; --line:#ddd6cb; --hair:#e7e1d7;
-    --gloss:#5c5648; --accent:#2f7d68; --red:#c7513b;
-    --mono:"Space Mono", ui-monospace, Menlo, monospace;
-  }
-  *{ scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box; }
-  *::-webkit-scrollbar{ display:none; width:0; height:0; }
-  /* overflow-x on <html> only: on <body> it makes <body> a scroll container and breaks the sticky rail */
-  html{ scroll-behavior:smooth; overflow-x:hidden; }
-  html, body{ margin:0; padding:0; background:var(--ground); }
-  body{ color:var(--ink); font-family:var(--mono); font-size:14px; line-height:1.65;
-        -webkit-font-smoothing:antialiased; }
-
-  a{ color:var(--ink); text-decoration:none; } a:hover{ opacity:.55; }
-  .site{ display:flex; align-items:flex-start; min-height:100vh; }
-  .index{ width:220px; flex:none; position:sticky; top:0; height:100vh; overflow:auto;
-          padding:30px 22px; border-right:1px solid var(--line); }
-  .brand{ margin-bottom:26px; line-height:1.35; min-height:58px; }
-  .brand b{ font-weight:700; font-size:14px; display:block; letter-spacing:-.01em; }
-  .brand span{ display:block; font-size:11px; color:var(--muted); margin-top:4px; text-transform:uppercase; letter-spacing:.08em; }
-  .menu{ list-style:none; margin:22px 0 0; padding:0; } .menu li{ margin:0 0 2px; }
-  .menu a{ display:block; padding:4px 0; } .menu a.on{ text-decoration:underline; text-underline-offset:3px; }
-  .menu li.meto{ margin-top:18px; padding-top:14px; border-top:1px solid var(--hair); }
-  .menu li.meto a{ color:var(--ink); font-size:14px; }
-  .view{ flex:1; min-width:0; }
-  .entry{ max-width:1000px; margin:0 auto; padding:114px clamp(22px,6vw,80px) clamp(40px,7vw,104px); }
-  .entry[hidden]{ display:none; }
-  .title{ font-weight:400; font-size:clamp(24px,3.4vw,32px); letter-spacing:-.02em; margin:0; line-height:1.1; }
-
-  .mast{ margin:0 0 clamp(44px,8vw,88px); }
-  .mast h1{ font-weight:400; font-size:clamp(26px,4vw,40px); letter-spacing:-.02em; margin:0;
-            line-height:1.05; }
-  .mast p{ color:var(--muted); font-size:12px; letter-spacing:.02em; margin:14px 0 0; max-width:52ch;
-           line-height:1.7; }
-
-  .stanza{ padding:clamp(30px,5vw,52px) 0; }
-  .stanza + .stanza{ border-top:1px solid var(--line); }
-  .stage{ font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--muted);
-          opacity:.6; margin:0 0 clamp(16px,2.4vw,24px); }
+{{DESIGN}}
+  .stanza{ padding:clamp(28px,4.5vw,52px) 0; }
+  .stanza + .stanza{ border-top:1px solid var(--rule); }
+  .stage{ margin:0 0 clamp(14px,2vw,22px); font-style:italic; font-size:1.125rem; }
 
   .split{ display:grid; grid-template-columns:clamp(210px,26vw,280px) minmax(0,1fr);
           gap:clamp(28px,4.5vw,64px); align-items:center; }
-  @media (max-width:720px){ .split{ grid-template-columns:1fr; gap:22px; } }
+  @media (max-width:720px){ .split{ grid-template-columns:1fr; gap:20px; } }
 
-  .viewer{ position:relative; width:100%; aspect-ratio:1; }
+  .viewer{ position:relative; width:100%; max-width:280px; aspect-ratio:1; }
   .slide{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
           opacity:0; transition:opacity .7s ease; }
   .slide.on{ opacity:1; }
   .slide svg{ width:100%; height:100%; overflow:visible; }
-  .nostruct{ color:var(--muted); }
 
   .verses{ display:grid; grid-template-columns:minmax(0,max-content) 1fr;
            column-gap:clamp(18px,3vw,34px); align-items:baseline; }
   .line{ display:contents; }
-  .name{ font-size:clamp(16px,2vw,20px); letter-spacing:-.01em; color:var(--ink);
-         white-space:nowrap; padding:6px 0; transition:color .4s ease; cursor:default; }
-  .gloss{ font-size:12.5px; line-height:1.5; color:var(--gloss); padding:6px 0; }
+  .name{ font-size:1.375rem; line-height:1.4; padding:6px 0; transition:color .4s ease; }
+  .gloss{ font-style:italic; font-size:1rem; line-height:1.4; padding:6px 0; }
   .line.on .name{ color:var(--accent); }
-  @media (max-width:720px){ .name{ white-space:normal; } }
-
-  .prose{ font-size:13px; line-height:1.85; margin:0 0 14px; color:var(--ink); max-width:64ch; }
-  .prose b{ font-weight:400; } .prose i{ color:var(--muted); font-style:normal; }
-
-  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } .slide{ transition:none; } }
+  @media (max-width:720px){
+    .verses{ grid-template-columns:1fr; }
+    .name{ padding:10px 0 0; } .gloss{ padding:0 0 4px; }
+  }
+  .page > section{ margin-top:clamp(24px,4vw,40px); }
 </style>
+</head>
+<body>
+{{STANDALONE}}
+<div class="page">
+  <header class="head">
+    <h1 class="title">Hexasíl·labs de químic</h1>
+    <p class="by">Miquel Duran-Frigola</p>
+    <p class="sub">Una vida en vuit edats, dita amb noms de molècules</p>
+  </header>
+  <nav><ul class="subnav">
+    <li><a data-sec="poema" class="on" href="#poema">El poema</a></li>
+    <li><a data-sec="metode" href="#metode">Metodologia</a></li>
+  </ul></nav>
 
-<div class="wrap"><div class="site">
-  <nav class="index">
-    <div class="brand"><a data-target="poema" href="#poema"><b>Hexasíl·labs de químic</b></a>
-      <span>una vida en molècules</span></div>
-    <ol class="menu">
-      <li><a data-target="poema" href="#poema" class="on">El poema</a></li>
-      <li class="meto"><a data-target="metode" href="#metode">Metodologia</a></li>
-    </ol>
-  </nav>
+  <section id="poema">
+    <div class="prose"><p>Cada vers, un hexasíl·lab; cada estrofa, la seva rima. El plafó va passant les molècules de cada edat.</p></div>
+    {{STANZAS}}
+  </section>
 
-  <main class="view">
-    <section class="entry" id="poema">
-      <header class="mast">
-        <h1 class="title">Hexasíl·labs de químic</h1>
-        <p>Una vida en vuit edats, dita amb noms de molècules. Cada vers, un hexasíl·lab;
-          cada estrofa, la seva rima. El plafó va passant les molècules de cada edat.</p>
-      </header>
-      {{STANZAS}}
-    </section>
-
-    <section class="entry" id="metode" hidden>
-      <h1 class="title">Metodologia</h1>
-      <div style="margin-top:clamp(24px,4vw,40px)">
-        <p class="prose">Cada vers és el nom d'una molècula real, en català, i un
-          <b>hexasíl·lab</b> (sis síl·labes fins a l'última tònica). Cada estrofa —del fetus
-          a la mort— <b>rima</b> amb un sufix diferent. A la mort l'hexasíl·lab es trenca a
-          posta: el vers es torna pedra, mineral, curt.</p>
-        <p class="prose">Estructures dibuixades amb RDKit; els minerals surten esquemàtics.
-          Recompte de síl·labes amb el motor de Softcatalà.</p>
-      </div>
-    </section>
-  </main>
-</div></div>
+  <section id="metode" hidden>
+    <div class="prose">
+      <p>Cada vers és el nom d'una molècula real, en català, i un
+        <i>hexasíl·lab</i> (sis síl·labes fins a l'última tònica). Cada estrofa —del fetus
+        a la mort— <i>rima</i> amb un sufix diferent. A la mort l'hexasíl·lab es trenca a
+        posta: el vers es torna pedra, mineral, curt.</p>
+      <p>Estructures dibuixades amb RDKit; els minerals surten esquemàtics.
+        Recompte de síl·labes amb el motor de Softcatalà.</p>
+    </div>
+  </section>
+</div>
 
 <script>
-  (function(){
-    var links = [].slice.call(document.querySelectorAll('[data-target]'));
-    var secs = [].slice.call(document.querySelectorAll('.entry[id]'));
-    function show(id){
-      if(!document.getElementById(id)) id = 'poema';
-      secs.forEach(function(s){ s.hidden = s.id !== id; });
-      links.forEach(function(a){ a.classList.toggle('on', a.dataset.target === id); });
-      window.scrollTo(0, 0);
-    }
-    links.forEach(function(a){
-      if(!a.dataset.target) return;
-      a.addEventListener('click', function(e){ e.preventDefault();
-        history.replaceState(null, '', '#' + a.dataset.target); show(a.dataset.target); });
-    });
-    show(location.hash.slice(1) || 'poema');
+(function(){
+  var links = [].slice.call(document.querySelectorAll('[data-sec]'));
+  var secs = [].slice.call(document.querySelectorAll('section[id]'));
+  function show(id){
+    if(!document.getElementById(id)) id = 'poema';
+    secs.forEach(function(s){ s.hidden = s.id !== id; });
+    links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec === id); });
+  }
+  links.forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault();
+      history.replaceState(null, '', '#' + a.dataset.sec); show(a.dataset.sec); window.scrollTo(0, 0); });
+  });
+  show(location.hash.slice(1) || 'poema');
 
-    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    [].slice.call(document.querySelectorAll('.stanza')).forEach(function(st, si){
-      var slides = [].slice.call(st.querySelectorAll('.slide'));
-      var lines = [].slice.call(st.querySelectorAll('.line'));
-      if(!slides.length) return;
-      var k = 0;
-      function paint(){
-        slides.forEach(function(s, j){ s.classList.toggle('on', j === k); });
-        lines.forEach(function(l, j){ l.classList.toggle('on', j === k); });
-      }
-      paint();
-      if(!reduce){ setTimeout(function(){
-        setInterval(function(){ k = (k + 1) % slides.length; paint(); }, 2600); }, si * 650); }
-    });
-  })();
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  [].slice.call(document.querySelectorAll('.stanza')).forEach(function(st, si){
+    var slides = [].slice.call(st.querySelectorAll('.slide'));
+    var lines = [].slice.call(st.querySelectorAll('.line'));
+    if(!slides.length) return;
+    var k = 0;
+    function paint(){
+      slides.forEach(function(s, j){ s.classList.toggle('on', j === k); });
+      lines.forEach(function(l, j){ l.classList.toggle('on', j === k); });
+    }
+    paint();
+    if(!reduce){ setTimeout(function(){
+      setInterval(function(){ k = (k + 1) % slides.length; paint(); }, 2600); }, si * 650); }
+  });
+})();
 </script>
+{{NAV}}
+</body>
+</html>
 """
 
 

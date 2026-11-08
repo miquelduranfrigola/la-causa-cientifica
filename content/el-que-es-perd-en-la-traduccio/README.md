@@ -37,7 +37,7 @@ es -> et -> eu -> fa -> fi -> fr -> ... -> en -> eo -> es
 3. **`code/main.py`** — CLI: list pieces, print the chain, show an archived
    original+residue pair, or re-run the chain live for one piece.
 4. **`code/build_web.py`** — assembles the self-contained `index.html` (poem-folder
-   root): Space Mono on a cream ground, a sticky index, and two sections the reader
+   root) in the shared editorial design (see `DESIGN.md`): a text menu and two sections the reader
    switches between — the poems (each plain text, with Neruda's original behind a
    toggle) and a "Metodologia" note whose 104-language grid animates a sweep through
    the chain. Everything is inlined (no external requests).

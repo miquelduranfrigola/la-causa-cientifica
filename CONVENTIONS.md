@@ -54,6 +54,7 @@ slug: el-jardi-de-nombres         # must match the folder name
 author: Miquel Duran-Frigola
 date: 2026-07-11                  # ISO date (YYYY-MM-DD)
 order: 1                          # optional; explicit site position (ascending)
+summary: Una línia sota el títol al catàleg   # Catalan, one line
 language: ca
 page: index.html                 # self-contained page served verbatim by the site
 tools:                            # computational tools used (may be empty)
@@ -105,11 +106,12 @@ This keeps every poem independently reproducible.
 ## Website
 
 The site builder (`site/build_site.py`) reads every `content/<slug>/metadata.yml`
-and produces a **left-index shell** (`_site/index.html`) that lists every piece and
-shows the selected one in an iframe. Each piece is served from its committed
+and produces a **shell** (`_site/index.html`): a masthead, a catalogue of every
+piece (title + the one-line `summary:`), a "Sobre el projecte" page, and, for the
+selected piece, a slim bar (back / position / previous / next) above an iframe. Each piece is served from its committed
 `index.html` via the `page:` key (the builder copies it verbatim to
 `_site/<slug>/index.html`); a piece without `page:` falls back to templated
-`poem.md` rendering. The whole site shares one look — Space Mono on cream. GitHub
+`poem.md` rendering. The whole site shares one editorial look defined in [`DESIGN.md`](DESIGN.md) (Newsreader serif, Hanken Grotesk for UI, IBM Plex Mono for machine text, near-white paper, one ultramarine accent). Every piece page inlines the shared design from `shared/design/` (`inline.py`: `design_css()`, `nav_script()`, `standalone_bar()`); never copy design CSS into a piece. GitHub
 Actions (`.github/workflows/pages.yml`) builds and deploys `_site` on push to `main`.
 
 `_site/` is a **disposable build output** — the compiled site (the equivalent of a
@@ -123,6 +125,6 @@ content/<slug>/       one folder per poem (the unit above)
 _template/poem/       copy-me skeleton for a new poem
 shared/               small shared assets, repo-wide drive-manifest.yml, vendor/ (fonts)
 scripts/              new_poem.py (scaffold), fetch_assets.py (Drive)
-site/                 build_site.py, templates/, static/ (style.css, spacemono.css)
+site/                 build_site.py, templates/, static/ (style.css); shared design in shared/design/
 .github/workflows/    pages.yml (build + deploy)
 ```

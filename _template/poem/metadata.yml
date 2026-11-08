@@ -6,6 +6,8 @@ author: Miquel Duran-Frigola
 date: 2026-01-01
 # order: 1   # optional: explicit site position (ascending); else newest-first by date
 language: ca
+# One line shown under the title in the home catalogue (Catalan, italic, no final detail).
+summary: Una frase que descriu el poema.
 # Uncomment if code/build_web.py builds a self-contained page at the poem-folder root.
 # page: index.html
 # Computational tools used to assist this poem. Descriptions in Catalan.

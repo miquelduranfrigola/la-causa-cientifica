@@ -15,7 +15,7 @@ Everything is driven by the per-site posteriors in ``results/reconstruction.csv`
    (the third-position 'wobble'). matplotlib only, cream palette.
 
 3. **A styled text block** (``results/sequence.html``) in the *versos-proteics*
-   look (cream ground, Space Mono), for embedding in a web page.
+   look (see DESIGN.md), for embedding in a web page.
 """
 
 from __future__ import annotations

@@ -1,0 +1,17 @@
+/* Design tokens. Source of truth: DESIGN.md. */
+:root {
+  --paper: #fbfbf9;
+  --ink: #111111;
+  --accent: #1d2fd1;
+  --rule: #111111;
+
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --sans: 'Hanken Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --gutter: clamp(24px, 6vw, 96px);
+  --edge: max(var(--gutter), calc((100vw - 1280px) / 2));   /* left/right inset shared by masthead, bar and pages */
+  --measure-verse: 34em;
+  --measure-prose: 38em;
+  color-scheme: light;
+}

@@ -1,0 +1,100 @@
+/* Base styles shared by the shell and every poem page. Source of truth: DESIGN.md.
+   Class vocabulary (poem pages):
+     .page      page container (gutters, max width)
+     .subnav    text menu of views inside a piece (a.on = current)
+     .head      title block: h1.title + .by
+     .verse     poem text; .v = one line, .br = stanza gap
+     .prose     running text (methodology, notes)
+     .label     small bold sans label above a block
+     .how       "Com està fet" section: hairline on top
+     .code      monospace block / inline machine text
+     .fig       figure + figcaption (.cap)
+     .hair      hairline rule
+*/
+*, *::before, *::after { box-sizing: border-box; }
+
+html { background: var(--paper); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.125rem/1.6 var(--serif);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+em, i, cite { font-style: italic; }
+
+[hidden] { display: none !important; }
+
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::selection { background: var(--accent); color: var(--paper); }
+
+/* ---------- Layout ---------- */
+.page {
+  padding: 0 var(--edge) clamp(64px, 10vw, 128px);
+}
+
+/* ---------- Text-menu of views inside a piece ---------- */
+.subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  margin: 0;
+  padding: 14px 0;
+  list-style: none;
+  border-bottom: 1px solid var(--rule);
+  font: 400 .875rem/1.4 var(--sans);
+}
+.subnav a { display: inline-block; padding: 2px 0; border-bottom: 1px solid transparent; }
+.subnav a.on { color: var(--accent); border-bottom-color: var(--accent); }
+.subnav .gap { flex: 1 1 100%; height: 0; }   /* forces a new row, e.g. before "Metodologia" */
+
+/* ---------- Title block ---------- */
+.head { padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+.title {
+  margin: 0;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  line-height: 1.04;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.by { margin: 16px 0 0; font-size: 1.25rem; line-height: 1.35; }
+.sub { margin: 4px 0 0; font-style: italic; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
+
+/* ---------- Text ---------- */
+.verse { font-size: 1.25rem; line-height: 1.6; max-width: var(--measure-verse); }
+.verse .v { display: block; }
+.verse .br { display: block; height: 1.1em; }
+.prose { max-width: var(--measure-prose); text-wrap: pretty; }
+.prose p { margin: 0 0 1em; }
+.prose a { border-bottom: 1px solid currentColor; }
+
+.label { margin: 0 0 12px; font: 600 .875rem/1.4 var(--sans); }
+.hair { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+.how { border-top: 1px solid var(--rule); padding-top: 12px; margin-top: clamp(40px, 6vw, 72px); }
+
+/* ---------- Machine text ---------- */
+.code, code, pre {
+  font-family: var(--mono);
+  font-size: .8125rem;
+  line-height: 1.55;
+  font-variant-ligatures: none;
+}
+pre { margin: 0; overflow-x: auto; }
+
+/* ---------- Figures (printed plates: ink + one blue) ---------- */
+.fig { margin: 0; }
+.cap { margin-top: 8px; font-style: italic; font-size: .9375rem; line-height: 1.45; max-width: 46em; }
+
+/* ---------- Opened outside the shell ---------- */
+.standalone { display: none; padding: 14px var(--edge); border-bottom: 1px solid var(--rule); font: 400 .875rem/1.4 var(--sans); }
+.is-top .standalone { display: block; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
