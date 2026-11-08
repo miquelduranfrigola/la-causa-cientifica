@@ -41,9 +41,9 @@ _TEMPLATE = r"""<!doctype html>
 <title>Llangardaix extingit</title>
 <style>
 {{DESIGN}}
-  .seqbox{ margin-top:clamp(28px,4vw,48px); }
+  .seqbox{ margin-top:clamp(20px,3vw,32px); }
   .fasta-head{ margin:0 0 14px; overflow-wrap:anywhere; text-wrap:balance; }
-  pre.seq{ font-size:.875rem; line-height:1.7; letter-spacing:.02em; white-space:pre; }
+  pre.seq{ font-size:.875rem; line-height:1.7; letter-spacing:.02em; white-space:pre; columns:33rem; column-gap:clamp(32px,4vw,64px); overflow:visible; }   /* printed-page columns: the genome fills the width */
   .prose{ font-size:1.25rem; }
   section[hidden]{ display:none; }
 </style>
@@ -54,7 +54,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Llangardaix extingit</h1>
     <p class="sub">Genoma mitocondrial inferit de l’avantpassat de <i>Podarcis muralis</i> i <i>Varanus salvator</i></p>
-    <p class="cue">El poema és aquest genoma: les lletres A, C, G i T, llegides de dalt a baix.</p>
+    <p class="cue">El poema és aquest genoma: les lletres A, C, G i T, llegides de dalt a baix, columna a columna.</p>
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#obra">El genoma</a></li>

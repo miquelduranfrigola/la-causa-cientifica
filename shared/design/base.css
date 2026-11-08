@@ -61,7 +61,13 @@ a:active { color: var(--accent); }
 .subnav .gap { flex: 1 1 100%; height: 0; }   /* forces a new row, e.g. before "Metodologia" */
 
 /* ---------- Title block ---------- */
-.head { padding: clamp(28px, 4vw, 48px) 0 clamp(20px, 3vw, 32px); }
+.head { padding: clamp(28px, 4vw, 48px) 0 clamp(16px, 2.4vw, 24px); }
+@media (min-width: 56rem) {   /* the descriptor and the instruction sit side by side, so the head uses the width */
+  .head { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); column-gap: clamp(32px, 5vw, 80px); align-items: baseline; }
+  .head .title { grid-column: 1 / -1; }
+  .head .sub, .head .cue { margin: 16px 0 0; }
+  .head .cue { max-width: none; }
+}
 .title {
   margin: 0;
   font-weight: 400;
@@ -71,7 +77,7 @@ a:active { color: var(--accent); }
   text-wrap: balance;
 }
 .cue { margin: 14px 0 0; max-width: 40em; font: 400 .9375rem/1.45 var(--sans); }
-.page > nav + main > section:first-child { padding-top: clamp(20px, 3vw, 32px); }
+.page > nav + main > section:first-child { padding-top: clamp(16px, 2.4vw, 24px); }
 .sub { margin: 16px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
 
 /* ---------- Text ---------- */
@@ -84,7 +90,7 @@ a:active { color: var(--accent); }
 
 .label { margin: 0 0 12px; font: 600 .875rem/1.4 var(--sans); }
 .hair { border: 0; border-top: 1px solid var(--rule); margin: 0; }
-.how { border-top: 1px solid var(--rule); padding-top: 12px; margin-top: clamp(40px, 6vw, 72px); }
+.how { border-top: 1px solid var(--rule); padding-top: 12px; margin-top: clamp(24px, 3.5vw, 40px); }
 
 /* ---------- Machine text ---------- */
 .code, code, pre {
@@ -156,9 +162,9 @@ pre { margin: 0; overflow-x: auto; }
 html { scroll-behavior: smooth; }
 .page > nav { position: sticky; top: 0; z-index: 5; background: var(--paper); }
 section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
-.sec { margin-top: clamp(56px, 8vw, 104px); }
+.sec { margin-top: clamp(32px, 4.5vw, 64px); }
 .sec > .label:first-child { margin: 0 0 clamp(20px, 3vw, 32px); padding-top: 12px; border-top: 1px solid var(--rule); }
-.more { margin-top: clamp(64px, 9vw, 120px); padding-top: 12px; border-top: 1px solid var(--rule); }
+.more { margin-top: clamp(40px, 6vw, 72px); padding-top: 12px; border-top: 1px solid var(--rule); }
 .more > .label { margin: 0 0 16px; }
 .more .list { list-style: none; margin: 0; padding: 0; columns: 2 20rem; column-gap: clamp(24px, 4vw, 56px); }
 .more .list a { display: flex; gap: 12px; align-items: baseline; padding: 6px 0; break-inside: avoid; }
@@ -170,7 +176,10 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 .is-embedded .mast, .is-embedded .more, .is-embedded .head .title { display: none; }
 .is-embedded .subnav a:not([data-sec]) { display: none; }
 .is-embedded .head { padding: 0 0 clamp(12px, 2vw, 20px); }
+.is-embedded main > section:first-child, .is-embedded .page > section { margin-top: 0 !important; }
 .is-embedded .head .sub { margin-top: 0; }
+.is-embedded .head .cue { margin-top: 10px; }
+@media (min-width: 56rem) { .is-embedded .head .cue { margin-top: 0; } }
 .is-embedded .page { padding: 0 0 8px; }
 .is-embedded .page > nav { position: static; }
 .is-embedded .page > nav:not(:has(a[data-sec])) { display: none; }   /* no tabs, no bar: hidden from the first paint */

@@ -109,6 +109,15 @@ _TEMPLATE = r"""<!doctype html>
   .page > section{ margin-top:clamp(24px,4vw,40px); }
   .dims{ margin:0 0 clamp(20px,3vw,32px); font:400 .875rem/1.4 var(--sans); min-height:1.4em; }
   .dims .arrow{ color:var(--accent); }
+  .dims > span{ margin-right:1em; }
+  /* wide screens: the poem on the left, the running log of mutations beside it and kept in view */
+  @media (min-width:56rem){
+    #poem{ display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); column-gap:clamp(32px,5vw,80px);   /* the same two columns as the head above */ align-items:start; }
+    #poem .dims{ grid-column:2; grid-row:1; position:sticky; top:calc(var(--nav-h,0px) + 1.25rem); margin:0; font-size:1.0625rem; line-height:1.5; }
+    #poem .verse{ grid-column:1; grid-row:1; }
+    .dims > span{ display:block; margin:0 0 .4em; }
+    .dims .k{ font-size:1.5rem; line-height:1.2; color:var(--accent); margin-bottom:.5em; }
+  }
   .verse .v:empty{ height:1.6em; }
   .verse .v{ overflow-wrap:anywhere; }
   @media (max-width:40rem){ .dims{ min-height:2.8em; } }
@@ -191,8 +200,8 @@ _TEMPLATE = r"""<!doctype html>
       if(s>=1){
         var st = DATA.steps[s-1];
         box.children[st.line].innerHTML = st.hi;
-        dims.innerHTML = 'Mutació '+st.n+' de '+N+' &nbsp; '+st.before+' <span class="arrow">→</span> '+
-          st.after+' &nbsp; '+st.pos+', '+st.edit;
+        dims.innerHTML = '<span class="k">Mutació '+st.n+' de '+N+'</span><span>'+st.before+' <span class="arrow">→</span> '+
+          st.after+'</span><span>'+st.pos+', '+st.edit+'</span>';
       } else {
         dims.innerHTML = 'Poema original';
       }

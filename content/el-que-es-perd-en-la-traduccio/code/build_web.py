@@ -115,11 +115,12 @@ _TEMPLATE = r"""<!doctype html>
 <title>El que es perd en la traducció</title>
 <style>
 {{DESIGN}}
-  .epigraph{ margin:0 0 clamp(40px,6vw,72px); max-width:var(--measure-prose); }
-  .entry{ padding:clamp(32px,5vw,56px) 0; border-top:1px solid var(--rule); }
-  .entry:first-of-type{ border-top:0; padding-top:0; }
+  .epigraph{ margin:0 0 clamp(24px,3.5vw,40px); max-width:var(--measure-prose); }
+  /* the poems are short: they fill the width in columns, each under its own hairline */
+  .poems{ display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr)); gap:0 clamp(32px,4vw,64px); align-items:start; }
+  .entry{ padding:clamp(18px,2.4vw,28px) 0 clamp(24px,3vw,36px); border-top:1px solid var(--rule); }
   .etitle{ margin:0 0 clamp(16px,2.4vw,24px); font-weight:400; font-size:clamp(1.5rem,3vw,2rem); line-height:1.15; letter-spacing:-.01em; text-wrap:balance; }
-  .orig{ margin-top:clamp(20px,3vw,32px); }
+  .orig{ margin-top:clamp(14px,2vw,22px); }
   .orig>summary{ cursor:pointer; list-style:none; font:400 .875rem/1.4 var(--sans); display:inline-block; border-bottom:1px solid transparent; }
   .orig>summary::-webkit-details-marker{ display:none; }
   .orig>summary::after{ content:" +"; }
@@ -153,7 +154,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="poemes" style="margin-top:clamp(32px,5vw,56px)">
     <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
-    {{POEMS}}
+    <div class="poems">{{POEMS}}</div>
   </section>
   <section id="meto" class="sec"><h2 class="label">Metodologia</h2>
     {{METHOD}}

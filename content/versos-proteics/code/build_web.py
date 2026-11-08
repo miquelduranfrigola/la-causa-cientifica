@@ -223,7 +223,7 @@ _TEMPLATE = r"""<!doctype html>
 <style>
 {{DESIGN}}
   .entry[hidden]{ display:none; }
-  .entry{ padding-top:clamp(28px,4vw,48px); animation:appear .25s ease both; }
+  .entry{ padding-top:clamp(20px,3vw,32px); animation:appear .25s ease both; }
   @keyframes appear{ from{ opacity:0; } to{ opacity:1; } }
 
   .ptitle{ margin:0; font-weight:400; font-size:clamp(1.75rem,3.6vw,2.75rem); line-height:1.1;
@@ -232,7 +232,7 @@ _TEMPLATE = r"""<!doctype html>
 
   /* structures (left, stacked) · poem (right, sized to its longest verse so no line is cut) */
   .split{ display:grid; grid-template-columns:17.5rem max-content; gap:clamp(24px,4vw,64px);
-          align-items:start; margin:clamp(28px,4vw,48px) 0 0; }
+          align-items:start; margin:clamp(24px,3vw,36px) 0 0; }
   .structures{ display:flex; flex-direction:column; gap:clamp(14px,3vw,22px); align-items:center; }
   /* phones: the poem comes first, the folds follow as a compact row (no 600px of empty plate before the verse) */
   @media (max-width:760px){
@@ -240,6 +240,14 @@ _TEMPLATE = r"""<!doctype html>
     .verse{ order:-1; }
     .structures{ display:grid; grid-template-columns:repeat(auto-fit,minmax(7.5rem,1fr)); gap:12px; }
     .structures .viewer{ justify-self:center; }
+  }
+  /* wide screens: structures, poem and amino-acid sequence side by side */
+  @media (min-width:72rem){
+    .entry{ display:grid; grid-template-columns:17.5rem max-content minmax(16rem,1fr); column-gap:clamp(32px,4vw,64px); align-items:start; }
+    .entry > .ptitle, .entry > .pauthor{ grid-column:1 / -1; }
+    .entry .split{ display:contents; }
+    .entry .structures, .entry .verse, .entry .how{ margin-top:clamp(24px,3vw,36px); }
+    .entry .structures{ grid-column:1; } .entry .verse{ grid-column:2; } .entry .how{ grid-column:3; }
   }
   .viewer{ position:relative; width:100%; max-width:17.5rem; aspect-ratio:1; pointer-events:none; }
   .viewer canvas{ pointer-events:none; }

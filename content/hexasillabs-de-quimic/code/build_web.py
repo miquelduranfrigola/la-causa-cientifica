@@ -165,8 +165,15 @@ _TEMPLATE = r"""<!doctype html>
 <title>Hexasíl·labs de químic</title>
 <style>
 {{DESIGN}}
-  .stanza{ padding:clamp(28px,4.5vw,52px) 0; }
-  .stanza + .stanza{ border-top:1px solid var(--rule); }
+  .stanza{ padding:clamp(20px,3vw,32px) 0; border-top:1px solid var(--rule); }
+  /* on wide screens the eight ages sit two by two, the molecule above the lines it names */
+  @media (min-width:72rem){
+    .stanzas{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 clamp(40px,5vw,80px); }
+    .stanza .split{ grid-template-columns:11rem minmax(0,1fr); gap:clamp(20px,2.4vw,32px); align-items:start; }
+    .stanza .viewer{ max-width:11rem; }
+    .stanza .verses{ grid-template-columns:minmax(0,1fr); }
+    .stanza .name{ padding:6px 0 0; } .stanza .gloss{ padding:0 0 4px; }
+  }
   .stage{ margin:0 0 clamp(14px,2vw,22px); font:600 .875rem/1.4 var(--sans); }
 
   .split{ display:grid; grid-template-columns:clamp(13rem,26vw,17.5rem) minmax(0,1fr);
@@ -209,7 +216,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="poema">
     <div class="prose"><p>Cada vers, un hexasíl·lab; cada estrofa, la seva rima. El plafó va passant les molècules de cada edat.</p></div>
-    {{STANZAS}}
+    <div class="stanzas">{{STANZAS}}</div>
   </section>
 
   <section id="metode" class="sec"><h2 class="label">Metodologia</h2>
