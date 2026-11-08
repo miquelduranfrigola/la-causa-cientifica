@@ -51,7 +51,6 @@
   var sections = [].slice.call(document.querySelectorAll('.piece'));
   var links = [].slice.call(document.querySelectorAll('.index a'));
   var dialog = document.getElementById('book');
-  var settled = false;
   html.classList.add('js');
 
   /* A piece loads when it is about a screen away, never all at once: until then the frame holds its measured height. */
@@ -68,17 +67,40 @@
   frames.forEach(function (fr) { fr.addEventListener('load', function () { sendHeight(fr); fr.classList.add('ready'); }); });
   window.addEventListener('resize', function () { frames.forEach(sendHeight); });
 
-  /* Open at the piece named in the address; the frames above it settle first, so keep going until the reader moves. */
-  function goHash() {
-    var id = decodeURIComponent(location.hash.replace(/^#/, ''));
-    var el = id && document.getElementById(id);
-    if (el && el.classList.contains('piece')) el.scrollIntoView({ behavior: 'instant' });
+  /* Moving to a piece. The frames above it settle as they load, which moves the target, so after a
+     jump the page checks once more where the piece ended up and corrects it. It never fights the reader. */
+  var idxBar = document.querySelector('.index');
+  var idxH = function () { return idxBar.offsetHeight; };
+  function setIdx() { html.style.setProperty('--idx-h', idxH() + 'px'); }
+  setIdx(); window.addEventListener('resize', setIdx); if (document.fonts && document.fonts.ready) document.fonts.ready.then(setIdx);
+  var pin = null, fixes = 0;
+  function target(el, how) { pin = el; fixes = 0; el.scrollIntoView({ behavior: how }); }
+  function recheck() {
+    if (!pin) return;
+    var off = pin.getBoundingClientRect().top - idxH();
+    if (Math.abs(off) > 3 && fixes++ < 3) pin.scrollIntoView({ behavior: 'smooth' }); else pin = null;
   }
+  if ('onscrollend' in window) window.addEventListener('scrollend', recheck);
   ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
-    window.addEventListener(ev, function () { settled = true; }, { once: true, passive: true });
+    window.addEventListener(ev, function () { pin = null; }, { passive: true });   // the reader takes over
   });
-  setTimeout(function () { settled = true; }, 4000);
-  if (location.hash && location.hash !== '#llibre') goHash();
+  function piece(id) { var el = id && document.getElementById(id); return el && el.classList.contains('piece') ? el : null; }
+  function hashPiece() { return piece(decodeURIComponent(location.hash.replace(/^#/, ''))); }
+
+  /* Open at the piece named in the address, without animation. */
+  var first = hashPiece();
+  if (first && location.hash !== '#llibre') { target(first, 'instant'); setTimeout(function () { if (pin === first) { recheck(); } }, 1500); }
+
+  /* Index links glide to their piece. */
+  [].forEach.call(document.querySelectorAll('.index a'), function (a) {
+    a.addEventListener('click', function (e) {
+      var el = piece(a.getAttribute('href').slice(1));
+      if (!el) return;
+      e.preventDefault();
+      history.replaceState(null, '', '#' + el.id);
+      target(el, 'smooth');
+    });
+  });
 
   /* The index marks the piece in view. */
   function mark() {
@@ -88,7 +110,7 @@
     var on = links[cur];
     if (on && html.scrollWidth <= window.innerWidth) {   // glide the index only once the reader moves; at load it must not scroll
       var bar = on.closest('.index'), x = Math.max(0, on.offsetLeft - 24);
-      if (Math.abs(bar.scrollLeft - x) > 1) bar.scrollTo({ left: x, behavior: settled ? 'smooth' : 'instant' });
+      if (Math.abs(bar.scrollLeft - x) > 1) bar.scrollTo({ left: x, behavior: document.readyState === 'complete' ? 'smooth' : 'instant' });
     }
   }
   window.addEventListener('scroll', mark, { passive: true });
@@ -100,7 +122,7 @@
     var line = document.querySelector('.index').offsetHeight + 8, cur = 0;
     sections.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line + 4) cur = i; });
     var n = Math.max(0, Math.min(sections.length - 1, cur + d));
-    sections[n].scrollIntoView({ behavior: 'smooth' });
+    target(sections[n], 'smooth');
   }
   document.addEventListener('keydown', function (e) {
     if (e.metaKey || e.ctrlKey || e.altKey || dialog.open) return;
@@ -113,7 +135,7 @@
     else if (m.lcc === 'prev') step(-1);
     else if (m.lcc === 'height' && m.px > 0) {
       frames.forEach(function (fr) { if (fr.contentWindow === e.source) fr.style.height = m.px + 'px'; });
-      if (!settled) goHash();
+      if (pin && first === pin && !('onscrollend' in window)) recheck();
     }
   });
 
@@ -124,7 +146,7 @@
   dialog.addEventListener('close', closed);
   dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
   if (location.hash === '#llibre') openBook();
-  window.addEventListener('hashchange', function () { if (location.hash === '#llibre') openBook(); else if (location.hash) { settled = false; goHash(); } });
+  window.addEventListener('hashchange', function () { if (location.hash === '#llibre') openBook(); else { var el = hashPiece(); if (el) target(el, 'smooth'); } });
 })();
 </script>
 {% endblock %}
