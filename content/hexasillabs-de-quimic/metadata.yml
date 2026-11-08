@@ -6,6 +6,12 @@ author: Miquel Duran-Frigola
 date: 2026-07-11
 order: 3
 summary: L’arc d’una vida, escrit amb noms de molècules.
+# Optional: lines for the verse card in social/verse/ (see scripts/make_social.py).
+excerpt:
+  - desoxiguanosina,
+  - desoxicitidina,
+  - desoxitimidina,
+  - triiodotironina.
 language: ca
 # Self-contained page served as this poem's website page, built by code/build_web.py.
 page: index.html

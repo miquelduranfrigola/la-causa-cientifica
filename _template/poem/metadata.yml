@@ -8,6 +8,10 @@ date: 2026-01-01
 language: ca
 # One line shown under the title in the home catalogue (Catalan, italic, no final detail).
 summary: Una frase que descriu el poema.
+# Optional: lines for a verse card in social/verse/ (python scripts/make_social.py).
+# excerpt:
+#   - Primer vers
+#   - Segon vers
 # Uncomment if code/build_web.py builds a self-contained page at the poem-folder root.
 # page: index.html
 # Computational tools used to assist this poem. Descriptions in Catalan.

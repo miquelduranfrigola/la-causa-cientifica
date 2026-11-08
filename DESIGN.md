@@ -84,3 +84,13 @@ Figures look like printed plates: ink and the single accent. The only exception 
 - Tokens and base styles live in `shared/design/` (`tokens.css`, `base.css`) and are inlined into every page by the build scripts. Do not copy them into poem templates.
 - Per-poem CSS only covers that poem's figures and interactions.
 - Old values (`#f0ebe6`, `#c7513b`, `#2f7d68`, Space Mono) must not reappear.
+
+## 11. Social visuals and link previews
+
+Generated, never hand-made: `python scripts/make_social.py` renders HTML cards in this same design with headless Chrome and writes PNGs to `social/` (committed). Titles and summaries come from `metadata.yml`.
+
+- Poem cards are paper with ink type and a blue numeral: title in large serif anchored low, italic summary, hairlines, author and URL in the grotesque. The collection card, avatar and banner are the one place the blue is used as a full field, with paper-coloured type.
+- Formats: `og/` 1200x630 (link previews), `square/` 1080x1080 (feed posts), `story/` 1080x1920, `verse/` 1080x1080 (only for poems that define `excerpt:` lines in `metadata.yml`), `brand/` (avatar, banner, favicon, touch icons).
+- The site build copies them next to each page and adds Open Graph and Twitter tags (`site/build_site.py`). A poem URL opened directly redirects into the shell.
+- Same rules as the site: no photos, no decoration, one accent. Long titles shrink to fit and wrap; they are never cropped.
+

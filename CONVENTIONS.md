@@ -55,6 +55,7 @@ author: Miquel Duran-Frigola
 date: 2026-07-11                  # ISO date (YYYY-MM-DD)
 order: 1                          # optional; explicit site position (ascending)
 summary: Una línia sota el títol al catàleg   # Catalan, one line
+excerpt: [Primer vers, Segon vers]   # optional; verse card in social/verse/
 language: ca
 page: index.html                 # self-contained page served verbatim by the site
 tools:                            # computational tools used (may be empty)
