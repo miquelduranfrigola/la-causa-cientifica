@@ -82,7 +82,7 @@ _TEMPLATE = r"""<!doctype html>
   .yr{ font-size:clamp(3rem,8vw,5.5rem); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; color:var(--accent); }
   .stat{ margin:0; font-size:1.125rem; line-height:1.4; }
   .mapbox{ margin:0 calc(-1 * var(--edge) + 8px); padding:0; }
-  svg.map{ width:100%; height:auto; max-height:max(16rem, calc(100vh - 13rem)); max-height:max(16rem, calc(100svh - 13rem)); display:block; margin:0 auto; }
+  svg.map{ width:100%; height:auto; max-height:max(16rem, calc(100vh - 13rem)); max-height:max(16rem, calc(100svh - 13rem)); max-height:max(16rem, calc(var(--vh, 100svh) - 13rem)); display:block; margin:0 auto; }
   .land path{ fill:rgba(17,17,17,.035); stroke:var(--ink); stroke-opacity:.45; stroke-width:.6; vector-effect:non-scaling-stroke; }
   .route{ fill:none; stroke:var(--ink); stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
   .route.ghost{ stroke:rgba(17,17,17,.12); stroke-width:1; }
@@ -114,10 +114,19 @@ _TEMPLATE = r"""<!doctype html>
     #map{ display:grid; grid-template-columns:minmax(15rem,22rem) minmax(0,1fr); grid-template-rows:auto auto 1fr; gap:0 clamp(32px,5vw,80px); align-items:start; }
     .readout{ grid-column:1; grid-row:1; flex-direction:column; align-items:flex-start; gap:8px; padding-top:clamp(8px,2vw,24px); }
     .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:calc(var(--nav-h,56px) + 1rem); }
-    svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); }
+    svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); max-height:calc(var(--vh, 100svh) - 2rem); }
     .controls{ grid-column:1; grid-row:2; position:relative; flex-direction:column; align-items:stretch; margin-top:16px; }
     .controls .tl{ flex-basis:auto; }
     .play{ align-self:flex-start; }
+  }
+  @media (min-width:56rem){   /* the same layout when shown in a frame on the home page */
+    .is-embedded #map{ display:grid; grid-template-columns:minmax(15rem,22rem) minmax(0,1fr); grid-template-rows:auto auto 1fr; gap:0 clamp(32px,5vw,80px); align-items:start; }
+    .is-embedded .readout{ grid-column:1; grid-row:1; flex-direction:column; align-items:flex-start; gap:8px; padding-top:clamp(8px,2vw,24px); }
+    .is-embedded .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:calc(var(--nav-h,56px) + 1rem); }
+    .is-embedded svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); max-height:calc(var(--vh, 100svh) - 2rem); }
+    .is-embedded .controls{ grid-column:1; grid-row:2; position:relative; flex-direction:column; align-items:stretch; margin-top:16px; }
+    .is-embedded .controls .tl{ flex-basis:auto; }
+    .is-embedded .play{ align-self:flex-start; }
   }
   @media (max-height:32rem){ .controls{ position:relative; } svg.map{ max-height:none; } }
   @media (prefers-reduced-motion:reduce){ .draw{ transition:none; } }
@@ -137,6 +146,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Tour de França</h1>
     <p class="sub">{{NYEARS}} edicions, de {{FIRST}} a {{LAST}}, traçades etapa a etapa</p>
+    <p class="cue">Les edicions es tracen soles, una darrere l’altra. Prem Pausa, o arrossega l’any, per aturar-les on vulguis.</p>
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#map">El mapa</a></li>
@@ -312,9 +322,15 @@ _TEMPLATE = r"""<!doctype html>
     });
 
     // ---- views (text menu) ----
-    // Playback pauses once the map has scrolled out of view.
+    // The map plays by itself once it is on screen (unless motion is reduced),
+    // and pauses when it scrolls out of view.
+    var started = false;
+    var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if('IntersectionObserver' in window){
-      new IntersectionObserver(function(es){ if(!es[0].isIntersecting) stop(); }).observe(document.getElementById('map'));
+      new IntersectionObserver(function(es){
+        if(!es[0].isIntersecting){ stop(); return; }
+        if(!started && !calm){ started = true; play(); }
+      }, {threshold: .2}).observe(document.getElementById('map'));
     }
 
     showYear(0, false);

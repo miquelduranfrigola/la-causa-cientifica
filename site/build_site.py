@@ -4,9 +4,10 @@
 The single source of truth is each ``content/<slug>/`` folder: this reads every
 ``metadata.yml``. A piece with a ``page:`` key is served from its self-contained
 ``index.html`` verbatim; otherwise ``poem.md`` is rendered. The home page is a
-catalogue with a drawn legend; a piece is a plain page at ``<slug>/`` with the
-masthead, prev/next links and a "next piece" ending added (see DESIGN.md); the
-About page is ``sobre/``. Authors never edit HTML.
+sticky index and the six pieces one after another, each in a frame as tall as its
+content, with the book in a dialog; each piece is also a page of its own at
+``<slug>/`` (prev/next links and a "Més peces" list added; see DESIGN.md).
+``sobre/`` only redirects to the book. Authors never edit HTML.
 
 Poetry-aware rendering (the important part)
 -------------------------------------------
@@ -77,6 +78,7 @@ class Poem:
     tags: list[str]
     poem_html: str
     page_src: Path | None = None  # optional self-contained page to serve verbatim
+    number: int = 0  # 1-based position in the page
 
 
 # --------------------------------------------------------------------------- #
@@ -251,7 +253,7 @@ def write_crawler_files(out_dir: Path, poems: list[Poem], env: Environment, comm
     (out_dir / "robots.txt").write_text(
         f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8"
     )
-    urls = [f"{SITE_URL}/", f"{SITE_URL}/sobre/"] + [f"{SITE_URL}/{p.slug}/" for p in poems]
+    urls = [f"{SITE_URL}/"] + [f"{SITE_URL}/{p.slug}/" for p in poems]
     entries = "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
     (out_dir / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -259,7 +261,7 @@ def write_crawler_files(out_dir: Path, poems: list[Poem], env: Environment, comm
         f"{entries}\n</urlset>\n",
         encoding="utf-8",
     )
-    lines = [f"# {SITE_TITLE}", "", f"> {SITE_INTRO}", "", f"- [Sobre el llibre]({SITE_URL}/sobre/)", "", "## Peces", ""]
+    lines = [f"# {SITE_TITLE}", "", f"> {SITE_INTRO}", "", f"- [El llibre]({SITE_URL}/#llibre)", "", "## Peces", ""]
     lines += [f"- [{p.title}]({SITE_URL}/{p.slug}/): {p.summary}".rstrip(": ") for p in poems]
     lines += ["", "## Codi", "", f"- [Repositori a GitHub]({REPO_URL}): textos, dades i codi en Python de totes les peces", ""]
     (out_dir / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
@@ -325,6 +327,9 @@ def build(out_dir: Path) -> None:
         "repo_url": REPO_URL,
         **book_context(),
     }
+    for i, p in enumerate(poems, 1):
+        p.number = i
+
     index_tmpl = env.get_template("index.html")
     (out_dir / "index.html").write_text(
         index_tmpl.render(
@@ -339,18 +344,11 @@ def build(out_dir: Path) -> None:
         encoding="utf-8",
     )
 
+    # The About page now lives on the home page; keep the old address working.
     about_dir = out_dir / "sobre"
     about_dir.mkdir()
     (about_dir / "index.html").write_text(
-        env.get_template("sobre.html").render(
-            root="../",
-            page_title=f"Sobre el llibre — {SITE_TITLE}",
-            page_description=SITE_INTRO,
-            page_url=f"{SITE_URL}/sobre/",
-            page_image=f"{SITE_URL}/og.png",
-            **common,
-        ),
-        encoding="utf-8",
+        env.get_template("sobre.html").render(page_url=f"{SITE_URL}/#llibre", **common), encoding="utf-8"
     )
 
     poem_tmpl = env.get_template("poem.html")
@@ -358,6 +356,7 @@ def build(out_dir: Path) -> None:
     for i, poem in enumerate(poems):
         prev = poems[i - 1] if i > 0 else None
         nxt = poems[i + 1] if i + 1 < len(poems) else None
+        others = poems[i + 1 :] + poems[:i]  # the rest, starting with the next piece
         poem_out = out_dir / poem.slug
         poem_out.mkdir(parents=True, exist_ok=True)
         card = SOCIAL_DIR / "og" / f"{poem.slug}.png"
@@ -375,7 +374,7 @@ def build(out_dir: Path) -> None:
                 raise SystemExit(f"{poem.page_src}: no <head> to add share tags to")
             page = page.replace("<head>", "<head>\n" + share_head(poem, poem_url, prev, nxt), 1)
             page = re.sub(r"<title>[^<]*</title>", f"<title>{html.escape(poem.title)} — {SITE_TITLE}</title>", page, count=1)
-            ending = next_tmpl.render(nxt=nxt, root_up="../")
+            ending = next_tmpl.render(others=others, root_up="../")
             page, n = re.subn(r"(</main>\s*)(</div>)", lambda m: m.group(1) + ending + m.group(2), page, count=1)
             if n != 1:
                 raise SystemExit(f"{poem.page_src}: expected '</main></div>' to place the next-piece ending")
@@ -384,7 +383,7 @@ def build(out_dir: Path) -> None:
             (poem_out / "index.html").write_text(
                 poem_tmpl.render(
                     poem=poem,
-                    nxt=nxt,
+                    others=others,
                     root="../",
                     root_up="../",
                     page_title=f"{poem.title} — {SITE_TITLE}",

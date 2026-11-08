@@ -143,6 +143,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">El que es perd en la traducció</h1>
     <p class="sub"><i>Veinte poemas de amor y una canción desesperada</i>, de Pablo Neruda, despoetitzat amb 104 traduccions automàtiques</p>
+    <p class="cue">Cada poema, després de 104 traduccions. Prem «Original» sota cada poema per veure la versió de Neruda.</p>
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#poemes">Els poemes</a></li>
@@ -152,7 +153,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="poemes" style="margin-top:clamp(32px,5vw,56px)">
     <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
-    {{POEMS}}
+    <div class="fold" data-keep="2">{{POEMS}}</div>
   </section>
   <section id="meto" class="sec"><h2 class="label">Metodologia</h2>
     {{METHOD}}

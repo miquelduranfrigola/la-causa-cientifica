@@ -272,6 +272,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Versos proteics</h1>
     <p class="sub">Cada poema, plegat com una proteïna amb ESMFold</p>
+    <p class="cue">Cada paraula s’il·lumina mentre es llegeix, i la proteïna que dibuixa el poema gira al costat. Tria un poema aquí a sota.</p>
   </header>
   <nav><ul class="subnav">{{MENU}}</ul></nav>
   <main>

@@ -1,51 +1,41 @@
-/* La causa científica: home and about (the masthead lives in base.css).
+/* La causa científica: the home page, one scrolling page of live pieces (the masthead lives in base.css).
    Tokens and base live in tokens.css / base.css. Source of truth: DESIGN.md. */
 
 main:focus { outline: none; }
 .wrap { padding: 0 var(--edge) 48px; }
 
-/* ---------- Catalogue (home) ---------- */
-.intro {
-  max-width: 30em;
-  margin: clamp(32px, 5vw, 64px) 0 clamp(28px, 4vw, 48px);
-  font-size: clamp(1.5rem, 2.8vw, 2.125rem);
-  line-height: 1.3;
-  letter-spacing: -.01em;
-  text-wrap: pretty;
-}
-.cat { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--rule); }
-.cat li { border-top: 1px solid var(--rule); }
-.cat a {
-  display: grid;
-  grid-template-columns: 3.5rem minmax(0, 1fr);
-  gap: 0 16px;
-  padding: 20px 0 24px;
-}
-.cat .n { padding-top: 1.1em; color: var(--accent); font: 400 .875rem/1 var(--sans); font-variant-numeric: tabular-nums; }
-.cat .name {
-  display: block;
-  font-size: clamp(1.875rem, 4.6vw, 3.5rem);
-  line-height: 1.06;
-  letter-spacing: -.02em;
-  text-wrap: balance;
-}
-.cat .sum { display: block; margin-top: 10px; font-size: 1.125rem; line-height: 1.45; max-width: 40em; }
-.cat a:hover .name, .cat a:focus-visible .name { color: var(--accent); }
+/* ---------- Home: one scrolling page of live pieces ---------- */
+.mast .textlink { background: none; border: 0; border-bottom: 1px solid currentColor; padding: 2px 0; font: inherit; color: inherit; cursor: pointer; }
+.mast .textlink:hover { color: var(--accent); }
+.index { position: sticky; top: 0; z-index: 5; background: var(--paper); border-bottom: 1px solid var(--rule); overflow-x: auto; scrollbar-width: none; }
+.index::-webkit-scrollbar { display: none; }
+.index ol { display: flex; gap: clamp(16px, 2.4vw, 32px); margin: 0; padding: 0 var(--edge); list-style: none; width: max-content; min-width: 100%; box-sizing: border-box; font: 400 .875rem/1.4 var(--sans); }
+.index a { display: block; padding: 12px 0; border-bottom: 1px solid transparent; white-space: nowrap; }
+.index .n { margin-right: .5em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.index a[aria-current] { border-bottom-color: var(--accent); }
+.piece { padding: 0 var(--edge); scroll-margin-top: 0; }
+.piece + .piece { margin-top: clamp(24px, 4vw, 56px); border-top: 1px solid var(--rule); }
+.ptitle { display: flex; align-items: baseline; gap: 16px; margin: 0; padding: clamp(28px, 4vw, 48px) 0 clamp(8px, 1.5vw, 16px); font-size: clamp(2.5rem, 5.2vw, 4rem); font-weight: 400; line-height: 1.04; letter-spacing: -.02em; text-wrap: balance; }
+.ptitle .n { flex: none; color: var(--accent); font: 400 .875rem/1 var(--sans); font-variant-numeric: tabular-nums; }
+.live { display: block; width: 100%; height: 70vh; min-height: 22rem; border: 0; background: var(--paper); }
+.piece { scroll-margin-top: calc(var(--idx-h, 44px)); }
+main > .wrap { padding-top: 0; }
+@media (max-width: 640px) { .ptitle { gap: 12px; font-size: clamp(2rem, 9.5vw, 2.75rem); } }
 
-/* ---------- About ---------- */
-.book-head { display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); gap: clamp(32px, 6vw, 88px); align-items: start; margin-top: clamp(24px, 4vw, 56px); }
-.cover { margin: 0; }
-.cover img { display: block; width: 100%; height: auto; }
-.book-text .title { margin: clamp(0px, 2vw, 24px) 0 12px; }
-.about .prose { font-size: 1.25rem; }
-.book-meta { margin: 0 0 clamp(24px, 4vw, 40px); font: 400 .9375rem/1.4 var(--sans); }
-
-.pull { margin: clamp(28px, 4vw, 44px) 0; padding: 12px 0 0; border-top: 1px solid var(--rule); font-size: 1.5rem; line-height: 1.35; text-wrap: balance; }
-.pull cite { display: block; margin-top: 12px; font: 400 .9375rem/1.4 var(--sans); }
+/* The book, on request. */
+dialog { width: min(60rem, calc(100vw - 2 * var(--edge) + 2rem)); max-height: calc(100dvh - 2rem); padding: 0; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); overflow: auto; }
+dialog::backdrop { background: rgba(251, 251, 249, .94); }
+dialog .close { position: sticky; top: 0; float: right; margin: 16px 20px 0 0; background: none; border: 0; border-bottom: 1px solid currentColor; padding: 2px 0; font: 400 .875rem/1.4 var(--sans); color: inherit; cursor: pointer; z-index: 1; }
+.book-grid { display: grid; grid-template-columns: minmax(0, 14rem) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; padding: clamp(24px, 4vw, 48px); }
+.book-grid .cover { display: block; width: 100%; height: auto; }
+.book-text .ptitle { padding-top: 0; font-size: clamp(2rem, 4vw, 3rem); }
+.book-meta { margin: 0 0 20px; font: 400 .9375rem/1.4 var(--sans); }
+.book-text .prose { font-size: 1.125rem; }
+.pull { margin: 28px 0; padding: 12px 0 0; border-top: 1px solid var(--rule); font-size: 1.375rem; line-height: 1.35; text-wrap: balance; }
+.pull cite { display: block; margin-top: 10px; font: 400 .9375rem/1.4 var(--sans); }
 .pull cite::before { content: "— "; }
-.more { margin-top: 28px; font: 400 .9375rem/1.4 var(--sans); }
-.about-label { margin-top: clamp(56px, 8vw, 104px); padding-top: 12px; border-top: 1px solid var(--rule); }
-@media (max-width: 760px) { .book-head { grid-template-columns: minmax(0, 1fr); } .cover { max-width: 20rem; } }
+.more-link { margin: 0; font: 400 .9375rem/1.4 var(--sans); }
+@media (max-width: 640px) { .book-grid { grid-template-columns: minmax(0, 1fr); } .book-grid .cover { max-width: 10rem; } }
 
 /* ---------- Footer ---------- */
 .foot {
@@ -62,10 +52,6 @@ main:focus { outline: none; }
 /* ---------- Touch ---------- */
 .foot a { position: relative; }
 .foot a::after { content: ""; position: absolute; inset: -12px -8px; }   /* 44px touch targets */
-.cat a { -webkit-tap-highlight-color: transparent; }
-.cat a:active .name { color: var(--accent); }
-@media (hover: none) { .cat a:hover .name { color: inherit; } }
-@media (max-width: 640px) { .cat a { grid-template-columns: 2.25rem minmax(0, 1fr); gap: 0 8px; } }
 
 /* ---------- Skip link ---------- */
 .skip { position: absolute; left: var(--edge); top: -4rem; z-index: 10; padding: 8px 12px; background: var(--ink); color: var(--paper); font: 400 .875rem/1.4 var(--sans); }
@@ -75,33 +61,3 @@ main:focus { outline: none; }
 /* ---------- Utilities ---------- */
 .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .textlink { border-bottom: 1px solid currentColor; }
-
-/* ---------- Home legend: what is in every piece, drawn ---------- */
-.legend { list-style: none; margin: 0 0 clamp(36px, 5vw, 64px); padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); }
-.legend li { display: grid; gap: 8px; align-content: start; padding-top: 14px; border-top: 1px solid var(--rule); }
-.legend .draw { display: flex; align-items: flex-end; height: 5.25rem; margin-bottom: 6px; }
-.legend .k { display: flex; gap: 10px; font: 600 .875rem/1.4 var(--sans); }
-.legend .n { color: var(--accent); font-weight: 400; font-variant-numeric: tabular-nums; }
-.legend .d { font-size: 1.0625rem; line-height: 1.4; max-width: 22em; text-wrap: pretty; }
-/* 1  the piece: lines of verse */
-.legend .d-piece { flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 9px; }
-.d-piece i { display: block; height: 2px; background: var(--ink); }
-.d-piece i:nth-child(1) { width: 78%; } .d-piece i:nth-child(2) { width: 54%; } .d-piece i:nth-child(3) { width: 88%; } .d-piece i:nth-child(4) { width: 40%; }
-/* 2  the method: a sweep through steps */
-.legend .d-method { gap: 8px; align-items: center; }
-.d-method i { display: block; width: 14px; height: 14px; border: 1px solid var(--ink); border-radius: 0; animation: sweep 3.5s steps(1, end) infinite; }
-.d-method i:nth-child(1) { animation-delay: 0s; } .d-method i:nth-child(2) { animation-delay: .5s; } .d-method i:nth-child(3) { animation-delay: 1s; }
-.d-method i:nth-child(4) { animation-delay: 1.5s; } .d-method i:nth-child(5) { animation-delay: 2s; } .d-method i:nth-child(6) { animation-delay: 2.5s; } .d-method i:nth-child(7) { animation-delay: 3s; }
-@keyframes sweep { 0% { background: var(--accent); border-color: var(--accent); } 14.3% { background: transparent; border-color: var(--ink); } 100% { background: transparent; border-color: var(--ink); } }
-/* 3  the book: a page with one marked line */
-.legend .d-book { flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; width: 3.75rem; padding: 0 8px; border: 1px solid var(--ink); background: #fff; }
-.d-book i { display: block; height: 1px; background: var(--ink); }
-.d-book i.mk { height: 6px; background: var(--marker); }
-@media (max-width: 640px) {
-  .legend { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .legend li { grid-template-columns: 5.5rem minmax(0, 1fr); column-gap: 16px; padding: 14px 0 16px; }
-  .legend .draw { grid-row: 1 / span 2; height: 4.5rem; margin: 0; }
-  .legend .d-book { height: 4.5rem; }
-  .legend .d { grid-column: 2; }
-}
-@media (prefers-reduced-motion: reduce) { .d-method i:nth-child(3) { background: var(--accent); border-color: var(--accent); } }

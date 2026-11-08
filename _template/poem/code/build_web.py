@@ -45,6 +45,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">{{TITLE}}</h1>
     <p class="sub">{{SUMMARY}}</p>
+    <!-- <p class="cue">One plain sentence on what to look at or press.</p> -->
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#poem">El poema</a></li>

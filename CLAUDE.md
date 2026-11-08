@@ -50,7 +50,7 @@ pip install -r site/requirements.txt
 python site/build_site.py            # add --out DIR to change output
 ```
 
-The site builder reads each `content/<slug>/metadata.yml` and builds plain pages: the home (masthead, a drawn legend, the catalogue using each poem's `summary:`), the "Sobre el llibre" page (`sobre/`) and each piece (its committed `index.html`, wired via `page:`) with the masthead, prev/next links and a "next piece" ending added. A piece is one scrolling page: the poem, then Metodologia, then Al llibre, under a sticky index. Rebuild the page with the piece's `code/build_web.py`; rebuild the site with `site/build_site.py`. The `_site/` folder is a disposable, git-ignored build output (a `dist/`), regenerated on every build — the only committed page is each poem's `index.html`.
+The site builder reads each `content/<slug>/metadata.yml` and builds one home page (masthead, a sticky index, and the six pieces one after another, each in a lazy frame as tall as its content; the book opens in a dialog from the masthead; no About page) plus each piece's own page (its committed `index.html`, wired via `page:`) with prev/next links and a "Més peces" list added, for sharing. A framed piece (`html.is-embedded`) hides its own chrome and folds its method and book page. Rebuild the page with the piece's `code/build_web.py`; rebuild the site with `site/build_site.py`. The `_site/` folder is a disposable, git-ignored build output (a `dist/`), regenerated on every build — the only committed page is each poem's `index.html`.
 
 ## Conventions to preserve
 

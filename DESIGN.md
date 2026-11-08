@@ -2,7 +2,7 @@
 
 The design of **La causa científica**: a small literary press that publishes poems which happen to have code.
 
-This file is the single source of truth. Every page (the home, the About page and each piece's `index.html`), every social card and every future piece follows it. If something here is wrong or missing, change this file first, then the code.
+This file is the single source of truth. Every page (the home and each piece's `index.html`), every social card and every future piece follows it. If something here is wrong or missing, change this file first, then the code.
 
 **Reference:** Fitzcarraldo Editions. Typographic, quiet, rigorous. **Anti-reference:** a tech product, an AI tool, a blog template.
 
@@ -127,27 +127,28 @@ Text on paper meets 4.5:1 contrast. Figures look like printed plates: ink and th
 
 ### Components (shared vocabulary in `shared/design/base.css`)
 
-`.page` container · `.head` title block (`.title`, `.sub` plain descriptor; no author byline, the author is named once in the shell) · `.subnav` the sticky index of a piece (current section: accent + 1px underline) · `.verse` poem text (`.v` line, `.br` stanza gap) · `.prose` running text · `.label` small bold grotesque heading · `.sec` a stacked section with its `.label` heading under a hairline · `.next` the "Peça següent" ending · `.mast` the masthead · `.code` / `pre` machine text · `.fig` + `.cap` figure and caption · `.hair` rule.
+`.page` container · `.head` title block (`.title`, `.sub` plain descriptor; no author byline, the author is named once, in the footer) · `.subnav` the sticky index of a piece (current section: accent + 1px underline) · `.verse` poem text (`.v` line, `.br` stanza gap) · `.prose` running text · `.label` small bold grotesque heading · `.cue` the one-line instruction under a piece's title · `.shelf` + `.card` a piece as a picture, title, line and book page · `.sec` a stacked section with its `.label` heading under a hairline · `.more` the "Més peces" ending · `.mast` the masthead · `.code` / `pre` machine text · `.fig` + `.cap` figure and caption · `.hair` rule.
 
 ### Site pages (home, about, piece)
 
-- **Masthead:** the same on every page: wordmark left (links home), "Peces" and "Sobre el llibre" right, one rule under. It is part of the page and scrolls away; only the piece's index is sticky.
-- **Home:** one short Catalan intro, then a drawn legend of the three things every piece has (the piece, how it is made, where it sits in the book: lines of verse, a stepping row, a page with one yellow line), then the catalogue: per row a blue numeral, a large serif title and the roman one-line `summary:`; hairlines between rows. Hover and focus turn the title blue.
-- **About ("Sobre el llibre"):** the cover photograph beside the back-cover text, one pull quote, a link to the publisher's catalogue; then "Sobre aquest web" (a few plain paragraphs).
-- **A piece is a plain page** (`/<slug>/`), not a frame: the masthead, the title block, one scrolling page and, at the end, "Peça següent" (or "Torna a la llista" after the last).
+- **Masthead:** wordmark left, `El llibre` right, one rule under. On the home page it scrolls away; below it a sticky **index** of the six pieces (numeral + title, the one in view underlined in accent; it scrolls sideways on phones). On a piece's own page the masthead links back (`Peces`, `El llibre`).
+- **Home: one page, no About page, no explanatory copy.** It is the six pieces one after another, live: for each, a hairline, the numeral and the title in large serif (`clamp(2.5rem, 5.2vw, 4rem)`), and the piece itself, shown in a frame as tall as its content (`iframe.live`, lazy-loaded). Nothing introduces them: no tagline, no legend, no thumbnails, no cards.
+- **The book is a request, not a banner.** It appears only as (a) the yellow page note in each piece (`Al llibre  p. 77`, folded; opening it shows the facsimile and its sentence) and (b) the masthead's `El llibre`, which opens a dialog with the cover, the back-cover text, one quote and the publisher's catalogue link. `#llibre` opens it. Yellow (`--marker`) is used only for the page note and the highlighter on the facsimile.
+- **A piece shown on the home** (`html.is-embedded`, set when the page is framed): its masthead, big title, jump index and "Més peces" strip are hidden; the method and the book page fold under their headings (click to open, `aria-expanded`); long content folds too (`.fold`: the first N items by `data-keep`, or a height by `--fold`, then a `Continua` control). The page passes its window height as `--vh` because `vh` units inside a frame that grows with its content would never settle. Animations still play only while visible.
+- **A piece is also a page of its own** (`/<slug>/`, for sharing and link previews): masthead, title block, one scrolling page with everything open, and **Més peces**, a plain list of the others linking back into the home.
 - **Footer:** author and GitHub link on a rule.
 
 ### Piece pages
 
-1. Title block: the piece's name and one plain line describing it (no byline).
-2. The sticky index: `El poema · Metodologia · Al llibre` (names follow the piece), each a jump link; the section in view is in accent. Nothing hides behind a click.
+1. Title block: the piece's name, one plain line describing it (no byline) and a **cue**: one sentence saying what to look at or press (`.cue`, grotesque, small).
+2. The sticky index: `El poema · Metodologia · Al llibre` (names follow the piece), each a jump link; the section in view is in accent. (On the home page the sections are folded instead; see above.)
 3. One scrolling page: the poem or main figure first, then **Metodologia** (animated, and it plays only while it is on screen), then **Al llibre** (the facsimile with its marked sentences and its citation). Each stacked section starts with a `.label` heading under a hairline.
 4. Only genuinely separate poems stay as tabs (*Versos proteics* has one tab per poem); its method and book section still sit below the open poem.
 5. The yellow `--marker` is used for the book highlighter and its legend only.
 
 ### Keyboard and links
 
-`j` / `k` next and previous piece · `Esc` back to the list (read from `<link rel="next|prev|up">`; `←` / `→` only switch tabs where a page has them). The shortcuts are not advertised on the site. A skip link jumps to the content. Everything is also reachable with Tab and plain links, and every page is a real URL.
+`j` / `k` next and previous piece (on the home page they scroll to it; on a piece's own page they follow `<link rel="next|prev">`) · `Esc` closes the book or goes back to the list · `←` / `→` only switch tabs where a page has them. The shortcuts are not advertised on the site. A skip link jumps to the content. Everything is also reachable with Tab and plain links, and every page is a real URL.
 
 ### Copy
 
@@ -184,9 +185,9 @@ Generated, never hand-made: `python scripts/make_social.py` renders HTML cards i
 - [ ] Works with `prefers-reduced-motion` and without hover.
 - [ ] No external requests; the file works opened from disk.
 - [ ] Catalan glyphs render (`l·l`, `ŀ`, `« »`, accents); apostrophes are ’.
-- [ ] Back button, `j`/`k`/`Esc` and the "Peça següent" link work.
+- [ ] On the home page: every frame shows its whole piece with no blank gap and no inner scrollbar; `j`/`k`, the index and `#llibre` work.
 - [ ] No console errors, and `python scripts/check_design.py` passes.
-- [ ] Lighthouse accessibility is 100 for the home, About and each piece, in its animated state too.
+- [ ] Lighthouse accessibility is 100 for the home and each piece, in its animated state too.
 
 ### Where things live
 `shared/design/` tokens, base, fonts, nav script, inliner · `site/` page templates and build · `content/<slug>/code/build_web.py` each piece · `scripts/make_social.py` and `social/` the share cards · `CONVENTIONS.md` the repo-level contract.

@@ -33,8 +33,10 @@ def nav_script() -> str:
 def site_header() -> str:
     """Return the masthead shared by every piece (links are relative to ``/<slug>/``)."""
     return (
+        "<script>try{if(window.top!==window)document.documentElement.classList.add('is-embedded')}"
+        "catch(e){document.documentElement.classList.add('is-embedded')}</script>"
         '<header class="mast"><a class="word" href="../">La causa científica</a>'
-        '<nav aria-label="Principal"><a href="../">Peces</a><a href="../sobre/">Sobre el llibre</a></nav></header>'
+        '<nav aria-label="Principal"><a href="../">Peces</a><a href="../#llibre">El llibre</a></nav></header>'
     )
 
 
@@ -67,7 +69,7 @@ def add_book_section(page: str, slug: str) -> str:
             f'<figcaption><span class="ref">La causa científica, p.&nbsp;{it["page"]}</span>{quote}</figcaption></figure>'
         )
     section = (
-        '<section id="llibre" class="sec book"><h2 class="label">Al llibre</h2>'
+        f'<section id="llibre" class="sec book"><h2 class="label">Al llibre <span class="pg">p.&nbsp;{items[0]["page"]}</span></h2>'
         f'<div class="leaves">{"".join(figures)}</div></section>\n'
     )
     link = '<li><a href="#llibre">Al llibre</a></li>\n  '

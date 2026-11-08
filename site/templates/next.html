@@ -1,4 +1,8 @@
-<footer class="next">
-  {% if nxt %}<a href="{{ root_up }}{{ nxt.slug }}/" rel="next"><span class="k">Peça següent</span><span class="t">{{ nxt.title }}</span></a>
-  {% else %}<a href="{{ root_up }}"><span class="k">Has vist totes les peces</span><span class="t">Torna a la llista</span></a>{% endif %}
+<footer class="more">
+  <h2 class="label">Més peces</h2>
+  <ol class="list">
+    {% for poem in others %}
+    <li><a href="../#{{ poem.slug }}"><span class="n">{{ '%02d' % poem.number }}</span><span class="name">{{ poem.title }}</span></a></li>
+    {% endfor %}
+  </ol>
 </footer>

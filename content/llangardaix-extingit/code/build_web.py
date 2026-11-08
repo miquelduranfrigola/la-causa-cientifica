@@ -54,6 +54,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Llangardaix extingit</h1>
     <p class="sub">Genoma mitocondrial inferit de l’avantpassat de <i>Podarcis muralis</i> i <i>Varanus salvator</i></p>
+    <p class="cue">El poema és aquest genoma: les lletres A, C, G i T, llegides de dalt a baix.</p>
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#obra">El genoma</a></li>
@@ -63,7 +64,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="obra" style="margin-top:clamp(24px,4vw,40px)">
     <p class="label">{{LEN}} parells de bases · reconstrucció per màxima versemblança</p>
-    <div class="seqbox how" style="margin-top:0">
+    <div class="seqbox how fold" style="margin-top:0;--fold:24rem">
       <p class="code fasta-head">&gt;sargantana_avi_ancestor mitogenome | ML reconstruction (HKY85)</p>
 <pre class="seq" id="seq" data-seq="{{RAW}}">{{SEQ}}</pre>
     </div>

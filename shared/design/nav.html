@@ -4,7 +4,10 @@
    Esc  back to the index (<link rel="up">)
    ←/→  previous/next tab, only on pages that still have tabs (.subnav a[data-sec]) */
 (function () {
+  var embedded = false;
+  try { embedded = window.top !== window; } catch (e) { embedded = true; }
   function go(rel) {
+    if (embedded) { try { parent.postMessage({ lcc: rel }, '*'); } catch (e) {} return; }   // the home page handles the keys
     var l = document.querySelector('link[rel="' + rel + '"]');
     if (l && l.href) location.href = l.href;
   }
@@ -30,6 +33,38 @@
   function measure() { if (nav) document.documentElement.style.setProperty('--nav-h', nav.offsetHeight + 'px'); }
   window.addEventListener('resize', measure); measure();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
+  if (embedded) {
+    /* On the home page a piece is shown in a frame as tall as its content: the method and the book
+       page are folded under their headings, and the window height is handed in by the page. */
+    [].slice.call(document.querySelectorAll('.sec > .label:first-child')).forEach(function (h) {
+      var sec = h.parentNode;
+      h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
+      function flip() { var on = sec.classList.toggle('open'); h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
+      h.addEventListener('click', flip);
+      h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+    });
+    [].slice.call(document.querySelectorAll('.fold')).forEach(function (f) {
+      var b = document.createElement('button');
+      var keep = parseInt(f.getAttribute('data-keep'), 10);
+      var rest = keep ? [].slice.call(f.children).slice(keep) : [];
+      rest.forEach(function (c) { c.hidden = true; });   // fold by whole items (poems, stanzas)
+      b.type = 'button'; b.className = 'foldmore'; b.textContent = 'Continua';
+      b.addEventListener('click', function () { rest.forEach(function (c) { c.hidden = false; }); f.classList.add('unfolded'); b.remove(); });
+      f.parentNode.insertBefore(b, f.nextSibling);
+    });
+    if (nav && !document.querySelector('.subnav a[data-sec]')) nav.hidden = true;
+    window.addEventListener('message', function (e) {
+      if (e.data && e.data.lcc === 'vh') document.documentElement.style.setProperty('--vh', e.data.px + 'px');
+    });
+    /* Tell the page how tall this piece is, whenever it changes. */
+    function reportHeight() {
+      try { parent.postMessage({ lcc: 'height', px: Math.ceil(document.body.getBoundingClientRect().height) }, '*'); } catch (e) {}
+    }
+    if (window.ResizeObserver) new ResizeObserver(reportHeight).observe(document.body);
+    window.addEventListener('load', reportHeight);
+    reportHeight();
+  }
 
   var jumps = [].slice.call(document.querySelectorAll('.subnav a[href^="#"]:not([data-sec])'));
   var targets = jumps.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });

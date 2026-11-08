@@ -109,9 +109,7 @@ This keeps every poem independently reproducible.
 ## Website
 
 The site builder (`site/build_site.py`) reads every `content/<slug>/metadata.yml`
-and produces plain pages: the home (`_site/index.html`: masthead, a drawn legend and a
-catalogue of every piece with its one-line `summary:`), the About page (`_site/sobre/`),
-and one page per piece. Each piece is served from its committed
+and produces one home page (`_site/index.html`: the six pieces one after another, live, with the book in a dialog) and one page per piece. Each piece is served from its committed
 `index.html` via the `page:` key (the builder copies it verbatim to
 `_site/<slug>/index.html`); a piece without `page:` falls back to templated
 `poem.md` rendering. The whole site shares one editorial look defined in [`DESIGN.md`](DESIGN.md) (Newsreader serif, Hanken Grotesk for UI, IBM Plex Mono for machine text, near-white paper, one ultramarine accent). Every piece page inlines the shared design from `shared/design/` (`inline.py`: `design_css()`, `nav_script()`, `site_header()`, `add_book_section()`); never copy design CSS into a piece. GitHub

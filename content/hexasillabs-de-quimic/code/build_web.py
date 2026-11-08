@@ -199,6 +199,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Hexasíl·labs de químic</h1>
     <p class="sub">Una vida en vuit edats, dita amb noms de molècules</p>
+    <p class="cue">Els versos s’encenen un a un i, al costat, es dibuixa la molècula que anomenen.</p>
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#poema">El poema</a></li>
@@ -208,7 +209,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="poema">
     <div class="prose"><p>Cada vers, un hexasíl·lab; cada estrofa, la seva rima. El plafó va passant les molècules de cada edat.</p></div>
-    {{STANZAS}}
+    <div class="fold" data-keep="2">{{STANZAS}}</div>
   </section>
 
   <section id="metode" class="sec"><h2 class="label">Metodologia</h2>

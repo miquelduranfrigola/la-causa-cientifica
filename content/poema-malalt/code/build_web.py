@@ -122,6 +122,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Poema malalt</h1>
     <p class="sub">L’evolució d’un poema de {{AUTHOR}}, <span style="font-style:normal">«{{SEED}}»</span>, a força de mutacions</p>
+    <p class="cue">El poema muta sol: cada canvi és una paraula que s’encén en blau.</p>
   </header>
   <nav><ul class="subnav">
     <li><a class="on" href="#poem">El poema</a></li>
