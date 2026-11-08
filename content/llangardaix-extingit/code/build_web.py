@@ -43,7 +43,7 @@ _TEMPLATE = r"""<!doctype html>
 {{DESIGN}}
   .seqbox{ margin-top:clamp(28px,4vw,48px); }
   .fasta-head{ margin:0 0 14px; overflow-wrap:anywhere; text-wrap:balance; }
-  pre.seq{ font-size:.875rem; line-height:2; letter-spacing:.02em; white-space:pre; }
+  pre.seq{ font-size:.875rem; line-height:1.7; letter-spacing:.02em; white-space:pre; }
   .prose{ font-size:1.25rem; }
   section[hidden]{ display:none; }
 </style>
@@ -64,7 +64,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="obra" style="margin-top:clamp(24px,4vw,40px)">
     <p class="label">{{LEN}} parells de bases · reconstrucció per màxima versemblança</p>
-    <div class="seqbox how fold" style="margin-top:0;--fold:24rem">
+    <div class="seqbox how" style="margin-top:0">
       <p class="code fasta-head">&gt;sargantana_avi_ancestor mitogenome | ML reconstruction (HKY85)</p>
 <pre class="seq" id="seq" data-seq="{{RAW}}">{{SEQ}}</pre>
     </div>

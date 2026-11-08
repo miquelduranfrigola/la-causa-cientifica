@@ -182,8 +182,8 @@ _TEMPLATE = r"""<!doctype html>
   .verses{ display:grid; grid-template-columns:minmax(0,12.5rem) minmax(0,1fr);
            column-gap:clamp(18px,3vw,34px); align-items:baseline; }
   .line{ display:contents; }
-  .name{ font-size:1.375rem; line-height:1.4; padding:6px 0; overflow-wrap:anywhere; transition:color .4s ease; }
-  .gloss{ font-size:1rem; line-height:1.4; padding:6px 0; }
+  .name{ font-size:1.375rem; line-height:1.3; padding:4px 0; overflow-wrap:anywhere; transition:color .4s ease; }
+  .gloss{ font-size:1rem; line-height:1.35; padding:4px 0; }
   .line.on .name{ color:var(--accent); }
   @media (max-width:60rem){
     .verses{ grid-template-columns:minmax(0,1fr); }
@@ -209,7 +209,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="poema">
     <div class="prose"><p>Cada vers, un hexasíl·lab; cada estrofa, la seva rima. El plafó va passant les molècules de cada edat.</p></div>
-    <div class="fold" data-keep="2">{{STANZAS}}</div>
+    {{STANZAS}}
   </section>
 
   <section id="metode" class="sec"><h2 class="label">Metodologia</h2>

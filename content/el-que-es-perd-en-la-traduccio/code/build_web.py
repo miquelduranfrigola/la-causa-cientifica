@@ -153,7 +153,7 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="poemes" style="margin-top:clamp(32px,5vw,56px)">
     <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
-    <div class="fold" data-keep="2">{{POEMS}}</div>
+    {{POEMS}}
   </section>
   <section id="meto" class="sec"><h2 class="label">Metodologia</h2>
     {{METHOD}}

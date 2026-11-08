@@ -35,7 +35,7 @@ def site_header() -> str:
     return (
         "<script>try{if(window.top!==window)document.documentElement.classList.add('is-embedded')}"
         "catch(e){document.documentElement.classList.add('is-embedded')}</script>"
-        '<header class="mast"><a class="word" href="../">La causa científica</a>'
+        '<header class="mast"><a class="word" href="../"><em>La causa científica</em></a>'
         '<nav aria-label="Principal"><a href="../">Peces</a><a href="../#llibre">El llibre</a></nav></header>'
     )
 
@@ -66,7 +66,7 @@ def add_book_section(page: str, slug: str) -> str:
         figures.append(
             f'<figure class="leaf"><img src="data:image/webp;base64,{data}" width="{it["width"]}" '
             f'height="{it["height"]}" alt="{html.escape(alt)}" loading="lazy">'
-            f'<figcaption><span class="ref">La causa científica, p.&nbsp;{it["page"]}</span>{quote}</figcaption></figure>'
+            f'<figcaption><span class="ref"><em>La causa científica</em>, p.&nbsp;{it["page"]}</span>{quote}</figcaption></figure>'
         )
     section = (
         f'<section id="llibre" class="sec book"><h2 class="label">Al llibre <span class="pg">p.&nbsp;{items[0]["page"]}</span></h2>'

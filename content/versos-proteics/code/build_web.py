@@ -253,7 +253,7 @@ _TEMPLATE = r"""<!doctype html>
   .wd.on{ color:var(--accent); }
 
   /* the sequence is machine text: mono, filling in the N-to-C rainbow */
-  .seq{ line-height:2; word-break:break-all; letter-spacing:.02em; }
+  .seq{ line-height:1.7; word-break:break-all; letter-spacing:.02em; }
   .res{ color:rgba(17,17,17,.62); transition:color .25s ease; }
   .res.on{ color:var(--c); }
 

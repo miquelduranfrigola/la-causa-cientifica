@@ -29,7 +29,7 @@ Text is never paler than ink. A word being read, a language already crossed, a v
 *In practice:* if a reveal effect needs a "before" state, the "before" state is ink.
 
 ### 4. Roman by default; italics always mean something
-Italics are not a style layer. They are for scientific names (*Podarcis muralis*), titles of cited works (*Veinte poemas de amor…*), a word the sentence stresses, or a quoted foreign phrase. Summaries, subtitles, credit lines, captions, glosses, labels, language names and software names are roman. Never bold for emphasis in running text.
+Italics are not a style layer. They are for scientific names (*Podarcis muralis*), titles of cited works (*Veinte poemas de amor…*, and the novel's own title, *La causa científica*, wherever it is named: the wordmark, the book dialog, the page notes), a word the sentence stresses, or a quoted foreign phrase. Summaries, subtitles, credit lines, captions, glosses, labels, language names and software names are roman. Never bold for emphasis in running text.
 *In practice:* before italicising anything, name which of the four reasons applies. If none does, leave it roman.
 
 ### 5. Three voices, never mixed
@@ -107,7 +107,7 @@ Text on paper meets 4.5:1 contrast. Figures look like printed plates: ink and th
 | Grotesque | Hanken Grotesk (400–600) | Menus, labels, numerals, captions, controls |
 | Mono | IBM Plex Mono (400) | Code, sequences, data |
 
-- Scale: page title `clamp(2.5rem, 5.2vw, 4rem)`, weight 400, leading 1.04, tracking -0.02em; poem text 1.25rem/1.6; prose 1.125rem/1.6 (1.25rem on piece pages); UI 0.875rem; captions 0.8125rem; mono 0.8125rem.
+- Scale: page title `clamp(2.5rem, 5.2vw, 4rem)`, weight 400, leading 1.04, tracking -0.02em; poem text 1.25rem/1.45; prose 1.125rem/1.5 (1.25rem on piece pages); UI 0.875rem; captions 0.8125rem; mono 0.8125rem.
 - Measures: poem text about 34em; prose about 38em; figures may use the full width.
 - Required glyphs in every font: `l·l`, `ŀ`, `à è é í ò ó ú ï ü ç`, `« »`, `—`.
 - Apostrophes are typographic (’). `shared/design/nav.html` converts straight apostrophes between letters at load, outside code and data.
@@ -134,7 +134,7 @@ Text on paper meets 4.5:1 contrast. Figures look like printed plates: ink and th
 - **Masthead:** wordmark left, `El llibre` right, one rule under. On the home page it scrolls away; below it a sticky **index** of the six pieces (numeral + title, the one in view underlined in accent; it scrolls sideways on phones). On a piece's own page the masthead links back (`Peces`, `El llibre`).
 - **Home: one page, no About page, no explanatory copy.** It is the six pieces one after another, live: for each, a hairline, the numeral and the title in large serif (`clamp(2.5rem, 5.2vw, 4rem)`), and the piece itself, shown in a frame as tall as its content (`iframe.live`, lazy-loaded). Nothing introduces them: no tagline, no legend, no thumbnails, no cards.
 - **The book is a request, not a banner.** It appears only as (a) the yellow page note in each piece (`Al llibre  p. 77`, folded; opening it shows the facsimile and its sentence) and (b) the masthead's `El llibre`, which opens a dialog with the cover, the back-cover text, one quote and the publisher's catalogue link. `#llibre` opens it. Yellow (`--marker`) is used only for the page note and the highlighter on the facsimile.
-- **A piece shown on the home** (`html.is-embedded`, set when the page is framed): its masthead, big title, jump index and "Més peces" strip are hidden; the method and the book page fold under their headings (click to open, `aria-expanded`); long content folds too (`.fold`: the first N items by `data-keep`, or a height by `--fold`, then a `Continua` control). The page passes its window height as `--vh` because `vh` units inside a frame that grows with its content would never settle. Animations still play only while visible.
+- **A piece shown on the home** (`html.is-embedded`, set when the page is framed): its masthead, big title, jump index and "Més peces" strip are hidden; the method and the book page fold under their headings (click to open, `aria-expanded`); everything else is shown in full (no `Continua` controls). The page passes its window height as `--vh` because `vh` units inside a frame that grows with its content would never settle. Animations still play only while visible.
 - **A piece is also a page of its own** (`/<slug>/`, for sharing and link previews): masthead, title block, one scrolling page with everything open, and **Més peces**, a plain list of the others linking back into the home.
 - **Footer:** author and GitHub link on a rule.
 

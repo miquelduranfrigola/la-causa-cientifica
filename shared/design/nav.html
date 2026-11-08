@@ -36,7 +36,7 @@
 
   if (embedded) {
     /* On the home page a piece is shown in a frame as tall as its content: the method and the book
-       page are folded under their headings, and the window height is handed in by the page. */
+       page are folded under their headings (long content is shown in full), and the window height is handed in by the page. */
     [].slice.call(document.querySelectorAll('.sec > .label:first-child')).forEach(function (h) {
       var sec = h.parentNode;
       h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
@@ -47,18 +47,6 @@
       function flip() { var on = sec.classList.toggle('open'); body.inert = !on; h.setAttribute('aria-expanded', on ? 'true' : 'false'); }
       h.addEventListener('click', flip);
       h.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
-    });
-    [].slice.call(document.querySelectorAll('.fold')).forEach(function (f) {
-      var b = document.createElement('button');
-      var keep = parseInt(f.getAttribute('data-keep'), 10);   // items past `keep` are hidden by the stylesheet, so nothing jumps
-      b.type = 'button'; b.className = 'foldmore'; b.textContent = 'Continua';
-      b.addEventListener('click', function () {
-        b.remove();
-        if (keep) { f.classList.add('unfolded', 'rise'); return; }
-        f.style.maxHeight = f.scrollHeight + 'px';   // grow to the full height, then release the cap
-        setTimeout(function () { f.classList.add('unfolded'); f.style.maxHeight = ''; }, 520);
-      });
-      f.parentNode.insertBefore(b, f.nextSibling);
     });
     if (nav && !document.querySelector('.subnav a[data-sec]')) nav.hidden = true;
     window.addEventListener('message', function (e) {
