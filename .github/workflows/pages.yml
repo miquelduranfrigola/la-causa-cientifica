@@ -29,6 +29,9 @@ jobs:
       - name: Install site dependencies
         run: pip install -r site/requirements.txt
 
+      - name: Lint (ruff, Ersilia standard)
+        run: pip install ruff && ruff check .
+
       - name: Check design rules (DESIGN.md)
         run: python scripts/check_design.py
 

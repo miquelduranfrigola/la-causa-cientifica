@@ -26,12 +26,10 @@ and dropped.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 
 from Bio import SeqIO
 from Bio.Align import PairwiseAligner, substitution_matrices
 from Bio.Seq import Seq
-
 from fetch_sequences import DATA_DIR, MITO_TABLE, REFERENCE, TAXA
 
 

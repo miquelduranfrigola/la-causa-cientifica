@@ -15,7 +15,7 @@ Outputs (committed, so the site build needs neither Chrome nor fonts):
 
 Usage
 -----
-    pip install pyyaml fonttools
+    pip install pyyaml pillow
     python scripts/make_social.py                # everything
     python scripts/make_social.py --only el-que-es-perd-en-la-traduccio
 
@@ -192,33 +192,8 @@ body{{background:{ACCENT};color:{PAPER}}}
 
 
 def favicon_svg() -> str:
-    """Return an SVG favicon: the Newsreader ``c`` as a path on the brand blue."""
-    from fontTools.pens.boundsPen import BoundsPen
-    from fontTools.pens.svgPathPen import SVGPathPen
-    from fontTools.pens.transformPen import TransformPen
-    from fontTools.ttLib import TTFont
-    from fontTools.varLib import instancer
-
-    src = os.environ.get("NEWSREADER_TTF")
-    if not src or not Path(src).exists():
-        raise SystemExit("Set NEWSREADER_TTF=/path/to/Newsreader.ttf to build the favicon")
-    font = instancer.instantiateVariableFont(TTFont(src), {"wght": 400, "opsz": 72})
-    gs = font.getGlyphSet()
-    name = font.getBestCmap()[ord("c")]
-    bp = BoundsPen(gs)
-    gs[name].draw(bp)
-    x0, y0, x1, y1 = bp.bounds
-    size, target = 64, 40.0
-    scale = target / (y1 - y0)
-    tx = (size - (x1 - x0) * scale) / 2 - x0 * scale
-    ty = size - ((size - target) / 2 + (-y0) * scale)
-    pen = SVGPathPen(gs)
-    gs[name].draw(TransformPen(pen, (scale, 0, 0, -scale, tx, ty)))
-    return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {size} {size}">'
-        f'<rect width="{size}" height="{size}" fill="{ACCENT}"/>'
-        f'<path d="{pen.getCommands()}" fill="{PAPER}"/></svg>\n'
-    )
+    """Return the favicon: a plain square of the brand blue, no lettering."""
+    return f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="{ACCENT}"/></svg>\n'
 
 
 def main() -> None:
@@ -253,11 +228,11 @@ def main() -> None:
                g["w"], g["h"], OUT / folder / f"{name}.png")
     for name, (page, w, h) in brand_cards().items():
         render(chrome, page, w, h, OUT / "brand" / f"{name}.png")
-    # Icons derived from the avatar.
-    avatar = OUT / "brand" / "avatar.png"
+    # Icons: plain brand blue, no lettering.
+    from PIL import Image
+
     for name, px in (("apple-touch-icon", 180), ("icon-192", 192), ("icon-512", 512)):
-        icon = f'<!doctype html><style>*{{margin:0}}body{{background:{ACCENT}}}img{{width:{px}px;height:{px}px;display:block}}</style><img src="{avatar.as_uri()}">'
-        render(chrome, icon, px, px, OUT / "brand" / f"{name}.png")
+        Image.new("RGB", (px, px), ACCENT).save(OUT / "brand" / f"{name}.png")
     (OUT / "brand" / "favicon.svg").write_text(favicon_svg(), encoding="utf-8")
     print("ok brand")
 

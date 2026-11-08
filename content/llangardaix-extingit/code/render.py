@@ -21,10 +21,10 @@ Everything is driven by the per-site posteriors in ``results/reconstruction.csv`
 from __future__ import annotations
 
 import csv
-import textwrap
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np

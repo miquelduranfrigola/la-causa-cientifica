@@ -32,7 +32,7 @@ from pipeline import poem_chunks, to_sequence  # noqa: E402
 
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
 
 POEMS_DIR = POEM_ROOT / "data" / "poems"
 
@@ -209,6 +209,7 @@ def build() -> Path:
             .replace("{{NAV}}", nav_script())
             .replace("{{DATA}}", json.dumps(data_out, ensure_ascii=False)))
     out = POEM_ROOT / "index.html"
+    page = add_book_tab(page, POEM_ROOT.name, section_class="entry")
     out.write_text(page, encoding="utf-8")
     return out
 

@@ -32,7 +32,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 POEM = os.path.dirname(HERE)
 REPO = os.path.dirname(os.path.dirname(POEM))
 sys.path.insert(0, os.path.join(REPO, "shared", "design"))
-from inline import design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
 
 OUT = os.path.join(POEM, "index.html")
 
@@ -151,6 +151,7 @@ def build():
             .replace("{{STANDALONE}}", standalone_bar())
             .replace("{{STANZAS}}", "".join(stanzas))
             .replace("{{NAV}}", nav_script()))
+    page = add_book_tab(page, os.path.basename(POEM))
     with open(OUT, "w", encoding="utf-8") as fh:
         fh.write(page)
     return OUT

@@ -61,6 +61,7 @@ _TITLE_RE = re.compile(r"^\s*#\s+.*$", re.MULTILINE)
 
 @dataclass
 class Poem:
+    """One piece of the collection, as read from its ``metadata.yml``."""
     slug: str
     title: str
     date: str

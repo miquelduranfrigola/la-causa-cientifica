@@ -22,7 +22,7 @@ POEM_ROOT = Path(__file__).resolve().parent.parent
 HERE = Path(__file__).resolve().parent
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
 
 POS_CA = {"N": "nom", "V": "verb", "A": "adjectiu", "R": "adverbi"}
 EDIT_CA = {"substitution": "substitució", "deletion": "deleció", "insertion": "inserció"}
@@ -92,6 +92,7 @@ def build() -> Path:
             .replace("{{EDIT}}", json.dumps(EDIT_CA, ensure_ascii=False)))
     out = POEM_ROOT / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
+    page = add_book_tab(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 

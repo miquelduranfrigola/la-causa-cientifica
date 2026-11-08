@@ -1,50 +1,37 @@
 # La causa científica
 
-Recull de poemes en català assistits per eines computacionals. Cada poema té la
-seva pròpia carpeta amb el text, les metadades i el codi (en Python) que l'ha
-ajudat a néixer. El recull es publica com a lloc web amb GitHub Pages.
+An expanded universe for the book *La causa científica* (Miquel Duran-Frigola, La Segona Perifèria): poems and graphic pieces made computationally, each with its method and its place in the printed book.
 
-## Estructura
+**Website: https://miquelduranfrigola.github.io/la-causa-cientifica/**
 
-Cada poema viu a `content/<slug>/` amb sempre els mateixos fitxers:
+Each piece lives in `content/<slug>/` with its text, its Python code and a self-contained page. The site is static and is published with GitHub Pages. Poems and site text are in Catalan; code and code documentation are in English.
 
-- `poem.md` — el poema (català)
-- `metadata.yml` — títol, autoria, data, eines, etiquetes, descripció, `page:`
-- `README.md` — notes del mètode computacional (anglès)
-- `install.sh` — prepara l'entorn i baixa els fitxers grans de Google Drive
-- `code/` — el codi en Python (`main.py` calcula; `build_web.py` genera la pàgina)
-- `index.html` — la pàgina web autocontinguda de la peça (és la que serveix el web)
-- `data/` — dades d'entrada · `results/` — sortides del càlcul (CSV, imatges…)
-- `assets/drive-manifest.yml` — enllaços als fitxers grans a Google Drive
+## Repository layout
 
-L'especificació completa i compartida entre repositoris és a
-[`CONVENTIONS.md`](CONVENTIONS.md); el disseny del web (tipografia, color, maquetació)
-és a [`DESIGN.md`](DESIGN.md).
+| Path | What it holds |
+| --- | --- |
+| `content/<slug>/` | One folder per piece: `poem.md`, `metadata.yml`, `code/`, `data/`, `results/`, `index.html` (the page) |
+| `book/` | The printed book: configuration, the facsimile pages the pieces point to |
+| `shared/design/` | The design layer (tokens, base CSS, fonts, keyboard script) inlined into every page |
+| `site/` | The static site generator (`build_site.py`, templates, styles) |
+| `scripts/` | `new_poem.py`, `check_design.py`, `make_social.py`, `make_book_pages.py`, `fetch_assets.py` |
+| `social/` | Generated share cards and icons |
+| `_template/poem/` | Skeleton copied by `new_poem.py` |
 
-## Afegir un poema
+Specifications: [`DESIGN.md`](DESIGN.md) (visual rules), [`CONVENTIONS.md`](CONVENTIONS.md) (folder and file standard), [`book/README.md`](book/README.md) (how a piece maps to the book).
 
-```bash
-python scripts/new_poem.py "Títol del poema"
-```
-
-## Construir el web localment
+## Usage
 
 ```bash
 pip install -r site/requirements.txt
-python site/build_site.py
-# obre _site/index.html
+python site/build_site.py          # builds the site into _site/
+python scripts/check_design.py     # checks DESIGN.md rules (also runs in CI)
+python scripts/new_poem.py "Títol del poema"
+python scripts/make_book_pages.py  # renders the book pages each piece cites (needs the book PDF)
 ```
 
-## Disseny, previsualitzacions i comprovacions
+Large files are not stored in git. They are listed in `drive-manifest.yml` files and fetched with `scripts/fetch_assets.py`.
 
-```bash
-python scripts/check_design.py   # comprova les regles de DESIGN.md (també s'executa a CI)
-python scripts/make_social.py    # regenera les targetes per a xarxes i les icones a social/
-```
+## License
 
-`DESIGN.md` explica els principis; `social/` conté les imatges ja generades.
-
-## Fitxers grans
-
-Els fitxers grans (àudio, vídeo, dades) no es guarden a git: es referencien a un
-`drive-manifest.yml` i es baixen amb `scripts/fetch_assets.py`.
+GNU General Public License v3.0. See [`LICENSE`](LICENSE).

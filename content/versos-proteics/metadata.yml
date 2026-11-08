@@ -34,3 +34,9 @@ description: |
   El web és una lectura tipus karaoke: a mesura que avança el poema, s'omplen en
   paral·lel la seqüència d'aminoàcids i l'estructura tridimensional. Una manera de
   preguntar-se quina forma tindria un poema si fos una molècula.
+# Where the piece sits in the printed book (see book/README.md). Placeholder
+# page chosen at random; replace with the real page and sentences.
+book:
+  provisional: true
+  excerpts:
+    - page: 142

@@ -42,3 +42,9 @@ description: |
   un embull de línies: la forma d'una vida mesurada en juliols. No són les
   carreteres reals —els traçats GPS només existeixen a partir del 2014—, sinó
   reconstruccions que uneixen d'on sortia cada etapa amb on arribava.
+# Where the piece sits in the printed book (see book/README.md). Placeholder
+# page chosen at random; replace with the real page and sentences.
+book:
+  provisional: true
+  excerpts:
+    - page: 99

@@ -39,3 +39,9 @@ description: |
   en un metre i agrupar-los en estrofes per família química, on la rima neix del
   sufix del grup funcional compartit. Els números i les lletres de la nomenclatura
   (2 → dos, N- → ena) es desconvolucionen a paraules abans de comptar.
+# Where the piece sits in the printed book (see book/README.md). Placeholder
+# page chosen at random; replace with the real page and sentences.
+book:
+  provisional: true
+  excerpts:
+    - page: 116

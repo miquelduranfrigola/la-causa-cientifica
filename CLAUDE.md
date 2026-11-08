@@ -10,7 +10,7 @@ The structure is a shared standard meant to be replicated across sibling "poemes
 
 ## Language rules (important)
 
-- **Poems and user-facing text** (titles, `metadata.yml` descriptions/tags, website UI, README.md at repo root) → **Catalan**.
+- **Poems and user-facing text** (titles, `metadata.yml` descriptions/tags, website UI) → **Catalan**.
 - **Code and code-facing docs** (per-poem `README.md`, docstrings, comments, identifiers) → **English**. Code is **Python**.
 
 ## Structure
@@ -39,8 +39,8 @@ cd content/<slug> && bash install.sh
 # Fetch large assets for a manifest without a full install
 python scripts/fetch_assets.py content/<slug>/assets/drive-manifest.yml
 
-# Regenerate social cards and icons into social/ (needs Chrome, pyyaml, fonttools)
-NEWSREADER_TTF=/path/to/Newsreader.ttf python scripts/make_social.py
+# Regenerate social cards and icons into social/ (needs Chrome, pyyaml, pillow)
+python scripts/make_social.py
 
 # Check the design rules from DESIGN.md (also runs in CI)
 python scripts/check_design.py
@@ -56,4 +56,6 @@ The site builder reads each `content/<slug>/metadata.yml` and builds a shell (ma
 
 - `metadata.yml` requires `title`, `slug` (must equal the folder name), and `date` (ISO `YYYY-MM-DD`). Site ordering follows an optional `order:` integer (ascending); pieces without one fall back to newest-first by `date`.
 - Every poem folder keeps the same fixed filenames so the tooling and website can rely on them.
-- The repo-root `README.md` and commit messages are in Catalan.
+- Commit messages are in Catalan; the repo-root `README.md` is in English (public entry point).
+- `book/book.yml` and each piece's optional `book:` block (page + sentences) say where the piece sits in the printed book; `scripts/make_book_pages.py` renders the facsimile and the piece gains an "Al llibre" tab. The book PDF lives in `book/source/` (git-ignored).
+- Lint with `ruff check .` (config: `ruff.toml`, the Ersilia standard).

@@ -94,6 +94,20 @@ def check_metadata(folder: Path) -> None:
         fail(where, "slug does not match the folder name")
     if not (REPO / "social" / "og" / f"{folder.name}.png").exists():
         fail(where, "missing social/og card (run scripts/make_social.py)")
+    book = meta.get("book")
+    if book is not None:
+        pages = int((yaml.safe_load((REPO / "book" / "book.yml").read_text(encoding="utf-8")) or {}).get("pages", 0))
+        excerpts = book.get("excerpts") or []
+        if not excerpts:
+            fail(where, "book: needs at least one excerpt")
+        for ex in excerpts:
+            page = ex.get("page")
+            if not isinstance(page, int) or not 1 <= page <= pages:
+                fail(where, f"book: page {page!r} must be an integer between 1 and {pages}")
+            if not isinstance(ex.get("sentences", []), list):
+                fail(where, "book: sentences must be a list")
+        if not book.get("provisional") and not all(ex.get("sentences") for ex in excerpts):
+            fail(where, "book: a confirmed excerpt needs its sentences")
     if len(str(meta.get("summary", ""))) > 90:
         fail(where, "summary should fit on one line (90 characters or fewer)")
 

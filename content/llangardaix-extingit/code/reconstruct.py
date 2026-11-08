@@ -47,11 +47,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
-from scipy.optimize import minimize
-
-from align import build_alignment, Partition
-from fetch_sequences import MITO_TABLE
+from align import Partition, build_alignment
 from Bio.Seq import Seq
+from fetch_sequences import MITO_TABLE
+from scipy.optimize import minimize
 
 BASES = "ACGT"
 BASE_INDEX = {b: i for i, b in enumerate(BASES)}
@@ -76,6 +75,7 @@ class Node:
 
     @property
     def is_leaf(self) -> bool:
+        """Whether this node is a tip of the tree (it carries a species name)."""
         return self.name is not None
 
 
@@ -189,6 +189,7 @@ def log_likelihood(params: np.ndarray, root: Node, tips: dict[str, np.ndarray],
 
 @dataclass
 class Reconstruction:
+    """The maximum-a-posteriori ancestral sequence and its per-site support."""
     map_bases: str                 # MAP nucleotide per site
     posteriors: np.ndarray         # (n_sites,) posterior of the MAP base
     full_posterior: np.ndarray     # (4, n_sites)

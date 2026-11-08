@@ -15,13 +15,14 @@ import urllib.parse
 import urllib.request
 
 import matplotlib
+
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from rdkit import Chem
-from rdkit.Chem import Draw
-from rdkit.Chem.Draw import rdMolDraw2D
-from PIL import Image
 import io
+
+import matplotlib.pyplot as plt
+from PIL import Image
+from rdkit import Chem
+from rdkit.Chem.Draw import rdMolDraw2D
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 POEM = os.path.dirname(HERE)

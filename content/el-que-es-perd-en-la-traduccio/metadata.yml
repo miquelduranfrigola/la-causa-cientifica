@@ -42,3 +42,9 @@ description: |
   modificació més enllà de petites correccions gramaticals. Els poemes es llegeixen
   l'un rere l'altre, amb l'original de Neruda a un clic; una secció de metodologia
   anima el pas de les 104 llengües que els dissolen.
+# Where the piece sits in the printed book (see book/README.md). Placeholder
+# page chosen at random; replace with the real page and sentences.
+book:
+  provisional: true
+  excerpts:
+    - page: 84

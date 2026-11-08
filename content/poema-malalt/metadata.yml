@@ -47,3 +47,9 @@ description: |
   mots— on cada node és una paraula i cada branca, una mutació que ha sobreviscut.
   El procés revela dos espectres, com en la genòmica del càncer real: el de les
   mutacions proposades i el de les que sobreviuen a la selecció.
+# Where the piece sits in the printed book (see book/README.md). Placeholder
+# page chosen at random; replace with the real page and sentences.
+book:
+  provisional: true
+  excerpts:
+    - page: 77

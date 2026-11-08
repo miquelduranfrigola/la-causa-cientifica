@@ -18,10 +18,10 @@ import csv
 import os
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
-from molname import verbalise, poetic_counts
+from molname import poetic_counts, verbalise
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 POEM = os.path.dirname(HERE)

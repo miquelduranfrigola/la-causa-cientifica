@@ -234,3 +234,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# The book PDF and cover live in Google Drive; only the derived facsimiles are tracked
+book/source/*
+!book/source/.gitkeep

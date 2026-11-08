@@ -179,6 +179,12 @@ pre { margin: 0; overflow-x: auto; }
   a { color: inherit; }
 }
 
+/* Al llibre: facsimile of the printed page, flat, with a hairline edge. */
+.leaves{ display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,48px); align-items:flex-start; }
+.leaf{ margin:0; flex:0 1 26rem; max-width:100%; }
+.leaf img{ display:block; width:100%; height:auto; border:1px solid var(--rule); background:#fff; }
+.leaf figcaption{ font:400 .8125rem/1.4 var(--sans); margin-top:.75rem; }
+
   .stanza{ padding:clamp(28px,4.5vw,52px) 0; }
   .stanza + .stanza{ border-top:1px solid var(--rule); }
   .stage{ margin:0 0 clamp(14px,2vw,22px); font:600 .875rem/1.4 var(--sans); }

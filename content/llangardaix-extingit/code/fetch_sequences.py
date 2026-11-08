@@ -155,6 +155,7 @@ def _trna_aa(feature) -> str | None:
 
 @dataclass(frozen=True)
 class Feature:
+    """A gene annotation on a mitochondrial genome."""
     key: str          # e.g. "COX1", "rrnL", "trnL1"
     kind: str         # "CDS" | "rRNA" | "tRNA"
     nt: str           # coding-strand nucleotides

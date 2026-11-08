@@ -32,10 +32,9 @@ import random
 from dataclasses import dataclass
 from pathlib import Path
 
-from wordfreq import zipf_frequency
-
 # Reuse the alphabet and the cancer-calibrated mutation model from the tree engine.
-from main import ALPHABET, VOWELS, MutationModel
+from main import ALPHABET, MutationModel
+from wordfreq import zipf_frequency
 
 POEM_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DICT = POEM_ROOT / "data" / "lexicon" / "diccionari.txt"
@@ -95,6 +94,7 @@ def edit_type(src: str, dst: str) -> str:
 
 @dataclass
 class Candidate:
+    """A candidate replacement word for a mutation."""
     word: str
     tag: str          # the matched tag
     edit: str         # substitution | insertion | deletion

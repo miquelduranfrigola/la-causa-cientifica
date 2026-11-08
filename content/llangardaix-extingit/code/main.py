@@ -19,11 +19,10 @@ from __future__ import annotations
 
 import sys
 
-from align import build_alignment
-from reconstruct import (fit_and_reconstruct, repair_cds_stops,
-                         _write_outputs, summarise)
-import render
 import fetch_sequences
+import render
+from align import build_alignment
+from reconstruct import _write_outputs, fit_and_reconstruct, repair_cds_stops, summarise
 
 
 def main() -> None:

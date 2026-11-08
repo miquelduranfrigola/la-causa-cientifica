@@ -223,6 +223,7 @@ class Spectrum:
     viable_titv: Counter = field(default_factory=Counter)
 
     def record(self, event: MutationEvent, *, viable: bool) -> None:
+        """Count one proposed mutation and whether it was viable."""
         self.proposed[event.kind] += 1
         if event.substitution_class:
             self.proposed_titv[event.substitution_class] += 1
@@ -241,6 +242,7 @@ class Spectrum:
         return "  ".join(parts)
 
     def report(self) -> str:
+        """Return the mutational spectrum as plain text."""
         lines = ["Mutational spectrum (mutation type):"]
         lines.append(f"  proposed (process) : {self._fmt(self.proposed)}")
         lines.append(f"  viable (survivors) : {self._fmt(self.viable)}")
@@ -267,14 +269,17 @@ class Spectrum:
 # --------------------------------------------------------------------------- #
 @dataclass
 class Node:
+    """A poem variant in the tree of mutations."""
     word: str
     event: MutationEvent | None = None  # mutation that produced this node
     children: list["Node"] = field(default_factory=list)
 
     def depth(self) -> int:
+        """Return the number of generations below this node, itself included."""
         return 1 + max((c.depth() for c in self.children), default=0)
 
     def size(self) -> int:
+        """Return the number of variants in this subtree, itself included."""
         return 1 + sum(c.size() for c in self.children)
 
 

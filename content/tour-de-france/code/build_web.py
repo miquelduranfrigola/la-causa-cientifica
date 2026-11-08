@@ -25,7 +25,7 @@ from pathlib import Path
 POEM_ROOT = Path(__file__).resolve().parent.parent
 REPO = POEM_ROOT.parent.parent
 sys.path.insert(0, str(REPO / "shared" / "design"))
-from inline import design_css, nav_script, standalone_bar  # noqa: E402
+from inline import add_book_tab, design_css, nav_script, standalone_bar  # noqa: E402
 
 ROUTES = POEM_ROOT / "results" / "routes.json"
 GEOJSON = POEM_ROOT / "data" / "europe.geojson"
@@ -65,6 +65,7 @@ def build() -> Path:
             .replace("{{NAV}}", nav_script()))
 
     out = POEM_ROOT / "index.html"
+    page = add_book_tab(page, POEM_ROOT.name)
     out.write_text(page, encoding="utf-8")
     return out
 

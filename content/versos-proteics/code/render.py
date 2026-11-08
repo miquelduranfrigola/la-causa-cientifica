@@ -27,7 +27,7 @@ from matplotlib.patches import Circle  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from folding import DEFAULT_CACHE, _seq_hash, fold_sequence  # noqa: E402
 from globularity import parse_ca  # noqa: E402
-from pipeline import poem_chunks, to_sequence  # noqa: E402
+from pipeline import poem_chunks  # noqa: E402
 
 PYMOL_BIN = "pymol"
 

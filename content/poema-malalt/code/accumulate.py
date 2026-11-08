@@ -26,8 +26,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from evolve import candidates, load_lexicon, DEFAULT_DICT  # noqa: E402
-from main import letter_class  # noqa: E402
+from evolve import DEFAULT_DICT, candidates, load_lexicon  # noqa: E402
 
 POEM_ROOT = HERE.parent
 EVO = POEM_ROOT / "data" / "evolution.json"

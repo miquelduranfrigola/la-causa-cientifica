@@ -21,7 +21,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from molname import verbalise, poetic_counts
+from molname import poetic_counts, verbalise
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 POEM = os.path.dirname(HERE)
