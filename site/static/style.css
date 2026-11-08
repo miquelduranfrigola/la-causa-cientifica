@@ -99,3 +99,22 @@ html.mode-piece .app { height: 100dvh; min-height: 0; }
   .bar { grid-template-columns: 1fr 1fr; }
   .bar .pos { display: none; }
 }
+
+/* ---------- Touch ---------- */
+.mast a, .bar a, .foot a { position: relative; }
+.mast a::after, .bar a::after, .foot a::after { content: ""; position: absolute; inset: -12px -8px; }   /* 44px touch targets */
+.cat a { -webkit-tap-highlight-color: transparent; }
+.cat a:active .name { color: var(--accent); }
+@media (hover: none) { .cat a:hover .name { color: inherit; } }
+
+/* On phones the masthead tucks away while reading down a piece, and returns on scroll up. */
+.mast { transition: margin-top .2s ease; }
+@media (max-width: 760px) {
+  html.mode-piece.chrome-hidden .mast { margin-top: calc(-1 * var(--mast-h, 48px)); }
+}
+/* Landscape phones: the piece needs every pixel; the bar already links back to the index. */
+@media (max-height: 520px) and (orientation: landscape) {
+  html.mode-piece .mast { display: none; }
+  .bar { padding-top: 6px; padding-bottom: 6px; }
+}
+.app { padding-bottom: env(safe-area-inset-bottom, 0px); }

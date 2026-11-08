@@ -10,7 +10,8 @@
   --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
 
   --gutter: clamp(24px, 6vw, 96px);
-  --edge: max(var(--gutter), calc((100vw - 1280px) / 2));   /* left/right inset shared by masthead, bar and pages */
+  /* left/right inset shared by masthead, bar and pages; also clears a phone notch in landscape */
+  --edge: max(var(--gutter), calc((100vw - 1280px) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --measure-verse: 34em;
   --measure-prose: 38em;
   color-scheme: light;

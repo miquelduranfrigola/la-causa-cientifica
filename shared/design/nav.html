@@ -24,6 +24,17 @@
       l[n].click(); l[n].focus({ preventScroll: true });
     }
   });
+  /* Report scroll direction so the shell can tuck its masthead away on phones. */
+  var lastY = 0, acc = 0, dir = '';
+  window.addEventListener('scroll', function () {
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var d = y - lastY; lastY = y;
+    if (y < 30) { if (dir !== 'up') { dir = 'up'; tell({ lcc: 'scroll', dir: 'up' }); } acc = 0; return; }
+    if ((d > 0) !== (acc > 0)) acc = 0;
+    acc += d;
+    if (acc > 24 && dir !== 'down') { dir = 'down'; tell({ lcc: 'scroll', dir: 'down' }); }
+    else if (acc < -24 && dir !== 'up') { dir = 'up'; tell({ lcc: 'scroll', dir: 'up' }); }
+  }, { passive: true });
 })();
 
 /* Typography: curly apostrophes between letters (l'aire -> l’aire) in text that is

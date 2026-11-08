@@ -65,7 +65,7 @@ _TEMPLATE = r"""<!doctype html>
     <p class="label">{{LEN}} parells de bases · reconstrucció per màxima versemblança</p>
     <div class="seqbox how" style="margin-top:0">
       <p class="code fasta-head">&gt;sargantana_avi_ancestor mitogenome | ML reconstruction (HKY85)</p>
-<pre class="seq">{{SEQ}}</pre>
+<pre class="seq" id="seq" data-seq="{{RAW}}">{{SEQ}}</pre>
     </div>
   </section>
   <section id="meto" hidden style="margin-top:clamp(24px,4vw,40px)">
@@ -83,6 +83,31 @@ _TEMPLATE = r"""<!doctype html>
   }
   links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); show(a.dataset.sec); window.scrollTo(0,0); }); });
   show('obra');
+
+  /* Re-wrap the genome to the width available (multiples of 10 bases, at most 60),
+     so it never scrolls sideways on a phone. */
+  var pre = document.getElementById('seq'), raw = pre.getAttribute('data-seq'), last = 0;
+  function wrapSeq(){
+    if (!pre.offsetParent) return;
+    // Measure with an off-screen probe so the visible text (and the scroll position)
+    // is only touched when the line length really changes.
+    var probe = document.createElement('pre');
+    probe.className = 'seq';
+    probe.style.cssText = 'position:absolute;visibility:hidden;height:0;overflow:hidden;white-space:pre';
+    probe.textContent = new Array(101).join('M');
+    pre.parentNode.appendChild(probe);
+    var per = probe.scrollWidth / 100;
+    pre.parentNode.removeChild(probe);
+    var n = Math.min(60, Math.max(10, Math.floor(pre.clientWidth / per / 10) * 10));
+    if (n === last) return;
+    last = n;
+    var out = [];
+    for (var i = 0; i < raw.length; i += n) out.push(raw.slice(i, i + n));
+    pre.textContent = out.join('\n');
+  }
+  wrapSeq();
+  window.addEventListener('resize', wrapSeq);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(wrapSeq);
 })();
 </script>
 {{NAV}}
@@ -100,6 +125,7 @@ def build() -> Path:
         .replace("{{STANDALONE}}", standalone_bar())
         .replace("{{LEN}}", f"{len(seq):,}".replace(",", "."))
         .replace("{{SEQ}}", wrapped)
+        .replace("{{RAW}}", seq)
         .replace("{{METHOD}}", METHOD)
         .replace("{{NAV}}", nav_script())
     )

@@ -107,6 +107,14 @@ _TEMPLATE = r"""<!doctype html>
   .note p{ margin:0; }
   section[hidden]{ display:none; }
   @media (max-width:600px){ .mapbox{ margin:0 -16px; } }
+  @media (pointer:coarse){   /* finger-sized controls */
+    .play{ min-height:44px; padding:10px 20px; }
+    input[type=range]{ height:44px; }
+    input[type=range]::-webkit-slider-thumb{ width:20px; height:32px; margin-top:-16px; }
+    input[type=range]::-moz-range-thumb{ width:20px; height:32px; }
+    .toggle{ min-height:44px; }
+    .toggle input{ width:22px; height:22px; }
+  }
 </style>
 </head>
 <body>

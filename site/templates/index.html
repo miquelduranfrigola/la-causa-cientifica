@@ -134,7 +134,12 @@
     if (e.source !== frame.contentWindow || !e.data) return;
     if (e.data.lcc === 'step') step(e.data.d | 0);
     else if (e.data.lcc === 'index') toIndex();
+    else if (e.data.lcc === 'scroll') html.classList.toggle('chrome-hidden', e.data.dir === 'down');
   });
+  function measure() { html.style.setProperty('--mast-h', document.querySelector('.mast').offsetHeight + 'px'); }
+  window.addEventListener('resize', measure);
+  measure();
+  window.addEventListener('hashchange', function () { html.classList.remove('chrome-hidden'); });
   window.addEventListener('hashchange', route);
   route();
 })();

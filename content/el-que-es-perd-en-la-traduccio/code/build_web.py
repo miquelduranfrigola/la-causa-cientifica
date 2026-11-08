@@ -124,6 +124,7 @@ _TEMPLATE = r"""<!doctype html>
   .orig>summary::after{ content:" +"; }
   .orig[open]>summary::after{ content:" –"; }
   .orig>summary:hover{ color:var(--accent); }
+  @media (pointer:coarse){ .orig>summary{ padding:13px 0; } }
   .orig .original{ margin-top:16px; font-style:italic; }
   .chaincount{ font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
   .maps{ list-style:none; margin:16px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:4px 24px; max-width:60rem; }

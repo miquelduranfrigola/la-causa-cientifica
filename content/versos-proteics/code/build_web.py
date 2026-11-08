@@ -237,8 +237,10 @@ _TEMPLATE = r"""<!doctype html>
   .viewer{ position:relative; width:100%; max-width:280px; aspect-ratio:1; pointer-events:none; }
   .viewer canvas{ pointer-events:none; }
 
-  .verse{ max-width:none; overflow-x:auto; }
-  .verse .v{ white-space:nowrap; }
+  @media (min-width:761px){
+    .verse{ max-width:none; overflow-x:auto; }
+    .verse .v{ white-space:nowrap; }
+  }
   .wd{ color:rgba(17,17,17,.25); transition:color .25s ease; }   /* grows: faint -> ink */
   .wd.on{ color:var(--ink); }
 
