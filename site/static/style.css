@@ -50,8 +50,18 @@ main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .cat a:hover .name, .cat a:focus-visible .name { color: var(--accent); }
 
 /* ---------- About ---------- */
-#about .title { margin: clamp(40px, 7vw, 88px) 0 clamp(24px, 4vw, 40px); }
+.book-head { display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); gap: clamp(32px, 6vw, 88px); align-items: start; margin-top: clamp(24px, 4vw, 56px); }
+.cover { margin: 0; }
+.cover img { display: block; width: 100%; height: auto; }
+.book-text .title { margin: clamp(0px, 2vw, 24px) 0 12px; }
+.book-meta { margin: 0 0 clamp(24px, 4vw, 40px); font: 400 .9375rem/1.4 var(--sans); }
 #about .prose { font-size: 1.25rem; }
+.pull { margin: clamp(28px, 4vw, 44px) 0; padding: 12px 0 0; border-top: 1px solid var(--rule); font-size: 1.5rem; line-height: 1.35; text-wrap: balance; }
+.pull cite { display: block; margin-top: 12px; font: 400 .9375rem/1.4 var(--sans); }
+.pull cite::before { content: "— "; }
+.more { margin-top: 28px; font: 400 .9375rem/1.4 var(--sans); }
+.about-label { margin-top: clamp(56px, 8vw, 104px); padding-top: 12px; border-top: 1px solid var(--rule); }
+@media (max-width: 760px) { .book-head { grid-template-columns: minmax(0, 1fr); } .cover { max-width: 20rem; } }
 .keys-label { margin-top: clamp(40px, 6vw, 72px); padding-top: 12px; border-top: 1px solid var(--rule); }
 .keys { margin: 0; max-width: var(--measure-prose); font: 400 .9375rem/1.5 var(--sans); }
 .keys div { display: grid; grid-template-columns: 5rem 1fr; padding: 4px 0; }

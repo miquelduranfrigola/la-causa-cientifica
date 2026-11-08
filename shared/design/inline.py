@@ -62,10 +62,12 @@ def add_book_tab(page: str, slug: str, *, section_class: str = "") -> str:
     for it in items:
         data = base64.b64encode((manifest.parent / it["image"]).read_bytes()).decode()
         alt = f"Pàgina {it['page']} del llibre, amb les frases marcades en groc: " + " ".join(it["marked"])
+        quote = "".join(f"<p>«{html.escape(s)}»</p>" for s in it["marked"])
         figures.append(
             f'<figure class="leaf"><img src="data:image/webp;base64,{data}" width="{it["width"]}" '
             f'height="{it["height"]}" alt="{html.escape(alt)}" loading="lazy">'
-            f'<figcaption>Al llibre, p.&nbsp;{it["page"]}</figcaption></figure>'
+            f'<figcaption><span class="label">Al llibre</span>'
+            f'<span class="ref">La causa científica, p.&nbsp;{it["page"]}</span>{quote}</figcaption></figure>'
         )
     classes = f"view book {section_class}".strip()
     section = f'<section id="llibre" class="{classes}" hidden><div class="leaves">{"".join(figures)}</div></section>\n'

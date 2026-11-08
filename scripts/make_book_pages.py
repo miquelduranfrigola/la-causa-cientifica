@@ -55,9 +55,9 @@ def trim_rect(page: pymupdf.Page, cfg: dict) -> pymupdf.Rect:
     return pymupdf.Rect(r.x0 + m, r.y0 + m, r.x1 - m, r.y1 - m)
 
 
-def find_runs(page: pymupdf.Page, sentence: str) -> list[pymupdf.Rect]:
+def find_runs(page: pymupdf.Page, sentence: str, clip: pymupdf.Rect) -> list[pymupdf.Rect]:
     """Return one rectangle per printed line that the sentence runs over."""
-    words = page.get_text("words")  # x0, y0, x1, y1, word, block, line, wordno
+    words = page.get_text("words", clip=clip)  # x0, y0, x1, y1, word, block, line, wordno
     flat: list[tuple[str, tuple]] = []
     for w in words:
         for t in tokens(w[4]):
@@ -76,9 +76,10 @@ def find_runs(page: pymupdf.Page, sentence: str) -> list[pymupdf.Rect]:
     return []
 
 
-def sentences_of(page: pymupdf.Page) -> list[str]:
+def sentences_of(page: pymupdf.Page, clip: pymupdf.Rect) -> list[str]:
     """Split a page's text into sentences long enough to be worth marking."""
-    text = " ".join(page.get_text("text").split())
+    text = " ".join(page.get_text("text", clip=clip).split())
+    text = re.sub(r"^\d{1,3}\s+", "", text)  # running page number
     parts = re.split(r"(?<=[.!?…»])\s+(?=[«\"A-ZÀ-Ý])", text)
     return [p for p in parts if len(tokens(p)) >= 6]
 
@@ -111,12 +112,12 @@ def render(doc: pymupdf.Document, printed: int, sentences: list[str], cfg: dict,
     img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
     chosen = list(sentences)
     if not chosen:
-        pool = sentences_of(page)
+        pool = sentences_of(page, clip)
         if pool:
             chosen = [random.Random(seed).choice(pool)]
     boxes, marked = [], []
     for s in chosen:
-        runs = find_runs(page, s)
+        runs = find_runs(page, s, clip)
         if not runs:
             print(f"  warning: sentence not found on p. {printed}: {s[:60]!r}", file=sys.stderr)
             continue

@@ -50,7 +50,7 @@ pip install -r site/requirements.txt
 python site/build_site.py            # add --out DIR to change output
 ```
 
-The site builder reads each `content/<slug>/metadata.yml` and builds a shell (masthead, catalogue home using each poem's `summary:`, "Sobre el projecte" page) that shows each piece (its committed `index.html`, wired via `page:`) in an iframe under a slim prev/next bar. Rebuild the page with the piece's `code/build_web.py`; rebuild the site with `site/build_site.py`. The `_site/` folder is a disposable, git-ignored build output (a `dist/`), regenerated on every build — the only committed page is each poem's `index.html`.
+The site builder reads each `content/<slug>/metadata.yml` and builds a shell (masthead, catalogue home using each poem's `summary:`, "Sobre el llibre" page) that shows each piece (its committed `index.html`, wired via `page:`) in an iframe under a slim prev/next bar. Rebuild the page with the piece's `code/build_web.py`; rebuild the site with `site/build_site.py`. The `_site/` folder is a disposable, git-ignored build output (a `dist/`), regenerated on every build — the only committed page is each poem's `index.html`.
 
 ## Conventions to preserve
 

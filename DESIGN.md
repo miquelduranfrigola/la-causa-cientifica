@@ -132,9 +132,9 @@ Text on paper meets 4.5:1 contrast. Figures look like printed plates: ink and th
 
 ### Shell (home, about, piece)
 
-- **Masthead:** wordmark left (links home), "Peces" and "Sobre el projecte" right, one rule under.
+- **Masthead:** wordmark left (links home), "Peces" and "Sobre el llibre" right, one rule under.
 - **Home:** one short Catalan intro, then the catalogue: per row a blue numeral, a large serif title and the roman one-line `summary:`; hairlines between rows. Hover and focus turn the title blue. Catalogue links are real URLs (`slug/`) that the page routes by hash.
-- **About ("Sobre el projecte"):** a few plain paragraphs, then the keyboard shortcuts.
+- **About ("Sobre el llibre"):** the cover photograph beside the back-cover text, one pull quote, a link to the publisher's catalogue; then "Sobre aquest web" (a few plain paragraphs) and the keyboard shortcuts.
 - **Piece view:** a bar (`← Totes les peces`, `03 / 06`, `← Anterior  Següent →`) above the piece's iframe. The piece fills the window; the browser Back button steps through pieces.
 - **Footer:** author and GitHub link on a rule.
 

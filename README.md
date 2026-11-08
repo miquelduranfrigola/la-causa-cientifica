@@ -14,7 +14,7 @@ Each piece lives in `content/<slug>/` with its text, its Python code and a self-
 | `book/` | The printed book: configuration, the facsimile pages the pieces point to |
 | `shared/design/` | The design layer (tokens, base CSS, fonts, keyboard script) inlined into every page |
 | `site/` | The static site generator (`build_site.py`, templates, styles) |
-| `scripts/` | `new_poem.py`, `check_design.py`, `make_social.py`, `make_book_pages.py`, `fetch_assets.py` |
+| `scripts/` | `new_poem.py`, `check_design.py`, `make_social.py`, `make_book_pages.py`, `make_cover_photo.py`, `fetch_assets.py` |
 | `social/` | Generated share cards and icons |
 | `_template/poem/` | Skeleton copied by `new_poem.py` |
 
@@ -28,6 +28,7 @@ python site/build_site.py          # builds the site into _site/
 python scripts/check_design.py     # checks DESIGN.md rules (also runs in CI)
 python scripts/new_poem.py "Títol del poema"
 python scripts/make_book_pages.py  # renders the book pages each piece cites (needs the book PDF)
+python scripts/make_cover_photo.py # renders the cover packshot for the About page
 ```
 
 Large files are not stored in git. They are listed in `drive-manifest.yml` files and fetched with `scripts/fetch_assets.py`.

@@ -145,8 +145,14 @@ pre { margin: 0; overflow-x: auto; }
   a { color: inherit; }
 }
 
-/* Al llibre: facsimile of the printed page, flat, with a hairline edge. */
-.leaves{ display:flex; flex-wrap:wrap; gap:clamp(24px,4vw,48px); align-items:flex-start; }
-.leaf{ margin:0; flex:0 1 26rem; max-width:100%; }
+/* Al llibre: facsimile of the printed page, flat, with a hairline edge, and its citation. */
+.book{ padding-top:clamp(24px,4vw,40px); }
+.leaves{ display:grid; gap:clamp(32px,5vw,64px); }
+.leaf{ margin:0; display:grid; grid-template-columns:minmax(0,26rem) minmax(0,1fr); gap:clamp(24px,4vw,56px); align-items:start; }
 .leaf img{ display:block; width:100%; height:auto; border:1px solid var(--rule); background:#fff; }
-.leaf figcaption{ font:400 .8125rem/1.4 var(--sans); margin-top:.75rem; }
+.leaf figcaption{ font-size:1.125rem; line-height:1.5; max-width:var(--measure-prose); }
+.leaf .label, .leaf .ref{ display:block; font-family:var(--sans); font-size:.8125rem; line-height:1.4; }
+.leaf .label{ font-weight:600; }
+.leaf .ref{ margin-bottom:1.25rem; }
+.leaf figcaption p{ margin:0 0 .75em; text-wrap:pretty; }
+@media (max-width: 760px){ .leaf{ grid-template-columns:minmax(0,1fr); } }

@@ -1,8 +1,24 @@
-<h1 class="title">Sobre el projecte</h1>
+{% if cover_w %}<div class="book-head">{% else %}<div class="book-head no-cover">{% endif %}
+  {% if cover_w %}<figure class="cover">
+    <img src="static/cover.webp" width="{{ cover_w }}" height="{{ cover_h }}" alt="Coberta del llibre La causa científica, de Miquel Duran">
+  </figure>{% endif %}
+  <div class="book-text">
+    <h1 class="title">Sobre el llibre</h1>
+    <p class="book-meta">Miquel Duran · La Segona Perifèria · {{ book_pages }} pàgines</p>
+    <div class="prose">
+      <p>Al Miquel Duran, protagonista d’aquesta història, un professor li pregunta fins a quin punt l’importa la causa científica i quins sacrificis està disposat a fer per ella. Bona pregunta. També li podria haver demanat per la causa de l’amor, o per la crida de la terra. No serà ell qui respondrà. Ho farà la veu de la consciència deslliurada del seu cos, que el sobrevola com un núvol, com un dron, com un dit acusador.</p>
+      <p><em>La causa científica</em> és una novel·la insòlita. Parla de trastorns i cèl·lules amigues i enemigues de la vida, d’afronautes, de diagrames i maquetes, de relacions fallides, de recerques fallides, de nissagues que s’acaben, de masies gironines i suburbis de ciutat africana. I tot amb una llengua i un estil refinadíssims, amb imatges d’una bellesa nova i estranya, de paisatge molecular.</p>
+      <blockquote class="pull">«<em>La causa científica</em> demostra que és possible escriure alta literatura amb mirada científica; o que la ciència és essencialment literària, en mans d’un artista»<cite>Jordi Carrión</cite></blockquote>
+      <p class="more"><a class="textlink" href="{{ publisher_url }}" target="_blank" rel="noopener">Catàleg de La Segona Perifèria ↗</a></p>
+    </div>
+  </div>
+</div>
+
+<h2 class="label about-label">Sobre aquest web</h2>
 <div class="prose">
-  <p>La causa científica és un recull de poemes en català escrits amb l’ajuda de l’ordinador. Cada peça té el seu text, la seva descripció i el codi, en Python, que l’ha ajudada a néixer.</p>
+  <p>El web amplia el llibre. Són poemes i imatges fets amb codi, i cada peça té tres coses: el text o la imatge, la metodologia animada que explica com es va fer, i la pàgina del llibre on té l’origen, amb les frases marcades en groc.</p>
   <p>El codi no és una il·lustració, sinó part del procés. Hi ha poemes que es pleguen com a proteïnes, un que muta com un tumor i un altre que és el genoma reconstruït d’un llangardaix extingit.</p>
-  <p>Tot és obert. Els textos, les dades i el codi són al repositori de GitHub. Cada pàgina és autocontinguda i no demana res a cap servei extern.</p>
+  <p>Tot és obert. Els textos, les dades i el codi són <a class="textlink" href="{{ repo_url }}" target="_blank" rel="noopener">al repositori</a>. Cada pàgina és autocontinguda i no demana res a cap servei extern.</p>
 </div>
 
 <h2 class="label keys-label">Dreceres de teclat</h2>
