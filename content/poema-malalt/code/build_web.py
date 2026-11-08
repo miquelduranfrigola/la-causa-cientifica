@@ -121,7 +121,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">Poema malalt</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub">L’evolució d’un poema de {{AUTHOR}}, <span style="font-style:normal">«{{SEED}}»</span>, a força de mutacions</p>
   </header>
   <nav><ul class="subnav">

@@ -53,7 +53,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">Llangardaix extingit</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub">Genoma mitocondrial inferit de l’avantpassat de <i>Podarcis muralis</i> i <i>Varanus salvator</i></p>
   </header>
   <nav><ul class="subnav">

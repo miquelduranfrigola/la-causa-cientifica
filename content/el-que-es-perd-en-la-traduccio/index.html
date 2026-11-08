@@ -33,7 +33,7 @@
    Class vocabulary (poem pages):
      .page      page container (gutters, max width)
      .subnav    text menu of views inside a piece (a.on = current)
-     .head      title block: h1.title + .by
+     .head      title block: h1.title + .sub
      .verse     poem text; .v = one line, .br = stanza gap
      .prose     running text (methodology, notes)
      .label     small bold sans label above a block
@@ -101,8 +101,7 @@ a:active { color: var(--accent); }
   letter-spacing: -.02em;
   text-wrap: balance;
 }
-.by { margin: 16px 0 0; font-size: 1.25rem; line-height: 1.35; }
-.sub { margin: 4px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
+.sub { margin: 16px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
 
 /* ---------- Text ---------- */
 .verse { font-size: 1.25rem; line-height: 1.6; max-width: var(--measure-verse); }
@@ -149,8 +148,7 @@ pre { margin: 0; overflow-x: auto; }
 @media (max-width: 640px) {
   .head { padding: 20px 0 16px; }
   .title { font-size: clamp(2rem, 9.5vw, 2.75rem); line-height: 1.06; }
-  .by { margin-top: 10px; font-size: 1.0625rem; }
-  .sub { font-size: 1rem; margin-top: 2px; }
+  .sub { font-size: 1rem; margin-top: 10px; }
   .subnav { padding: 8px 0; }
 }
 
@@ -158,7 +156,6 @@ pre { margin: 0; overflow-x: auto; }
 @media (max-height: 520px) {
   .head { padding: 20px 0 16px; }
   .title { font-size: clamp(1.75rem, 5vw, 2.5rem); }
-  .by { margin-top: 8px; }
 }
 
 /* ---------- Opened outside the shell ---------- */
@@ -212,7 +209,6 @@ pre { margin: 0; overflow-x: auto; }
 <div class="page">
   <header class="head">
     <h1 class="title">El que es perd en la traducció</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub"><i>Veinte poemas de amor y una canción desesperada</i>, de Pablo Neruda, despoetitzat amb 104 traduccions automàtiques</p>
   </header>
   <nav><ul class="subnav">

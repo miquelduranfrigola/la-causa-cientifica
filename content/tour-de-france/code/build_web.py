@@ -136,7 +136,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">Tour de França</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub">{{NYEARS}} edicions, de {{FIRST}} a {{LAST}}, traçades etapa a etapa</p>
   </header>
   <nav><ul class="subnav">

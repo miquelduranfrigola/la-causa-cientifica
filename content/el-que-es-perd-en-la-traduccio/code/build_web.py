@@ -142,7 +142,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">El que es perd en la traducció</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub"><i>Veinte poemas de amor y una canción desesperada</i>, de Pablo Neruda, despoetitzat amb 104 traduccions automàtiques</p>
   </header>
   <nav><ul class="subnav">

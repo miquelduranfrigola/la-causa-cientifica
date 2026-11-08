@@ -272,7 +272,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">Versos proteics</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub">Cada poema, plegat com una proteïna amb ESMFold</p>
   </header>
   <nav><ul class="subnav">{{MENU}}</ul></nav>

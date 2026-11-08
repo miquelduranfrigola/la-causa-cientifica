@@ -128,7 +128,7 @@ Text on paper meets 4.5:1 contrast. Figures look like printed plates: ink and th
 
 ### Components (shared vocabulary in `shared/design/base.css`)
 
-`.page` container · `.head` title block (`.title`, `.by` author, `.sub` plain descriptor) · `.subnav` text menu of views (current: accent + 1px underline) · `.verse` poem text (`.v` line, `.br` stanza gap) · `.prose` running text · `.label` small bold grotesque heading · `.how` "Com està fet" section (hairline above) · `.code` / `pre` machine text · `.fig` + `.cap` figure and caption · `.hair` rule · `.standalone` bar shown only when a page is opened outside the shell.
+`.page` container · `.head` title block (`.title`, `.sub` plain descriptor; no author byline, the author is named once in the shell) · `.subnav` text menu of views (current: accent + 1px underline) · `.verse` poem text (`.v` line, `.br` stanza gap) · `.prose` running text · `.label` small bold grotesque heading · `.how` "Com està fet" section (hairline above) · `.code` / `pre` machine text · `.fig` + `.cap` figure and caption · `.hair` rule · `.standalone` bar shown only when a page is opened outside the shell.
 
 ### Shell (home, about, piece)
 

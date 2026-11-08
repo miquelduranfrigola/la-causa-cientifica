@@ -44,7 +44,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">{{TITLE}}</h1>
-    <p class="by">{{AUTHOR}}</p>
     <p class="sub">{{SUMMARY}}</p>
   </header>
   <nav><ul class="subnav">
@@ -100,7 +99,6 @@ def build() -> Path:
         .replace("{{STANDALONE}}", standalone_bar())
         .replace("{{NAV}}", nav_script())
         .replace("{{TITLE}}", html.escape(meta["title"]))
-        .replace("{{AUTHOR}}", html.escape(meta.get("author", "")))
         .replace("{{SUMMARY}}", html.escape(meta.get("summary", "")))
         .replace("{{VERSE}}", verses(poem))
         .replace("{{METHOD}}", prose(meta.get("description")))

@@ -198,7 +198,6 @@ _TEMPLATE = r"""<!doctype html>
 <div class="page">
   <header class="head">
     <h1 class="title">Hexasíl·labs de químic</h1>
-    <p class="by">Miquel Duran-Frigola</p>
     <p class="sub">Una vida en vuit edats, dita amb noms de molècules</p>
   </header>
   <nav><ul class="subnav">
