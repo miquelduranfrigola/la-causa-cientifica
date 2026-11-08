@@ -23,7 +23,7 @@
 
   --gutter: clamp(24px, 6vw, 96px);
   /* left/right inset shared by masthead, bar and pages; also clears a phone notch in landscape */
-  --edge: max(var(--gutter), calc((100vw - 1280px) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --edge: max(var(--gutter), calc((100vw - 80rem) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --measure-verse: 34em;
   --measure-prose: 38em;
   color-scheme: light;
@@ -43,6 +43,10 @@
      .hair      hairline rule
 */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Everything is sized in rem, so large screens simply scale the whole design up. */
+@media (min-width: 1800px) { html { font-size: 112.5%; } }
+@media (min-width: 2300px) { html { font-size: 131.25%; } }
 
 html { background: var(--paper); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: rgba(29, 47, 209, .12); }
 body {
@@ -88,17 +92,17 @@ a:active { color: var(--accent); }
 .subnav .gap { flex: 1 1 100%; height: 0; }   /* forces a new row, e.g. before "Metodologia" */
 
 /* ---------- Title block ---------- */
-.head { padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+.head { padding: clamp(28px, 4vw, 48px) 0 clamp(20px, 3vw, 32px); }
 .title {
   margin: 0;
   font-weight: 400;
-  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  font-size: clamp(2.5rem, 5.2vw, 4rem);
   line-height: 1.04;
   letter-spacing: -.02em;
   text-wrap: balance;
 }
 .by { margin: 16px 0 0; font-size: 1.25rem; line-height: 1.35; }
-.sub { margin: 4px 0 0; font-style: italic; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
+.sub { margin: 4px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
 
 /* ---------- Text ---------- */
 .verse { font-size: 1.25rem; line-height: 1.6; max-width: var(--measure-verse); }
@@ -123,7 +127,15 @@ pre { margin: 0; overflow-x: auto; }
 
 /* ---------- Figures (printed plates: ink + one blue) ---------- */
 .fig { margin: 0; }
-.cap { margin-top: 8px; font-style: italic; font-size: .9375rem; line-height: 1.45; max-width: 46em; }
+.cap { margin-top: 8px; font: 400 .8125rem/1.45 var(--sans); max-width: 46em; }
+
+/* Touch: real 44px boxes (the underline moves to text-decoration so it hugs the text). */
+@media (pointer: coarse) {
+  .subnav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border-bottom: 0; }
+  .subnav a::after { display: none; }
+  .subnav a.on { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .4em; }
+  .subnav { gap: 0 20px; padding: 0; }
+}
 
 /* ---------- Phones ---------- */
 @media (max-width: 760px) {
@@ -131,6 +143,15 @@ pre { margin: 0; overflow-x: auto; }
   /* Verses wrap with a hanging indent instead of scrolling sideways. */
   .verse { overflow-x: visible; }
   .verse .v { white-space: normal; padding-left: 1.25em; text-indent: -1.25em; }
+}
+
+/* Narrow phones: a tighter title block so the piece starts on the first screen. */
+@media (max-width: 640px) {
+  .head { padding: 20px 0 16px; }
+  .title { font-size: clamp(2rem, 9.5vw, 2.75rem); line-height: 1.06; }
+  .by { margin-top: 10px; font-size: 1.0625rem; }
+  .sub { font-size: 1rem; margin-top: 2px; }
+  .subnav { padding: 8px 0; }
 }
 
 /* Short screens (phones in landscape): a quieter title block. */
@@ -157,11 +178,17 @@ pre { margin: 0; overflow-x: auto; }
   .pauthor{ margin:8px 0 0; font-size:1.125rem; }
 
   /* structures (left, stacked) · poem (right, sized to its longest verse so no line is cut) */
-  .split{ display:grid; grid-template-columns:280px max-content; gap:clamp(24px,4vw,64px);
+  .split{ display:grid; grid-template-columns:17.5rem max-content; gap:clamp(24px,4vw,64px);
           align-items:start; margin:clamp(28px,4vw,48px) 0 0; }
-  @media (max-width:760px){ .split{ grid-template-columns:minmax(0,1fr); } }
   .structures{ display:flex; flex-direction:column; gap:clamp(14px,3vw,22px); align-items:center; }
-  .viewer{ position:relative; width:100%; max-width:280px; aspect-ratio:1; pointer-events:none; }
+  /* phones: the poem comes first, the folds follow as a compact row (no 600px of empty plate before the verse) */
+  @media (max-width:760px){
+    .split{ grid-template-columns:minmax(0,1fr); }
+    .verse{ order:-1; }
+    .structures{ display:grid; grid-template-columns:repeat(auto-fit,minmax(7.5rem,1fr)); gap:12px; }
+    .structures .viewer{ justify-self:center; }
+  }
+  .viewer{ position:relative; width:100%; max-width:17.5rem; aspect-ratio:1; pointer-events:none; }
   .viewer canvas{ pointer-events:none; }
 
   @media (min-width:761px){
@@ -177,8 +204,12 @@ pre { margin: 0; overflow-x: auto; }
   .res.on{ color:var(--c); }
 
   .prose{ font-size:1.25rem; }
-  .maps{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px 24px; max-width:760px; }
-  .map i{ font-style:italic; }
+  .maps{ display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,11.25rem),1fr)); gap:8px 24px; max-width:47.5rem; }
+  .map{ overflow-wrap:anywhere; }
+  @media (prefers-reduced-motion:reduce){
+    .entry{ animation:none; }
+    .wd,.res{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -187,7 +218,7 @@ pre { margin: 0; overflow-x: auto; }
   <header class="head">
     <h1 class="title">Versos proteics</h1>
     <p class="by">Miquel Duran-Frigola</p>
-    <p class="sub">Cada poema, plegat com una proteïna amb <i>ESMFold</i></p>
+    <p class="sub">Cada poema, plegat com una proteïna amb ESMFold</p>
   </header>
   <nav><ul class="subnav"><li><a data-sec="poem-salvat-res-no-es-mesqui" href="#poem-salvat-res-no-es-mesqui">Res no és mesquí</a></li>
 <li><a data-sec="poem-pere-quart-corrandes-exili" href="#poem-pere-quart-corrandes-exili">Corrandes d’exili</a></li>
@@ -204,11 +235,11 @@ pre { margin: 0; overflow-x: auto; }
 
       <div class="how">
         <h3 class="label">Correspondència directa</h3>
-        <div class="maps"><span class="map"><b class="code">a</b> → A <i>alanina</i></span><span class="map"><b class="code">c</b> → C <i>cisteïna</i></span><span class="map"><b class="code">d</b> → D <i>aspartat</i></span><span class="map"><b class="code">e</b> → E <i>glutamat</i></span><span class="map"><b class="code">f</b> → F <i>fenilalanina</i></span><span class="map"><b class="code">g</b> → G <i>glicina</i></span><span class="map"><b class="code">h</b> → H <i>histidina</i></span><span class="map"><b class="code">i</b> → I <i>isoleucina</i></span><span class="map"><b class="code">k</b> → K <i>lisina</i></span><span class="map"><b class="code">l</b> → L <i>leucina</i></span><span class="map"><b class="code">m</b> → M <i>metionina</i></span><span class="map"><b class="code">n</b> → N <i>asparagina</i></span><span class="map"><b class="code">p</b> → P <i>prolina</i></span><span class="map"><b class="code">q</b> → Q <i>glutamina</i></span><span class="map"><b class="code">r</b> → R <i>arginina</i></span><span class="map"><b class="code">s</b> → S <i>serina</i></span><span class="map"><b class="code">t</b> → T <i>treonina</i></span><span class="map"><b class="code">v</b> → V <i>valina</i></span><span class="map"><b class="code">y</b> → Y <i>tirosina</i></span></div>
+        <div class="maps"><span class="map"><b class="code">a</b> → A alanina</span><span class="map"><b class="code">c</b> → C cisteïna</span><span class="map"><b class="code">d</b> → D aspartat</span><span class="map"><b class="code">e</b> → E glutamat</span><span class="map"><b class="code">f</b> → F fenilalanina</span><span class="map"><b class="code">g</b> → G glicina</span><span class="map"><b class="code">h</b> → H histidina</span><span class="map"><b class="code">i</b> → I isoleucina</span><span class="map"><b class="code">k</b> → K lisina</span><span class="map"><b class="code">l</b> → L leucina</span><span class="map"><b class="code">m</b> → M metionina</span><span class="map"><b class="code">n</b> → N asparagina</span><span class="map"><b class="code">p</b> → P prolina</span><span class="map"><b class="code">q</b> → Q glutamina</span><span class="map"><b class="code">r</b> → R arginina</span><span class="map"><b class="code">s</b> → S serina</span><span class="map"><b class="code">t</b> → T treonina</span><span class="map"><b class="code">v</b> → V valina</span><span class="map"><b class="code">y</b> → Y tirosina</span></div>
       </div>
 
       <div class="how">
-        <h3 class="label">Escapaments amb W (<i>triptòfan</i>)</h3>
+        <h3 class="label">Escapaments amb W (triptòfan)</h3>
         <div class="maps"><span class="map"><b class="code">o</b> → WQ</span><span class="map"><b class="code">u</b> → WV</span><span class="map"><b class="code">b</b> → WP</span><span class="map"><b class="code">j</b> → WG</span><span class="map"><b class="code">z</b> → WS</span><span class="map"><b class="code">x</b> → WH</span><span class="map"><b class="code">ç</b> → WK</span><span class="map"><b class="code">w</b> → WW</span><span class="map"><b class="code">l·l</b> → WL</span></div>
       </div>
     </section>
@@ -451,6 +482,12 @@ pre { margin: 0; overflow-x: auto; }
         });
       }
       var st = {stop:false, timer:null};
+      if(REDUCED){  // no looping: show the whole poem and the finished fold at once
+        words.forEach(function(w, k){ if(wd[k]) wd[k].classList.add('on'); if(res[k]) res[k].classList.add('on'); });
+        fDom = off.length; fB = 0; paint();
+        active = {id:id, viewers:viewers, st:st};
+        return;
+      }
       function step(){
         if(st.stop) return;
         if(i === 0){  // restart the fill

@@ -72,7 +72,13 @@ def _payload():
 def build() -> Path:
     payload = _payload()
     src = payload["source"]
-    conserved_note = payload.get("conserved", {}).get("note", "")
+    # The data note is in English; the page is Catalan, so build the sentence from the words.
+    words = payload.get("conserved", {}).get("words", [])
+    conserved_note = ""
+    if len(words) == 2:
+        conserved_note = (f"El vers «Res no és mesquí» no pot mutar: «{words[0]}» no té cap adjectiu "
+                          f"vàlid a una sola edició de distància, i «{words[1]}» tampoc no en té. "
+                          "És un gen conservat que emergeix per si sol.")
 
     page = (_TEMPLATE
             .replace("{{DESIGN}}", design_css())
@@ -100,9 +106,12 @@ _TEMPLATE = r"""<!doctype html>
 {{DESIGN}}
   .page > section{ margin-top:clamp(24px,4vw,40px); }
   .dims{ margin:0 0 clamp(20px,3vw,32px); font:400 .875rem/1.4 var(--sans); min-height:1.4em; }
-  .dims i{ font:italic 400 1.0625rem/1.4 var(--serif); }
   .dims .arrow{ color:var(--accent); }
   .verse .v:empty{ height:1.6em; }
+  .verse .v{ overflow-wrap:anywhere; }
+  @media (max-width:40rem){ .dims{ min-height:2.8em; } }
+  @media (max-width:22rem){ .dims{ min-height:4.2em; } }
+  @media (prefers-reduced-motion:reduce){ .dims{ min-height:0; } }
   .mut{ color:var(--accent); }
 </style>
 </head>
@@ -129,7 +138,7 @@ _TEMPLATE = r"""<!doctype html>
         paraula muta per una sola lletra —substitució, inserció o deleció—, tal com
         les mutacions somàtiques del càncer. La mutació només sobreviu si (1) dona una
         paraula catalana real, (2) manté la categoria gramatical i la concordança, i
-        (3) el poema encara té sentit. Cada mot mutat s'encén en <span class="mut">blau</span>.</p>
+        (3) el poema encara té sentit. Cada mot mutat s’encén en <span class="mut">blau</span>.</p>
       <p>{{CONSERVED}}</p>
     </div>
   </section>
@@ -150,14 +159,38 @@ _TEMPLATE = r"""<!doctype html>
       for(var i=0;i<k;i++){ var st=DATA.steps[i]; lines[st.line]=st.plain; }
       return lines;
     }
+    // Reserve each verse's tallest variant so mutating words never shift the layout.
+    function fit(){
+      var box = document.getElementById('poemtext');
+      if(!box.offsetParent) return;
+      var sets = DATA.initLines.map(function(t){ return [t]; });
+      DATA.steps.forEach(function(st){ if(sets[st.line].indexOf(st.plain)<0) sets[st.line].push(st.plain); });
+      box.style.minHeight = '';
+      var probe = document.createElement('div');
+      probe.className = 'verse'; probe.setAttribute('aria-hidden','true');
+      probe.style.cssText = 'visibility:hidden;height:0;overflow:hidden';
+      box.parentNode.insertBefore(probe, box);
+      var total = 0;
+      sets.forEach(function(v){
+        var span = document.createElement('span'); span.className = 'v'; probe.appendChild(span);
+        var h = 0;
+        v.forEach(function(t){ span.innerHTML = t; h = Math.max(h, span.getBoundingClientRect().height); });
+        total += h;
+      });
+      probe.remove();
+      box.style.minHeight = Math.ceil(total) + 'px';
+    }
+    var rt = null;
+    window.addEventListener('resize', function(){ clearTimeout(rt); rt = setTimeout(fit, 150); });
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
     function paint(){
       var lines = linesAt(s), box = document.getElementById('poemtext'), dims = document.getElementById('dims');
       box.innerHTML = lines.map(function(t){ return '<span class="v">'+t+'</span>'; }).join('');
       if(s>=1){
         var st = DATA.steps[s-1];
         box.children[st.line].innerHTML = st.hi;
-        dims.innerHTML = 'Mutació '+st.n+' de '+N+' &nbsp; <i>'+st.before+'</i> <span class="arrow">→</span> <i>'+
-          st.after+'</i> &nbsp; '+st.pos+', '+st.edit;
+        dims.innerHTML = 'Mutació '+st.n+' de '+N+' &nbsp; '+st.before+' <span class="arrow">→</span> '+
+          st.after+' &nbsp; '+st.pos+', '+st.edit;
       } else {
         dims.innerHTML = 'Poema original';
       }
@@ -174,7 +207,7 @@ _TEMPLATE = r"""<!doctype html>
       entries.forEach(function(e){ e.hidden = e.id !== id; });
       links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
       if(timer){ clearTimeout(timer); timer=null; }
-      if(id==='poem'){ s=0; if(reduce){ s=N; paint(); } else { loop(); } }
+      if(id==='poem'){ fit(); s=0; if(reduce){ s=N; paint(); } else { loop(); } }
       window.scrollTo({top:0});
     }
     links.forEach(function(a){

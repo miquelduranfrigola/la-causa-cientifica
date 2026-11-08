@@ -141,7 +141,7 @@ body{{background:{bg};color:{fg}}}
 .mid{{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:{g['pad']//2}px 0 {g['pad']//2}px;min-height:0}}
 #titlebox{{flex:1;min-height:0;display:flex;align-items:flex-end}}
 #title{{font-weight:400;line-height:1.02;letter-spacing:-.02em;text-wrap:balance;max-width:100%}}
-.sum{{margin-top:{g['pad']//2}px;font-style:italic;font-size:{g['summary']}px;line-height:1.28;max-width:24em}}
+.sum{{margin-top:{g['pad']//2}px;font-size:{g['summary']}px;line-height:1.28;max-width:24em;text-wrap:balance}}
 .bot{{display:flex;justify-content:space-between;align-items:baseline;padding-top:{g['top']//2}px;border-top:{rule};font-size:{g['small']}px}}
 </style>
 <div class="card">
@@ -163,12 +163,11 @@ def verse_card(title: str, lines: list[str], author: str, number: str) -> str:
 .num{{font-size:30px;color:{ACCENT}}}
 .verse{{flex:1;display:flex;align-items:center;font-size:{size}px;line-height:1.3;letter-spacing:-.01em}}
 .bot{{display:flex;justify-content:space-between;align-items:baseline;padding-top:17px;border-top:2px solid {INK};font-size:22px;white-space:nowrap;gap:24px}}
-.ttl{{font-style:italic}}
 </style>
 <div class="card">
   <div class="top"><span class="word">{html.escape(SITE_TITLE)}</span><span class="num sans">{html.escape(number)}</span></div>
   <div class="verse"><p>{body}</p></div>
-  <div class="bot sans"><span>{html.escape(author)} · <span class="ttl" style="font-family:'Newsreader',serif;font-size:25px">{html.escape(title)}</span></span><span>{html.escape(DISPLAY_URL)}</span></div>
+  <div class="bot sans"><span>{html.escape(author)} · {html.escape(title)}</span><span>{html.escape(DISPLAY_URL)}</span></div>
 </div></html>"""
 
 
@@ -185,7 +184,7 @@ body{{background:{ACCENT};color:{PAPER}}}
 body{{background:{ACCENT};color:{PAPER}}}
 .card{{width:1584px;height:396px;padding:56px 72px;justify-content:space-between}}
 .t{{font-size:112px;line-height:1;font-weight:400;letter-spacing:-.025em}}
-.s{{font-style:italic;font-size:36px;line-height:1.25}}
+.s{{font-size:36px;line-height:1.25}}
 .u{{font-size:24px}}
 </style><div class="card"><div class="t">{html.escape(SITE_TITLE)}</div>
 <div style="display:flex;justify-content:space-between;align-items:baseline"><div class="s">Poemes en català escrits amb l’ajuda de l’ordinador.</div><div class="u sans">{html.escape(DISPLAY_URL)}</div></div></div></html>"""

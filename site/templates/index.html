@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
+<a class="skip" href="#main">Salta al contingut</a>
 <div class="app" id="app">
   <header class="mast">
     <a class="word" href="#" data-home>{{ site_title }}</a>
@@ -10,14 +11,14 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <section id="home" class="view" aria-label="Peces">
       <div class="wrap">
         <p class="intro">{{ site_intro }}</p>
         <ol class="cat">
           {% for poem in poems %}
           <li>
-            <a href="#{{ poem.slug }}" data-slug="{{ poem.slug }}">
+            <a href="{{ poem.slug }}/" data-slug="{{ poem.slug }}">
               <span class="n">{{ '%02d' % loop.index }}</span>
               <span class="t">
                 <span class="name">{{ poem.title }}</span>
@@ -81,6 +82,23 @@
     document.title = label ? label + ' — ' + TITLE : TITLE;
   }
 
+  /* Catalogue links are real URLs (for crawlers, new tabs, no-JS); in the page they route by hash. */
+  [].slice.call(document.querySelectorAll('.cat a[data-slug]')).forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+      e.preventDefault();
+      homeY = window.pageYOffset;
+      location.hash = '#' + a.dataset.slug;
+    });
+  });
+
+  document.querySelector('.skip').addEventListener('click', function (e) {
+    e.preventDefault();
+    if (!views.piece.hidden) { try { frame.contentWindow.focus(); } catch (x) {} }
+    else document.getElementById('main').focus();
+  });
+
+  var homeY = 0;
   function route() {
     var id = decodeURIComponent(location.hash.replace(/^#/, ''));
     var i = indexOf(id);
@@ -106,17 +124,22 @@
       setView('about', 'Sobre el projecte');
       window.scrollTo(0, 0);
     } else {
+      var cameFromPiece = !!currentSlug;
       setView('home', '');
       if (currentSlug) { currentSlug = null; try { frame.contentWindow.location.replace('about:blank'); } catch (e) {} }
-      window.scrollTo(0, 0);
+      window.scrollTo(0, cameFromPiece ? homeY : 0);
     }
   }
 
+  function reveal() { if (currentSlug) frame.classList.add('ready'); }
   frame.addEventListener('load', function () {
     if (!currentSlug) return;
-    frame.classList.add('ready');
+    reveal();
     try { frame.contentWindow.focus(); } catch (e) {}
   });
+  // Never leave the frame invisible if a load event is missed (slow network, back/forward cache).
+  setInterval(reveal, 1500);
+  window.addEventListener('pageshow', reveal);
 
   function step(d) {
     var i = indexOf(currentSlug), j = i + d;

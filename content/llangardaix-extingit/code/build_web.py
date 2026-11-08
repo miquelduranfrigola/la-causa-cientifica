@@ -25,7 +25,7 @@ l'avantpassat comú de la sargantana de paret (<i>Podarcis muralis</i>) i el var
 aquàtic (<i>Varanus salvator</i>), a partir de sis espècies vives.</p>
 <p>Es descarreguen els mitogenomes complets de GenBank (NCBI&nbsp;Entrez /
 Biopython), s'alineen gen a gen i s'infereix l'avantpassat per màxima
-versemblança amb el model <i>HKY85</i> i la poda de Felsenstein. Cada base
+versemblança amb el model HKY85 i la poda de Felsenstein. Cada base
 s'escriu en majúscula quan el posterior de la millor base supera 0,90; si no,
 s'escriu amb el codi d'ambigüitat IUPAC del conjunt mínim de bases que cobreix el
 90&nbsp;% del posterior —l'alfabet del dubte allà on el temps ha esborrat el
@@ -42,7 +42,7 @@ _TEMPLATE = r"""<!doctype html>
 <style>
 {{DESIGN}}
   .seqbox{ margin-top:clamp(28px,4vw,48px); }
-  .fasta-head{ margin:0 0 14px; word-break:break-all; }
+  .fasta-head{ margin:0 0 14px; overflow-wrap:anywhere; text-wrap:balance; }
   pre.seq{ font-size:.875rem; line-height:2; letter-spacing:.02em; white-space:pre; }
   .prose{ font-size:1.25rem; }
   section[hidden]{ display:none; }
@@ -80,6 +80,7 @@ _TEMPLATE = r"""<!doctype html>
     if(!document.getElementById(id)) id='obra';
     secs.forEach(function(s){ s.hidden = s.id!==id; });
     links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
+    if (typeof wrapSeq === 'function') wrapSeq();  // the genome may have been resized while hidden
   }
   links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); show(a.dataset.sec); window.scrollTo(0,0); }); });
   show('obra');
@@ -88,7 +89,7 @@ _TEMPLATE = r"""<!doctype html>
      so it never scrolls sideways on a phone. */
   var pre = document.getElementById('seq'), raw = pre.getAttribute('data-seq'), last = 0;
   function wrapSeq(){
-    if (!pre.offsetParent) return;
+    if (!pre || !pre.offsetParent) return;
     // Measure with an off-screen probe so the visible text (and the scroll position)
     // is only touched when the line length really changes.
     var probe = document.createElement('pre');

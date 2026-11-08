@@ -70,14 +70,14 @@ def _entry(m: dict) -> str:
 def _method_entry() -> str:
     seq = chain()
     maps = "".join(
-        f'<li class="map"><i>{html.escape(NAMES[c])}</i></li>' for c in seq)
+        f'<li class="map">{html.escape(NAMES[c])}</li>' for c in seq)
     return f"""
       <div class="prose">
         <p>Cada poema d'amor de Neruda ha travessat 104 traduccions
         automàtiques encadenades amb el traductor de Google: del castellà a
         l'estonià, de l'estonià al basc… tota la volta de l'abecedari de llengües
         i, finalment, de tornada al castellà. A cada salt el poema perd una mica
-        més; el que en torna és el residu <i>despoetitzat</i> —el sediment de sentit
+        més; el que en torna és el residu «despoetitzat», el sediment de sentit
         que sobreviu al viatge.</p>
         <p>Es mostra el resultat sense cap modificació, més enllà de
         petites correccions gramaticals. Els resultats són els de la tirada
@@ -114,7 +114,7 @@ _TEMPLATE = r"""<!doctype html>
 <title>El que es perd en la traducció</title>
 <style>
 {{DESIGN}}
-  .epigraph{ margin:0 0 clamp(40px,6vw,72px); font-style:italic; max-width:var(--measure-prose); }
+  .epigraph{ margin:0 0 clamp(40px,6vw,72px); max-width:var(--measure-prose); }
   .entry{ padding:clamp(32px,5vw,56px) 0; border-top:1px solid var(--rule); }
   .entry:first-of-type{ border-top:0; padding-top:0; }
   .etitle{ margin:0 0 clamp(16px,2.4vw,24px); font-weight:400; font-size:clamp(1.5rem,3vw,2rem); line-height:1.15; letter-spacing:-.01em; text-wrap:balance; }
@@ -125,11 +125,13 @@ _TEMPLATE = r"""<!doctype html>
   .orig[open]>summary::after{ content:" –"; }
   .orig>summary:hover{ color:var(--accent); }
   @media (pointer:coarse){ .orig>summary{ padding:13px 0; } }
-  .orig .original{ margin-top:16px; font-style:italic; }
-  .chaincount{ font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
-  .maps{ list-style:none; margin:16px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:4px 24px; max-width:60rem; }
+  .orig .original{ margin-top:16px; }
+  .chaincount{ display:inline-block; vertical-align:bottom; max-width:calc(100% - 6rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
+  .how>.label{ position:sticky; top:0; z-index:1; margin:0; padding:.5rem 0; background:var(--paper); }
+  .maps{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr)); gap:.25rem 1rem; max-width:60rem; }
   .map{ font-size:1rem; line-height:1.4; white-space:nowrap; transition:color .14s ease; }
-  .map.done{ opacity:.35; }
+  .map.done{ opacity:.5; }
+  @media (prefers-reduced-motion:reduce){ .map{ transition:none; } }
   .map.now{ color:var(--accent); }
   section[hidden]{ display:none; }
 </style>
@@ -148,7 +150,7 @@ _TEMPLATE = r"""<!doctype html>
   </ul></nav>
 
   <section id="poemes" style="margin-top:clamp(32px,5vw,56px)">
-    <p class="epigraph">«Poetry is what gets lost in translation.» — Robert Frost</p>
+    <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
     {{POEMS}}
   </section>
   <section id="meto" hidden style="margin-top:clamp(24px,4vw,40px)">

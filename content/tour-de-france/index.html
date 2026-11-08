@@ -23,7 +23,7 @@
 
   --gutter: clamp(24px, 6vw, 96px);
   /* left/right inset shared by masthead, bar and pages; also clears a phone notch in landscape */
-  --edge: max(var(--gutter), calc((100vw - 1280px) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --edge: max(var(--gutter), calc((100vw - 80rem) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --measure-verse: 34em;
   --measure-prose: 38em;
   color-scheme: light;
@@ -43,6 +43,10 @@
      .hair      hairline rule
 */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Everything is sized in rem, so large screens simply scale the whole design up. */
+@media (min-width: 1800px) { html { font-size: 112.5%; } }
+@media (min-width: 2300px) { html { font-size: 131.25%; } }
 
 html { background: var(--paper); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: rgba(29, 47, 209, .12); }
 body {
@@ -88,17 +92,17 @@ a:active { color: var(--accent); }
 .subnav .gap { flex: 1 1 100%; height: 0; }   /* forces a new row, e.g. before "Metodologia" */
 
 /* ---------- Title block ---------- */
-.head { padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+.head { padding: clamp(28px, 4vw, 48px) 0 clamp(20px, 3vw, 32px); }
 .title {
   margin: 0;
   font-weight: 400;
-  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  font-size: clamp(2.5rem, 5.2vw, 4rem);
   line-height: 1.04;
   letter-spacing: -.02em;
   text-wrap: balance;
 }
 .by { margin: 16px 0 0; font-size: 1.25rem; line-height: 1.35; }
-.sub { margin: 4px 0 0; font-style: italic; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
+.sub { margin: 4px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
 
 /* ---------- Text ---------- */
 .verse { font-size: 1.25rem; line-height: 1.6; max-width: var(--measure-verse); }
@@ -123,7 +127,15 @@ pre { margin: 0; overflow-x: auto; }
 
 /* ---------- Figures (printed plates: ink + one blue) ---------- */
 .fig { margin: 0; }
-.cap { margin-top: 8px; font-style: italic; font-size: .9375rem; line-height: 1.45; max-width: 46em; }
+.cap { margin-top: 8px; font: 400 .8125rem/1.45 var(--sans); max-width: 46em; }
+
+/* Touch: real 44px boxes (the underline moves to text-decoration so it hugs the text). */
+@media (pointer: coarse) {
+  .subnav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border-bottom: 0; }
+  .subnav a::after { display: none; }
+  .subnav a.on { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .4em; }
+  .subnav { gap: 0 20px; padding: 0; }
+}
 
 /* ---------- Phones ---------- */
 @media (max-width: 760px) {
@@ -131,6 +143,15 @@ pre { margin: 0; overflow-x: auto; }
   /* Verses wrap with a hanging indent instead of scrolling sideways. */
   .verse { overflow-x: visible; }
   .verse .v { white-space: normal; padding-left: 1.25em; text-indent: -1.25em; }
+}
+
+/* Narrow phones: a tighter title block so the piece starts on the first screen. */
+@media (max-width: 640px) {
+  .head { padding: 20px 0 16px; }
+  .title { font-size: clamp(2rem, 9.5vw, 2.75rem); line-height: 1.06; }
+  .by { margin-top: 10px; font-size: 1.0625rem; }
+  .sub { font-size: 1rem; margin-top: 2px; }
+  .subnav { padding: 8px 0; }
 }
 
 /* Short screens (phones in landscape): a quieter title block. */
@@ -151,20 +172,21 @@ pre { margin: 0; overflow-x: auto; }
   .readout{ display:flex; align-items:baseline; gap:8px 32px; flex-wrap:wrap; padding:clamp(20px,3vw,32px) 0 8px; }
   .yr{ font-size:clamp(3rem,8vw,5.5rem); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; color:var(--accent); }
   .stat{ margin:0; font-size:1.125rem; line-height:1.4; }
-  .stat i{ font-style:italic; }
   .mapbox{ margin:0 calc(-1 * var(--edge) + 8px); padding:0; }
-  svg.map{ width:100%; height:auto; max-height:78vh; display:block; }
+  svg.map{ width:100%; height:auto; max-height:max(16rem, calc(100vh - 13rem)); max-height:max(16rem, calc(100svh - 13rem)); display:block; margin:0 auto; }
   .land path{ fill:rgba(17,17,17,.035); stroke:var(--ink); stroke-opacity:.45; stroke-width:.6; vector-effect:non-scaling-stroke; }
   .route{ fill:none; stroke:var(--ink); stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
   .route.ghost{ stroke:rgba(17,17,17,.12); stroke-width:1; }
   .route.head{ stroke:var(--accent); stroke-width:2; }
   .draw{ transition:stroke-dashoffset var(--dur,.5s) ease; }
 
-  .controls{ display:flex; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:16px 0 0; border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
+  .controls{ position:sticky; bottom:0; z-index:2; background:var(--paper); box-shadow:-2rem 0 0 var(--paper), 2rem 0 0 var(--paper); display:flex; align-items:center; gap:8px 16px; flex-wrap:wrap; padding:12px 0 calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
   .play{ font:inherit; background:var(--paper); color:var(--ink); border:1px solid var(--ink); border-radius:0; padding:6px 16px; min-width:7.5em; cursor:pointer; }
-  .play:hover{ background:var(--ink); color:var(--paper); }
+  @media (hover:hover){ .play:hover{ background:var(--ink); color:var(--paper); } }
+  .play:active{ background:var(--ink); color:var(--paper); }
+  .tl{ flex:1 1 16rem; display:flex; align-items:center; gap:12px; min-width:0; }
   .rail{ font-variant-numeric:tabular-nums; }
-  input[type=range]{ flex:1; min-width:160px; height:24px; margin:0; background:transparent; accent-color:var(--accent); cursor:pointer; }
+  input[type=range]{ flex:1; min-width:min(160px,40vw); height:24px; margin:0; background:transparent; accent-color:var(--accent); cursor:pointer; }
   input[type=range]{ -webkit-appearance:none; appearance:none; }
   input[type=range]::-webkit-slider-runnable-track{ height:1px; background:var(--ink); }
   input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:12px; height:20px; margin-top:-10px; background:var(--accent); border:0; border-radius:0; }
@@ -177,7 +199,18 @@ pre { margin: 0; overflow-x: auto; }
   .note{ margin-top:2em; padding-top:12px; border-top:1px solid var(--rule); }
   .note p{ margin:0; }
   section[hidden]{ display:none; }
-  @media (max-width:600px){ .mapbox{ margin:0 -16px; } }
+  @media (max-width:600px){ .mapbox{ margin:0 -16px; } .readout{ padding-top:16px; } .tl{ order:3; flex-basis:100%; } .controls{ justify-content:space-between; } }
+  @media (min-width:56rem) and (min-aspect-ratio:5/4){   /* landscape desktop: figure beside readout and controls */
+    #map:not([hidden]){ display:grid; grid-template-columns:minmax(15rem,22rem) minmax(0,1fr); grid-template-rows:auto auto 1fr; gap:0 clamp(32px,5vw,80px); align-items:start; }
+    .readout{ grid-column:1; grid-row:1; flex-direction:column; align-items:flex-start; gap:8px; padding-top:clamp(8px,2vw,24px); }
+    .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:1rem; }
+    svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); }
+    .controls{ grid-column:1; grid-row:2; position:static; box-shadow:none; flex-direction:column; align-items:stretch; margin-top:16px; }
+    .controls .tl{ flex-basis:auto; }
+    .play{ align-self:flex-start; }
+  }
+  @media (max-height:32rem){ .controls{ position:static; box-shadow:none; } svg.map{ max-height:none; } }
+  @media (prefers-reduced-motion:reduce){ .draw{ transition:none; } }
   @media (pointer:coarse){   /* finger-sized controls */
     .play{ min-height:44px; padding:10px 20px; }
     input[type=range]{ height:44px; }
@@ -206,7 +239,7 @@ pre { margin: 0; overflow-x: auto; }
     <div class="readout">
       <div class="yr" id="yr" aria-live="off">1985</div>
       <p class="stat"><span id="ns">0</span> etapes · <span id="km">0</span> km</p>
-      <p class="stat"><i>Gran Sortida</i> <span id="dep">—</span></p>
+      <p class="stat">Gran Sortida <span id="dep">—</span></p>
     </div>
     <div class="mapbox"><svg class="map" id="svg" role="img" aria-label="Mapa d'Europa amb els recorreguts del Tour de França" preserveAspectRatio="xMidYMid meet">
       <g class="land" id="land"></g>
@@ -214,9 +247,11 @@ pre { margin: 0; overflow-x: auto; }
     </svg></div>
     <div class="controls">
       <button class="play" id="play" type="button">Reprodueix</button>
-      <span class="rail" id="y0">1985</span>
-      <input type="range" id="slider" min="0" value="0" step="1" aria-label="Any">
-      <span class="rail" id="y1">2026</span>
+      <div class="tl">
+        <span class="rail" id="y0">1985</span>
+        <input type="range" id="slider" min="0" value="0" step="1" aria-label="Any">
+        <span class="rail" id="y1">2026</span>
+      </div>
       <label class="toggle"><input type="checkbox" id="acc" checked> Acumula els anys</label>
     </div>
   </section>
@@ -249,12 +284,12 @@ pre { margin: 0; overflow-x: auto; }
 
   <section id="method" hidden style="margin-top:clamp(24px,4vw,40px)">
     <div class="prose">
-      <p>Cada dia de cada Tour, de 1985 a 2026 —904 etapes en
-         total—, es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
+      <p>Cada dia de cada Tour, de 1985 a 2026 (904 etapes en
+         total), es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
       <p class="label" style="margin-top:2em">Com es fa</p>
       <p>Les etapes s'extreuen dels articles de la Viquipèdia de cada edició
          (vila de sortida, vila d'arribada, distància i tipus). Cada vila es
-         geocodifica amb OpenStreetMap (<i>Nominatim</i>) i el traçat de cada etapa és
+         geocodifica amb OpenStreetMap (Nominatim) i el traçat de cada etapa és
          una corba de Bézier quadràtica entre els dos punts, corbada lleugerament
          perquè els recorreguts repetits se superposin i el mapa sembli un
          palimpsest. Les contrarellotges i pròlegs en circuit es dibuixen com un

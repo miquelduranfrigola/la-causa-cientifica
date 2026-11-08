@@ -24,7 +24,7 @@ main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 /* ---------- Catalogue (home) ---------- */
 .intro {
   max-width: 30em;
-  margin: clamp(48px, 9vw, 112px) 0 clamp(48px, 8vw, 96px);
+  margin: clamp(32px, 5vw, 64px) 0 clamp(28px, 4vw, 48px);
   font-size: clamp(1.5rem, 2.8vw, 2.125rem);
   line-height: 1.3;
   letter-spacing: -.01em;
@@ -36,7 +36,7 @@ main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
   display: grid;
   grid-template-columns: 3.5rem minmax(0, 1fr);
   gap: 0 16px;
-  padding: 24px 0 28px;
+  padding: 20px 0 24px;
 }
 .cat .n { padding-top: 1.1em; color: var(--accent); font: 400 .875rem/1 var(--sans); font-variant-numeric: tabular-nums; }
 .cat .name {
@@ -46,16 +46,16 @@ main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
   letter-spacing: -.02em;
   text-wrap: balance;
 }
-.cat .sum { display: block; margin-top: 10px; font-style: italic; font-size: 1.125rem; line-height: 1.45; max-width: 40em; }
+.cat .sum { display: block; margin-top: 10px; font-size: 1.125rem; line-height: 1.45; max-width: 40em; }
 .cat a:hover .name, .cat a:focus-visible .name { color: var(--accent); }
 
 /* ---------- About ---------- */
 #about .title { margin: clamp(40px, 7vw, 88px) 0 clamp(24px, 4vw, 40px); }
 #about .prose { font-size: 1.25rem; }
-.keys-label { margin-top: clamp(40px, 6vw, 72px); padding-top: 12px; border-top: 1px solid var(--rule); max-width: var(--measure-prose); }
+.keys-label { margin-top: clamp(40px, 6vw, 72px); padding-top: 12px; border-top: 1px solid var(--rule); }
 .keys { margin: 0; max-width: var(--measure-prose); font: 400 .9375rem/1.5 var(--sans); }
 .keys div { display: grid; grid-template-columns: 5rem 1fr; padding: 4px 0; }
-.keys dt { font-family: var(--mono); font-size: .8125rem; }
+.keys dt { font-weight: 600; }
 .keys dd { margin: 0; }
 
 /* ---------- Footer ---------- */
@@ -118,3 +118,13 @@ html.mode-piece .app { height: 100dvh; min-height: 0; }
   .bar { padding-top: 6px; padding-bottom: 6px; }
 }
 .app { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Very narrow phones: the wordmark already links home, so drop the duplicate link. */
+@media (max-width: 380px) {
+  .mast nav a[data-link="home"] { display: none; }
+}
+
+/* ---------- Skip link ---------- */
+.skip { position: absolute; left: var(--edge); top: -4rem; z-index: 10; padding: 8px 12px; background: var(--ink); color: var(--paper); font: 400 .875rem/1.4 var(--sans); }
+.skip:focus { top: 8px; color: var(--paper); }
+main:focus { outline: none; }

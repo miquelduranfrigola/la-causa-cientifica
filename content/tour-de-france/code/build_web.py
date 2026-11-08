@@ -80,20 +80,21 @@ _TEMPLATE = r"""<!doctype html>
   .readout{ display:flex; align-items:baseline; gap:8px 32px; flex-wrap:wrap; padding:clamp(20px,3vw,32px) 0 8px; }
   .yr{ font-size:clamp(3rem,8vw,5.5rem); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; color:var(--accent); }
   .stat{ margin:0; font-size:1.125rem; line-height:1.4; }
-  .stat i{ font-style:italic; }
   .mapbox{ margin:0 calc(-1 * var(--edge) + 8px); padding:0; }
-  svg.map{ width:100%; height:auto; max-height:78vh; display:block; }
+  svg.map{ width:100%; height:auto; max-height:max(16rem, calc(100vh - 13rem)); max-height:max(16rem, calc(100svh - 13rem)); display:block; margin:0 auto; }
   .land path{ fill:rgba(17,17,17,.035); stroke:var(--ink); stroke-opacity:.45; stroke-width:.6; vector-effect:non-scaling-stroke; }
   .route{ fill:none; stroke:var(--ink); stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
   .route.ghost{ stroke:rgba(17,17,17,.12); stroke-width:1; }
   .route.head{ stroke:var(--accent); stroke-width:2; }
   .draw{ transition:stroke-dashoffset var(--dur,.5s) ease; }
 
-  .controls{ display:flex; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:16px 0 0; border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
+  .controls{ position:sticky; bottom:0; z-index:2; background:var(--paper); box-shadow:-2rem 0 0 var(--paper), 2rem 0 0 var(--paper); display:flex; align-items:center; gap:8px 16px; flex-wrap:wrap; padding:12px 0 calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
   .play{ font:inherit; background:var(--paper); color:var(--ink); border:1px solid var(--ink); border-radius:0; padding:6px 16px; min-width:7.5em; cursor:pointer; }
-  .play:hover{ background:var(--ink); color:var(--paper); }
+  @media (hover:hover){ .play:hover{ background:var(--ink); color:var(--paper); } }
+  .play:active{ background:var(--ink); color:var(--paper); }
+  .tl{ flex:1 1 16rem; display:flex; align-items:center; gap:12px; min-width:0; }
   .rail{ font-variant-numeric:tabular-nums; }
-  input[type=range]{ flex:1; min-width:160px; height:24px; margin:0; background:transparent; accent-color:var(--accent); cursor:pointer; }
+  input[type=range]{ flex:1; min-width:min(160px,40vw); height:24px; margin:0; background:transparent; accent-color:var(--accent); cursor:pointer; }
   input[type=range]{ -webkit-appearance:none; appearance:none; }
   input[type=range]::-webkit-slider-runnable-track{ height:1px; background:var(--ink); }
   input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:12px; height:20px; margin-top:-10px; background:var(--accent); border:0; border-radius:0; }
@@ -106,7 +107,18 @@ _TEMPLATE = r"""<!doctype html>
   .note{ margin-top:2em; padding-top:12px; border-top:1px solid var(--rule); }
   .note p{ margin:0; }
   section[hidden]{ display:none; }
-  @media (max-width:600px){ .mapbox{ margin:0 -16px; } }
+  @media (max-width:600px){ .mapbox{ margin:0 -16px; } .readout{ padding-top:16px; } .tl{ order:3; flex-basis:100%; } .controls{ justify-content:space-between; } }
+  @media (min-width:56rem) and (min-aspect-ratio:5/4){   /* landscape desktop: figure beside readout and controls */
+    #map:not([hidden]){ display:grid; grid-template-columns:minmax(15rem,22rem) minmax(0,1fr); grid-template-rows:auto auto 1fr; gap:0 clamp(32px,5vw,80px); align-items:start; }
+    .readout{ grid-column:1; grid-row:1; flex-direction:column; align-items:flex-start; gap:8px; padding-top:clamp(8px,2vw,24px); }
+    .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:1rem; }
+    svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); }
+    .controls{ grid-column:1; grid-row:2; position:static; box-shadow:none; flex-direction:column; align-items:stretch; margin-top:16px; }
+    .controls .tl{ flex-basis:auto; }
+    .play{ align-self:flex-start; }
+  }
+  @media (max-height:32rem){ .controls{ position:static; box-shadow:none; } svg.map{ max-height:none; } }
+  @media (prefers-reduced-motion:reduce){ .draw{ transition:none; } }
   @media (pointer:coarse){   /* finger-sized controls */
     .play{ min-height:44px; padding:10px 20px; }
     input[type=range]{ height:44px; }
@@ -135,7 +147,7 @@ _TEMPLATE = r"""<!doctype html>
     <div class="readout">
       <div class="yr" id="yr" aria-live="off">{{FIRST}}</div>
       <p class="stat"><span id="ns">0</span> etapes · <span id="km">0</span> km</p>
-      <p class="stat"><i>Gran Sortida</i> <span id="dep">—</span></p>
+      <p class="stat">Gran Sortida <span id="dep">—</span></p>
     </div>
     <div class="mapbox"><svg class="map" id="svg" role="img" aria-label="Mapa d'Europa amb els recorreguts del Tour de França" preserveAspectRatio="xMidYMid meet">
       <g class="land" id="land"></g>
@@ -143,9 +155,11 @@ _TEMPLATE = r"""<!doctype html>
     </svg></div>
     <div class="controls">
       <button class="play" id="play" type="button">Reprodueix</button>
-      <span class="rail" id="y0">{{FIRST}}</span>
-      <input type="range" id="slider" min="0" value="0" step="1" aria-label="Any">
-      <span class="rail" id="y1">{{LAST}}</span>
+      <div class="tl">
+        <span class="rail" id="y0">{{FIRST}}</span>
+        <input type="range" id="slider" min="0" value="0" step="1" aria-label="Any">
+        <span class="rail" id="y1">{{LAST}}</span>
+      </div>
       <label class="toggle"><input type="checkbox" id="acc" checked> Acumula els anys</label>
     </div>
   </section>
@@ -156,12 +170,12 @@ _TEMPLATE = r"""<!doctype html>
 
   <section id="method" hidden style="margin-top:clamp(24px,4vw,40px)">
     <div class="prose">
-      <p>Cada dia de cada Tour, de {{FIRST}} a {{LAST}} —{{NSTAGES}} etapes en
-         total—, es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
+      <p>Cada dia de cada Tour, de {{FIRST}} a {{LAST}} ({{NSTAGES}} etapes en
+         total), es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
       <p class="label" style="margin-top:2em">Com es fa</p>
       <p>Les etapes s'extreuen dels articles de la Viquipèdia de cada edició
          (vila de sortida, vila d'arribada, distància i tipus). Cada vila es
-         geocodifica amb OpenStreetMap (<i>Nominatim</i>) i el traçat de cada etapa és
+         geocodifica amb OpenStreetMap (Nominatim) i el traçat de cada etapa és
          una corba de Bézier quadràtica entre els dos punts, corbada lleugerament
          perquè els recorreguts repetits se superposin i el mapa sembli un
          palimpsest. Les contrarellotges i pròlegs en circuit es dibuixen com un

@@ -23,7 +23,7 @@
 
   --gutter: clamp(24px, 6vw, 96px);
   /* left/right inset shared by masthead, bar and pages; also clears a phone notch in landscape */
-  --edge: max(var(--gutter), calc((100vw - 1280px) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --edge: max(var(--gutter), calc((100vw - 80rem) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --measure-verse: 34em;
   --measure-prose: 38em;
   color-scheme: light;
@@ -43,6 +43,10 @@
      .hair      hairline rule
 */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Everything is sized in rem, so large screens simply scale the whole design up. */
+@media (min-width: 1800px) { html { font-size: 112.5%; } }
+@media (min-width: 2300px) { html { font-size: 131.25%; } }
 
 html { background: var(--paper); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: rgba(29, 47, 209, .12); }
 body {
@@ -88,17 +92,17 @@ a:active { color: var(--accent); }
 .subnav .gap { flex: 1 1 100%; height: 0; }   /* forces a new row, e.g. before "Metodologia" */
 
 /* ---------- Title block ---------- */
-.head { padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+.head { padding: clamp(28px, 4vw, 48px) 0 clamp(20px, 3vw, 32px); }
 .title {
   margin: 0;
   font-weight: 400;
-  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  font-size: clamp(2.5rem, 5.2vw, 4rem);
   line-height: 1.04;
   letter-spacing: -.02em;
   text-wrap: balance;
 }
 .by { margin: 16px 0 0; font-size: 1.25rem; line-height: 1.35; }
-.sub { margin: 4px 0 0; font-style: italic; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
+.sub { margin: 4px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
 
 /* ---------- Text ---------- */
 .verse { font-size: 1.25rem; line-height: 1.6; max-width: var(--measure-verse); }
@@ -123,7 +127,15 @@ pre { margin: 0; overflow-x: auto; }
 
 /* ---------- Figures (printed plates: ink + one blue) ---------- */
 .fig { margin: 0; }
-.cap { margin-top: 8px; font-style: italic; font-size: .9375rem; line-height: 1.45; max-width: 46em; }
+.cap { margin-top: 8px; font: 400 .8125rem/1.45 var(--sans); max-width: 46em; }
+
+/* Touch: real 44px boxes (the underline moves to text-decoration so it hugs the text). */
+@media (pointer: coarse) {
+  .subnav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border-bottom: 0; }
+  .subnav a::after { display: none; }
+  .subnav a.on { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .4em; }
+  .subnav { gap: 0 20px; padding: 0; }
+}
 
 /* ---------- Phones ---------- */
 @media (max-width: 760px) {
@@ -131,6 +143,15 @@ pre { margin: 0; overflow-x: auto; }
   /* Verses wrap with a hanging indent instead of scrolling sideways. */
   .verse { overflow-x: visible; }
   .verse .v { white-space: normal; padding-left: 1.25em; text-indent: -1.25em; }
+}
+
+/* Narrow phones: a tighter title block so the piece starts on the first screen. */
+@media (max-width: 640px) {
+  .head { padding: 20px 0 16px; }
+  .title { font-size: clamp(2rem, 9.5vw, 2.75rem); line-height: 1.06; }
+  .by { margin-top: 10px; font-size: 1.0625rem; }
+  .sub { font-size: 1rem; margin-top: 2px; }
+  .subnav { padding: 8px 0; }
 }
 
 /* Short screens (phones in landscape): a quieter title block. */
@@ -148,7 +169,7 @@ pre { margin: 0; overflow-x: auto; }
   * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
-  .epigraph{ margin:0 0 clamp(40px,6vw,72px); font-style:italic; max-width:var(--measure-prose); }
+  .epigraph{ margin:0 0 clamp(40px,6vw,72px); max-width:var(--measure-prose); }
   .entry{ padding:clamp(32px,5vw,56px) 0; border-top:1px solid var(--rule); }
   .entry:first-of-type{ border-top:0; padding-top:0; }
   .etitle{ margin:0 0 clamp(16px,2.4vw,24px); font-weight:400; font-size:clamp(1.5rem,3vw,2rem); line-height:1.15; letter-spacing:-.01em; text-wrap:balance; }
@@ -159,11 +180,13 @@ pre { margin: 0; overflow-x: auto; }
   .orig[open]>summary::after{ content:" –"; }
   .orig>summary:hover{ color:var(--accent); }
   @media (pointer:coarse){ .orig>summary{ padding:13px 0; } }
-  .orig .original{ margin-top:16px; font-style:italic; }
-  .chaincount{ font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
-  .maps{ list-style:none; margin:16px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:4px 24px; max-width:60rem; }
+  .orig .original{ margin-top:16px; }
+  .chaincount{ display:inline-block; vertical-align:bottom; max-width:calc(100% - 6rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
+  .how>.label{ position:sticky; top:0; z-index:1; margin:0; padding:.5rem 0; background:var(--paper); }
+  .maps{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr)); gap:.25rem 1rem; max-width:60rem; }
   .map{ font-size:1rem; line-height:1.4; white-space:nowrap; transition:color .14s ease; }
-  .map.done{ opacity:.35; }
+  .map.done{ opacity:.5; }
+  @media (prefers-reduced-motion:reduce){ .map{ transition:none; } }
   .map.now{ color:var(--accent); }
   section[hidden]{ display:none; }
 </style>
@@ -182,7 +205,7 @@ pre { margin: 0; overflow-x: auto; }
   </ul></nav>
 
   <section id="poemes" style="margin-top:clamp(32px,5vw,56px)">
-    <p class="epigraph">«Poetry is what gets lost in translation.» — Robert Frost</p>
+    <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
     
     <article class="entry" id="p-poema01">
       <h2 class="etitle">Poema 1</h2>
@@ -1011,7 +1034,7 @@ pre { margin: 0; overflow-x: auto; }
         automàtiques encadenades amb el traductor de Google: del castellà a
         l'estonià, de l'estonià al basc… tota la volta de l'abecedari de llengües
         i, finalment, de tornada al castellà. A cada salt el poema perd una mica
-        més; el que en torna és el residu <i>despoetitzat</i> —el sediment de sentit
+        més; el que en torna és el residu «despoetitzat», el sediment de sentit
         que sobreviu al viatge.</p>
         <p>Es mostra el resultat sense cap modificació, més enllà de
         petites correccions gramaticals. Els resultats són els de la tirada
@@ -1020,7 +1043,7 @@ pre { margin: 0; overflow-x: auto; }
       </div>
       <div class="how">
         <p class="label">La cadena <span class="chaincount">original → despoetitzat</span></p>
-        <ol class="maps"><li class="map"><i>Castellà</i></li><li class="map"><i>Estonià</i></li><li class="map"><i>Basc</i></li><li class="map"><i>Persa</i></li><li class="map"><i>Finès</i></li><li class="map"><i>Francès</i></li><li class="map"><i>Frisó</i></li><li class="map"><i>Irlandès</i></li><li class="map"><i>Gaèlic escocès</i></li><li class="map"><i>Gallec</i></li><li class="map"><i>Gujarati</i></li><li class="map"><i>Hausa</i></li><li class="map"><i>Hawaià</i></li><li class="map"><i>Hindi</i></li><li class="map"><i>Hmong</i></li><li class="map"><i>Croat</i></li><li class="map"><i>Crioll haitià</i></li><li class="map"><i>Hongarès</i></li><li class="map"><i>Armeni</i></li><li class="map"><i>Indonesi</i></li><li class="map"><i>Igbo</i></li><li class="map"><i>Islandès</i></li><li class="map"><i>Italià</i></li><li class="map"><i>Hebreu</i></li><li class="map"><i>Japonès</i></li><li class="map"><i>Javanès</i></li><li class="map"><i>Georgià</i></li><li class="map"><i>Kazakh</i></li><li class="map"><i>Khmer</i></li><li class="map"><i>Kannada</i></li><li class="map"><i>Coreà</i></li><li class="map"><i>Kurd</i></li><li class="map"><i>Kirguís</i></li><li class="map"><i>Llatí</i></li><li class="map"><i>Luxemburguès</i></li><li class="map"><i>Laosià</i></li><li class="map"><i>Lituà</i></li><li class="map"><i>Letó</i></li><li class="map"><i>Malgaix</i></li><li class="map"><i>Maori</i></li><li class="map"><i>Macedoni</i></li><li class="map"><i>Malaiàlam</i></li><li class="map"><i>Mongol</i></li><li class="map"><i>Marathi</i></li><li class="map"><i>Malai</i></li><li class="map"><i>Maltès</i></li><li class="map"><i>Birmà</i></li><li class="map"><i>Nepalès</i></li><li class="map"><i>Neerlandès</i></li><li class="map"><i>Noruec</i></li><li class="map"><i>Chichewa</i></li><li class="map"><i>Panjabi</i></li><li class="map"><i>Polonès</i></li><li class="map"><i>Paixtu</i></li><li class="map"><i>Portuguès</i></li><li class="map"><i>Romanès</i></li><li class="map"><i>Rus</i></li><li class="map"><i>Sindi</i></li><li class="map"><i>Singalès</i></li><li class="map"><i>Eslovac</i></li><li class="map"><i>Eslovè</i></li><li class="map"><i>Samoà</i></li><li class="map"><i>Xona</i></li><li class="map"><i>Somali</i></li><li class="map"><i>Albanès</i></li><li class="map"><i>Serbi</i></li><li class="map"><i>Sotho</i></li><li class="map"><i>Sondanès</i></li><li class="map"><i>Suec</i></li><li class="map"><i>Suahili</i></li><li class="map"><i>Tàmil</i></li><li class="map"><i>Telugu</i></li><li class="map"><i>Tadjik</i></li><li class="map"><i>Tai</i></li><li class="map"><i>Filipí</i></li><li class="map"><i>Turc</i></li><li class="map"><i>Ucraïnès</i></li><li class="map"><i>Urdú</i></li><li class="map"><i>Uzbek</i></li><li class="map"><i>Vietnamita</i></li><li class="map"><i>Xosa</i></li><li class="map"><i>Ídix</i></li><li class="map"><i>Ioruba</i></li><li class="map"><i>Xinès</i></li><li class="map"><i>Xinès trad.</i></li><li class="map"><i>Zulu</i></li><li class="map"><i>Afrikaans</i></li><li class="map"><i>Amhàric</i></li><li class="map"><i>Àrab</i></li><li class="map"><i>Azerbaidjanès</i></li><li class="map"><i>Bielorús</i></li><li class="map"><i>Búlgar</i></li><li class="map"><i>Bengalí</i></li><li class="map"><i>Bosnià</i></li><li class="map"><i>Català</i></li><li class="map"><i>Cebuà</i></li><li class="map"><i>Cors</i></li><li class="map"><i>Txec</i></li><li class="map"><i>Gal·lès</i></li><li class="map"><i>Danès</i></li><li class="map"><i>Alemany</i></li><li class="map"><i>Grec</i></li><li class="map"><i>Anglès</i></li><li class="map"><i>Esperanto</i></li><li class="map"><i>Castellà</i></li></ol>
+        <ol class="maps"><li class="map">Castellà</li><li class="map">Estonià</li><li class="map">Basc</li><li class="map">Persa</li><li class="map">Finès</li><li class="map">Francès</li><li class="map">Frisó</li><li class="map">Irlandès</li><li class="map">Gaèlic escocès</li><li class="map">Gallec</li><li class="map">Gujarati</li><li class="map">Hausa</li><li class="map">Hawaià</li><li class="map">Hindi</li><li class="map">Hmong</li><li class="map">Croat</li><li class="map">Crioll haitià</li><li class="map">Hongarès</li><li class="map">Armeni</li><li class="map">Indonesi</li><li class="map">Igbo</li><li class="map">Islandès</li><li class="map">Italià</li><li class="map">Hebreu</li><li class="map">Japonès</li><li class="map">Javanès</li><li class="map">Georgià</li><li class="map">Kazakh</li><li class="map">Khmer</li><li class="map">Kannada</li><li class="map">Coreà</li><li class="map">Kurd</li><li class="map">Kirguís</li><li class="map">Llatí</li><li class="map">Luxemburguès</li><li class="map">Laosià</li><li class="map">Lituà</li><li class="map">Letó</li><li class="map">Malgaix</li><li class="map">Maori</li><li class="map">Macedoni</li><li class="map">Malaiàlam</li><li class="map">Mongol</li><li class="map">Marathi</li><li class="map">Malai</li><li class="map">Maltès</li><li class="map">Birmà</li><li class="map">Nepalès</li><li class="map">Neerlandès</li><li class="map">Noruec</li><li class="map">Chichewa</li><li class="map">Panjabi</li><li class="map">Polonès</li><li class="map">Paixtu</li><li class="map">Portuguès</li><li class="map">Romanès</li><li class="map">Rus</li><li class="map">Sindi</li><li class="map">Singalès</li><li class="map">Eslovac</li><li class="map">Eslovè</li><li class="map">Samoà</li><li class="map">Xona</li><li class="map">Somali</li><li class="map">Albanès</li><li class="map">Serbi</li><li class="map">Sotho</li><li class="map">Sondanès</li><li class="map">Suec</li><li class="map">Suahili</li><li class="map">Tàmil</li><li class="map">Telugu</li><li class="map">Tadjik</li><li class="map">Tai</li><li class="map">Filipí</li><li class="map">Turc</li><li class="map">Ucraïnès</li><li class="map">Urdú</li><li class="map">Uzbek</li><li class="map">Vietnamita</li><li class="map">Xosa</li><li class="map">Ídix</li><li class="map">Ioruba</li><li class="map">Xinès</li><li class="map">Xinès trad.</li><li class="map">Zulu</li><li class="map">Afrikaans</li><li class="map">Amhàric</li><li class="map">Àrab</li><li class="map">Azerbaidjanès</li><li class="map">Bielorús</li><li class="map">Búlgar</li><li class="map">Bengalí</li><li class="map">Bosnià</li><li class="map">Català</li><li class="map">Cebuà</li><li class="map">Cors</li><li class="map">Txec</li><li class="map">Gal·lès</li><li class="map">Danès</li><li class="map">Alemany</li><li class="map">Grec</li><li class="map">Anglès</li><li class="map">Esperanto</li><li class="map">Castellà</li></ol>
       </div>
   </section>
 </div>

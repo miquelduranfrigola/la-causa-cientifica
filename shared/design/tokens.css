@@ -11,7 +11,7 @@
 
   --gutter: clamp(24px, 6vw, 96px);
   /* left/right inset shared by masthead, bar and pages; also clears a phone notch in landscape */
-  --edge: max(var(--gutter), calc((100vw - 1280px) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --edge: max(var(--gutter), calc((100vw - 80rem) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --measure-verse: 34em;
   --measure-prose: 38em;
   color-scheme: light;

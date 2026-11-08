@@ -23,7 +23,7 @@
 
   --gutter: clamp(24px, 6vw, 96px);
   /* left/right inset shared by masthead, bar and pages; also clears a phone notch in landscape */
-  --edge: max(var(--gutter), calc((100vw - 1280px) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --edge: max(var(--gutter), calc((100vw - 80rem) / 2), env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   --measure-verse: 34em;
   --measure-prose: 38em;
   color-scheme: light;
@@ -43,6 +43,10 @@
      .hair      hairline rule
 */
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Everything is sized in rem, so large screens simply scale the whole design up. */
+@media (min-width: 1800px) { html { font-size: 112.5%; } }
+@media (min-width: 2300px) { html { font-size: 131.25%; } }
 
 html { background: var(--paper); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: rgba(29, 47, 209, .12); }
 body {
@@ -88,17 +92,17 @@ a:active { color: var(--accent); }
 .subnav .gap { flex: 1 1 100%; height: 0; }   /* forces a new row, e.g. before "Metodologia" */
 
 /* ---------- Title block ---------- */
-.head { padding: clamp(32px, 5vw, 64px) 0 clamp(24px, 3vw, 40px); }
+.head { padding: clamp(28px, 4vw, 48px) 0 clamp(20px, 3vw, 32px); }
 .title {
   margin: 0;
   font-weight: 400;
-  font-size: clamp(2.5rem, 5.6vw, 4.5rem);
+  font-size: clamp(2.5rem, 5.2vw, 4rem);
   line-height: 1.04;
   letter-spacing: -.02em;
   text-wrap: balance;
 }
 .by { margin: 16px 0 0; font-size: 1.25rem; line-height: 1.35; }
-.sub { margin: 4px 0 0; font-style: italic; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
+.sub { margin: 4px 0 0; font-size: 1.125rem; line-height: 1.4; }   /* method / credit line */
 
 /* ---------- Text ---------- */
 .verse { font-size: 1.25rem; line-height: 1.6; max-width: var(--measure-verse); }
@@ -123,7 +127,15 @@ pre { margin: 0; overflow-x: auto; }
 
 /* ---------- Figures (printed plates: ink + one blue) ---------- */
 .fig { margin: 0; }
-.cap { margin-top: 8px; font-style: italic; font-size: .9375rem; line-height: 1.45; max-width: 46em; }
+.cap { margin-top: 8px; font: 400 .8125rem/1.45 var(--sans); max-width: 46em; }
+
+/* Touch: real 44px boxes (the underline moves to text-decoration so it hugs the text). */
+@media (pointer: coarse) {
+  .subnav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border-bottom: 0; }
+  .subnav a::after { display: none; }
+  .subnav a.on { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .4em; }
+  .subnav { gap: 0 20px; padding: 0; }
+}
 
 /* ---------- Phones ---------- */
 @media (max-width: 760px) {
@@ -131,6 +143,15 @@ pre { margin: 0; overflow-x: auto; }
   /* Verses wrap with a hanging indent instead of scrolling sideways. */
   .verse { overflow-x: visible; }
   .verse .v { white-space: normal; padding-left: 1.25em; text-indent: -1.25em; }
+}
+
+/* Narrow phones: a tighter title block so the piece starts on the first screen. */
+@media (max-width: 640px) {
+  .head { padding: 20px 0 16px; }
+  .title { font-size: clamp(2rem, 9.5vw, 2.75rem); line-height: 1.06; }
+  .by { margin-top: 10px; font-size: 1.0625rem; }
+  .sub { font-size: 1rem; margin-top: 2px; }
+  .subnav { padding: 8px 0; }
 }
 
 /* Short screens (phones in landscape): a quieter title block. */
@@ -149,7 +170,7 @@ pre { margin: 0; overflow-x: auto; }
 }
 
   .seqbox{ margin-top:clamp(28px,4vw,48px); }
-  .fasta-head{ margin:0 0 14px; word-break:break-all; }
+  .fasta-head{ margin:0 0 14px; overflow-wrap:anywhere; text-wrap:balance; }
   pre.seq{ font-size:.875rem; line-height:2; letter-spacing:.02em; white-space:pre; }
   .prose{ font-size:1.25rem; }
   section[hidden]{ display:none; }
@@ -435,7 +456,7 @@ l'avantpassat comú de la sargantana de paret (<i>Podarcis muralis</i>) i el var
 aquàtic (<i>Varanus salvator</i>), a partir de sis espècies vives.</p>
 <p>Es descarreguen els mitogenomes complets de GenBank (NCBI&nbsp;Entrez /
 Biopython), s'alineen gen a gen i s'infereix l'avantpassat per màxima
-versemblança amb el model <i>HKY85</i> i la poda de Felsenstein. Cada base
+versemblança amb el model HKY85 i la poda de Felsenstein. Cada base
 s'escriu en majúscula quan el posterior de la millor base supera 0,90; si no,
 s'escriu amb el codi d'ambigüitat IUPAC del conjunt mínim de bases que cobreix el
 90&nbsp;% del posterior —l'alfabet del dubte allà on el temps ha esborrat el
@@ -451,6 +472,7 @@ senyal.</p>
     if(!document.getElementById(id)) id='obra';
     secs.forEach(function(s){ s.hidden = s.id!==id; });
     links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
+    if (typeof wrapSeq === 'function') wrapSeq();  // the genome may have been resized while hidden
   }
   links.forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); show(a.dataset.sec); window.scrollTo(0,0); }); });
   show('obra');
@@ -459,7 +481,7 @@ senyal.</p>
      so it never scrolls sideways on a phone. */
   var pre = document.getElementById('seq'), raw = pre.getAttribute('data-seq'), last = 0;
   function wrapSeq(){
-    if (!pre.offsetParent) return;
+    if (!pre || !pre.offsetParent) return;
     // Measure with an off-screen probe so the visible text (and the scroll position)
     // is only touched when the line length really changes.
     var probe = document.createElement('pre');

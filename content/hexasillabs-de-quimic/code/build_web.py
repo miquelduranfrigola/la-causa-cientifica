@@ -166,28 +166,29 @@ _TEMPLATE = r"""<!doctype html>
 {{DESIGN}}
   .stanza{ padding:clamp(28px,4.5vw,52px) 0; }
   .stanza + .stanza{ border-top:1px solid var(--rule); }
-  .stage{ margin:0 0 clamp(14px,2vw,22px); font-style:italic; font-size:1.125rem; }
+  .stage{ margin:0 0 clamp(14px,2vw,22px); font:600 .875rem/1.4 var(--sans); }
 
-  .split{ display:grid; grid-template-columns:clamp(210px,26vw,280px) minmax(0,1fr);
+  .split{ display:grid; grid-template-columns:clamp(13rem,26vw,17.5rem) minmax(0,1fr);
           gap:clamp(28px,4.5vw,64px); align-items:center; }
-  @media (max-width:720px){ .split{ grid-template-columns:1fr; gap:20px; } }
+  @media (max-width:45rem){ .split{ grid-template-columns:1fr; gap:20px; } }
 
-  .viewer{ position:relative; width:100%; max-width:280px; aspect-ratio:1; }
+  .viewer{ position:relative; width:100%; max-width:17.5rem; aspect-ratio:1; }
   .slide{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
           opacity:0; transition:opacity .7s ease; }
   .slide.on{ opacity:1; }
   .slide svg{ width:100%; height:100%; overflow:visible; }
 
-  .verses{ display:grid; grid-template-columns:minmax(0,max-content) 1fr;
+  .verses{ display:grid; grid-template-columns:minmax(0,12.5rem) minmax(0,1fr);
            column-gap:clamp(18px,3vw,34px); align-items:baseline; }
   .line{ display:contents; }
-  .name{ font-size:1.375rem; line-height:1.4; padding:6px 0; transition:color .4s ease; }
-  .gloss{ font-style:italic; font-size:1rem; line-height:1.4; padding:6px 0; }
+  .name{ font-size:1.375rem; line-height:1.4; padding:6px 0; overflow-wrap:anywhere; transition:color .4s ease; }
+  .gloss{ font-size:1rem; line-height:1.4; padding:6px 0; }
   .line.on .name{ color:var(--accent); }
-  @media (max-width:720px){
-    .verses{ grid-template-columns:1fr; }
+  @media (max-width:60rem){
+    .verses{ grid-template-columns:minmax(0,1fr); }
     .name{ padding:10px 0 0; } .gloss{ padding:0 0 4px; }
   }
+  @media (prefers-reduced-motion:reduce){ .slide, .name{ transition:none; } }
   .page > section{ margin-top:clamp(24px,4vw,40px); }
 </style>
 </head>
@@ -212,8 +213,8 @@ _TEMPLATE = r"""<!doctype html>
   <section id="metode" hidden>
     <div class="prose">
       <p>Cada vers és el nom d'una molècula real, en català, i un
-        <i>hexasíl·lab</i> (sis síl·labes fins a l'última tònica). Cada estrofa —del fetus
-        a la mort— <i>rima</i> amb un sufix diferent. A la mort l'hexasíl·lab es trenca a
+        hexasíl·lab (sis síl·labes fins a l'última tònica). Cada estrofa —del fetus
+        a la mort— rima amb un sufix diferent. A la mort l'hexasíl·lab es trenca a
         posta: el vers es torna pedra, mineral, curt.</p>
       <p>Estructures dibuixades amb RDKit; els minerals surten esquemàtics.
         Recompte de síl·labes amb el motor de Softcatalà.</p>

@@ -156,7 +156,7 @@ def _entry(stem, glob, meta, data_out, embedded) -> str:
 
 def _rubric_section() -> str:
     directs = "".join(
-        f'<span class="map"><b class="code">{html.escape(k)}</b> → {v} <i>{AA_CA[v]}</i></span>'
+        f'<span class="map"><b class="code">{html.escape(k)}</b> → {v} {AA_CA[v]}</span>'
         for k, v in SINGLES.items())
     escapes = "".join(f'<span class="map"><b class="code">{html.escape(k)}</b> → {v}</span>'
                       for k, v in PAIRS.items())
@@ -173,7 +173,7 @@ def _rubric_section() -> str:
       </div>
 
       <div class="how">
-        <h3 class="label">Escapaments amb {ESCAPE} (<i>{AA_CA[ESCAPE]}</i>)</h3>
+        <h3 class="label">Escapaments amb {ESCAPE} ({AA_CA[ESCAPE]})</h3>
         <div class="maps">{escapes}</div>
       </div>
     </section>"""
@@ -230,11 +230,17 @@ _TEMPLATE = r"""<!doctype html>
   .pauthor{ margin:8px 0 0; font-size:1.125rem; }
 
   /* structures (left, stacked) · poem (right, sized to its longest verse so no line is cut) */
-  .split{ display:grid; grid-template-columns:280px max-content; gap:clamp(24px,4vw,64px);
+  .split{ display:grid; grid-template-columns:17.5rem max-content; gap:clamp(24px,4vw,64px);
           align-items:start; margin:clamp(28px,4vw,48px) 0 0; }
-  @media (max-width:760px){ .split{ grid-template-columns:minmax(0,1fr); } }
   .structures{ display:flex; flex-direction:column; gap:clamp(14px,3vw,22px); align-items:center; }
-  .viewer{ position:relative; width:100%; max-width:280px; aspect-ratio:1; pointer-events:none; }
+  /* phones: the poem comes first, the folds follow as a compact row (no 600px of empty plate before the verse) */
+  @media (max-width:760px){
+    .split{ grid-template-columns:minmax(0,1fr); }
+    .verse{ order:-1; }
+    .structures{ display:grid; grid-template-columns:repeat(auto-fit,minmax(7.5rem,1fr)); gap:12px; }
+    .structures .viewer{ justify-self:center; }
+  }
+  .viewer{ position:relative; width:100%; max-width:17.5rem; aspect-ratio:1; pointer-events:none; }
   .viewer canvas{ pointer-events:none; }
 
   @media (min-width:761px){
@@ -250,8 +256,12 @@ _TEMPLATE = r"""<!doctype html>
   .res.on{ color:var(--c); }
 
   .prose{ font-size:1.25rem; }
-  .maps{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px 24px; max-width:760px; }
-  .map i{ font-style:italic; }
+  .maps{ display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,11.25rem),1fr)); gap:8px 24px; max-width:47.5rem; }
+  .map{ overflow-wrap:anywhere; }
+  @media (prefers-reduced-motion:reduce){
+    .entry{ animation:none; }
+    .wd,.res{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -260,7 +270,7 @@ _TEMPLATE = r"""<!doctype html>
   <header class="head">
     <h1 class="title">Versos proteics</h1>
     <p class="by">Miquel Duran-Frigola</p>
-    <p class="sub">Cada poema, plegat com una proteïna amb <i>ESMFold</i></p>
+    <p class="sub">Cada poema, plegat com una proteïna amb ESMFold</p>
   </header>
   <nav><ul class="subnav">{{MENU}}</ul></nav>
   <main>
@@ -332,6 +342,12 @@ _TEMPLATE = r"""<!doctype html>
         });
       }
       var st = {stop:false, timer:null};
+      if(REDUCED){  // no looping: show the whole poem and the finished fold at once
+        words.forEach(function(w, k){ if(wd[k]) wd[k].classList.add('on'); if(res[k]) res[k].classList.add('on'); });
+        fDom = off.length; fB = 0; paint();
+        active = {id:id, viewers:viewers, st:st};
+        return;
+      }
       function step(){
         if(st.stop) return;
         if(i === 0){  // restart the fill
