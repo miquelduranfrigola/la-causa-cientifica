@@ -31,8 +31,8 @@ connecting two towns, not the real road. This is stated plainly in the page's
    arc (or a small loop for prologues / circuit time trials), grouped by year with
    per-edition aggregates. Deterministic, no network.
 5. **`code/build_web.py`** — assemble the self-contained `index.html`: inlines the
-   Space Mono webfont, the routes and the basemap; renders the SVG map and the
-   1985→2026 timeline animation; appends the shared keyboard-nav snippet.
+   shared design, the routes and the basemap; renders the SVG map and the
+   1985→2026 timeline animation; appends the shared keyboard-nav script.
 
 `data/` holds committed **inputs** (`stages.csv`, `geocode.json`, `europe.geojson`);
 `results/routes.json` is the committed **output**; `index.html` is the built page.

@@ -3,26 +3,26 @@
 {% block title %}{{ poem.title }} — {{ site_title }}{% endblock %}
 
 {% block body %}
-<article class="poem-page">
-  <p class="kicker"><a href="{{ root }}index.html">Poemes computacionals</a></p>
-  <h1 class="p-title">{{ poem.title }}</h1>
-  <p class="p-meta">
-    <time datetime="{{ poem.date }}">{{ poem.date }}</time>
-    {% if poem.author %}· {{ poem.author }}{% endif %}
-  </p>
+<div class="standalone"><a href="{{ root }}index.html">← {{ site_title }}</a></div>
+<script>try{if(window.top===window)document.documentElement.classList.add('is-top')}catch(e){document.documentElement.classList.add('is-top')}</script>
+<article class="page">
+  <header class="head">
+    <h1 class="title">{{ poem.title }}</h1>
+    {% if poem.author %}<p class="by">{{ poem.author }}</p>{% endif %}
+  </header>
 
-  <div class="poem">
+  <div class="verse">
     {{ poem.poem_html | safe }}
   </div>
 
   {% if poem.description_html or poem.tools %}
-  <section class="p-about">
-    {% if poem.description_html %}<div class="about-desc">{{ poem.description_html | safe }}</div>{% endif %}
+  <section class="how">
+    <h2 class="label">Com està fet</h2>
+    {% if poem.description_html %}<div class="prose">{{ poem.description_html | safe }}</div>{% endif %}
     {% if poem.tools %}
-    <p class="seclab">Eines</p>
-    <ul class="tool-list">
+    <ul class="prose">
       {% for tool in poem.tools %}
-      <li><span class="tool-name">{{ tool.name }}</span>{% if tool.description %} — <span class="tool-desc">{{ tool.description }}</span>{% endif %}</li>
+      <li>{{ tool.name }}{% if tool.description %}: <em>{{ tool.description }}</em>{% endif %}</li>
       {% endfor %}
     </ul>
     {% endif %}

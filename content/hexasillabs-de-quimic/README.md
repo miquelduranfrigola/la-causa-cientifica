@@ -178,13 +178,13 @@ PubChem by English name. Each molecule carries a short gloss on the web page.
 ## Web page
 
 `code/build_web.py` → `index.html`: a self-contained page that reads as a
-**standalone poem** in the collection's visual language (Space Mono on a cream
-ground — same tokens and vendored webfont as `versos-proteics`). The poem runs down
+**standalone poem** in the collection's visual language (the shared editorial
+design in `DESIGN.md`, inlined from `shared/design/`). The poem runs down
 the page as stanzas, the life stage only whispered (a small faint label). **Each
 stanza has one animation panel** on its left that cycles through that stanza's four
 molecules (fading; the matching verse lights up); the names read as the stanza and
 each **gloss sits in a parallel column** to its right. The title is not bold. No
-external requests; single-theme cream. Structures (**RDKit + CoordGen**) resolve from
+external requests; single-theme paper. Structures (**RDKit + CoordGen**) resolve from
 PubChem (English name / CID) or a SMILES override; minerals are schematic (ionic).
 Eventually to be merged with `versos-proteics` into one shared gallery.
 

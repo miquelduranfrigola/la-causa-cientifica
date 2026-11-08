@@ -1,24 +1,28 @@
-"""Assemble the self-contained "Poema malalt" gallery (HTML).
+"""Assemble the self-contained "Poema malalt" page (HTML).
 
-Same museum treatment as the sibling "Versos proteics": Space Mono on a cream
-ground, a quiet left index and a spacious content pane. Here the piece is a poem
-that *evolves*: starting from a seed poem, one word (a gene) mutates per step by a
-single-letter edit — each mutated word lights up red as the poem drifts, looping.
-It is auto-playing, not interactive (no controls).
+Editorial look (DESIGN.md; shared/design/ inlined, no external requests): serif title
+block, an italic descriptor, a text menu ("El poema" / "Metodologia"). The piece is a
+poem that *evolves*: starting from a seed poem, one word (a gene) mutates per step by a
+single-letter edit; the mutated word is set in the page's one blue as the poem drifts,
+looping. Auto-playing, not interactive (no controls); with reduced motion the final
+state is shown.
 
-Reads data/evolution.json (the ordered mutation log) and the inlined Space Mono
-webfont (code/vendor/spacemono.css). Writes index.html (poem-folder root) —
-everything inlined, no external requests.
+Reads data/evolution.json (the ordered mutation log). Writes index.html (poem-folder
+root).
 """
 
 from __future__ import annotations
 
 import html
 import json
+import sys
 from pathlib import Path
 
 POEM_ROOT = Path(__file__).resolve().parent.parent
 HERE = Path(__file__).resolve().parent
+REPO = POEM_ROOT.parent.parent
+sys.path.insert(0, str(REPO / "shared" / "design"))
+from inline import design_css, nav_script, standalone_bar  # noqa: E402
 
 POS_CA = {"N": "nom", "V": "verb", "A": "adjectiu", "R": "adverbi"}
 EDIT_CA = {"substitution": "substitució", "deletion": "deleció", "insertion": "inserció"}
@@ -66,13 +70,14 @@ def _payload():
 
 
 def build() -> Path:
-    font_css = (HERE.parents[2] / "shared" / "vendor" / "spacemono.css").read_text(encoding="utf-8")
     payload = _payload()
     src = payload["source"]
     conserved_note = payload.get("conserved", {}).get("note", "")
 
     page = (_TEMPLATE
-            .replace("{{FONT}}", font_css)
+            .replace("{{DESIGN}}", design_css())
+            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{NAV}}", nav_script())
             .replace("{{AUTHOR}}", html.escape(src.get("author", "")))
             .replace("{{SEED}}", html.escape(src.get("poem", "")))
             .replace("{{CONSERVED}}", html.escape(conserved_note))
@@ -81,107 +86,60 @@ def build() -> Path:
             .replace("{{EDIT}}", json.dumps(EDIT_CA, ensure_ascii=False)))
     out = POEM_ROOT / "index.html"
     out.parent.mkdir(parents=True, exist_ok=True)
-    nav = (HERE.parents[2] / "shared" / "vendor" / "menu-nav.html").read_text(encoding="utf-8")
-    out.write_text(page + nav, encoding="utf-8")
+    out.write_text(page, encoding="utf-8")
     return out
 
 
-_TEMPLATE = r"""<title>Poema malalt</title>
+_TEMPLATE = r"""<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poema malalt</title>
 <style>
-{{FONT}}
-  :root{
-    --ground:#f0ebe6; --ink:#282828; --muted:#8f887d; --line:#ddd6cb; --hair:#e7e1d7;
-    --accent:#2f7d68; --red:#c7513b;
-    --mono:"Space Mono", ui-monospace, Menlo, monospace;
-  }
-  *{ scrollbar-width:none; -ms-overflow-style:none; }
-  *::-webkit-scrollbar{ display:none; width:0; height:0; }
-  /* overflow-x on <html> only: on <body> it makes <body> a scroll container and breaks the sticky rail */
-  html{ overflow-x:hidden; }
-  html,body{ margin:0; padding:0; background:var(--ground); }
-  .wrap{ background:var(--ground); color:var(--ink); font-family:var(--mono);
-         font-size:14px; line-height:1.65; min-height:100vh; -webkit-font-smoothing:antialiased; }
-  .wrap *{ box-sizing:border-box; }
-  .wrap a{ color:var(--ink); text-decoration:none; transition:opacity .15s ease; }
-  .wrap a:hover{ opacity:.55; }
-
-  .site{ display:flex; align-items:flex-start; min-height:100vh; }
-  .index{ width:220px; flex:none; position:sticky; top:0; align-self:flex-start;
-          height:100vh; overflow:auto; padding:30px 22px; border-right:1px solid var(--line); }
-  .brand{ margin-bottom:26px; line-height:1.35; min-height:58px; }
-  .brand b{ font-weight:700; font-size:14px; display:block; letter-spacing:-.01em; }
-  .brand span{ display:block; color:var(--muted); font-size:11px; margin-top:4px; text-transform:uppercase; letter-spacing:.08em; }
-  .menu{ list-style:none; margin:0; padding:0; font-size:14px; }
-  .menu li a{ display:block; padding:3px 0; }
-  .menu li a.on{ text-decoration:underline; text-underline-offset:3px; }
-  .menu li.meto{ margin-top:18px; padding-top:14px; border-top:1px solid var(--hair); }
-  .menu li.meto a{ color:var(--ink); font-size:14px; }
-
-  .view{ flex:1; min-width:0; }
-  .entry{ max-width:1000px; margin:0 auto; padding:114px clamp(22px,6vw,80px) clamp(40px,7vw,104px); }
-  .entry[hidden]{ display:none; }
-  .entry{ animation:appear .3s ease both; }
-  @keyframes appear{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none;} }
-
-  .kicker{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
-  .title{ font-weight:400; font-size:clamp(24px,3.4vw,32px); line-height:1.1; letter-spacing:-.02em;
-          margin:0; text-wrap:balance; }
-  .dims{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted);
-         margin:18px 0 0; min-height:1.4em; }
-  .dims b{ color:var(--ink); font-weight:400; } .dims .arrow,.dims .rd{ color:var(--red); }
-
-  .poem{ font-size:14px; line-height:1.95; margin:clamp(30px,5vw,52px) 0 0; overflow-x:auto; }
-  .poem .v{ display:block; white-space:nowrap; }
-  .poem .br{ display:block; height:.9em; }
-  .mut{ color:var(--red); }
-
-  .prose{ max-width:60ch; margin:0 0 10px; }
-  .maps{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:9px 20px; max-width:720px; }
-  .map b{ color:var(--red); font-weight:400; } .map i{ color:var(--muted); font-style:normal; }
-
-  @media (max-width:900px){
-    .site{ display:block; }
-    .index{ width:auto; position:static; height:auto; overflow:visible; padding:20px 22px;
-            border-right:0; border-bottom:1px solid var(--line);
-            display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; }
-    .brand{ margin:0 14px 0 0; min-height:auto; } .menu{ display:flex; flex-wrap:wrap; gap:4px 16px; }
-  }
-  @media (prefers-reduced-motion: reduce){ .entry{ animation:none; } }
+{{DESIGN}}
+  .page > section{ margin-top:clamp(24px,4vw,40px); }
+  .dims{ margin:0 0 clamp(20px,3vw,32px); font:400 .875rem/1.4 var(--sans); min-height:1.4em; }
+  .dims i{ font:italic 400 1.0625rem/1.4 var(--serif); }
+  .dims .arrow{ color:var(--accent); }
+  .verse .v:empty{ height:1.6em; }
+  .mut{ color:var(--accent); }
 </style>
+</head>
+<body>
+{{STANDALONE}}
+<div class="page">
+  <header class="head">
+    <h1 class="title">Poema malalt</h1>
+    <p class="by">Miquel Duran-Frigola</p>
+    <p class="sub">L’evolució d’un poema de {{AUTHOR}}, <span style="font-style:normal">«{{SEED}}»</span>, a força de mutacions</p>
+  </header>
+  <nav><ul class="subnav">
+    <li><a data-sec="poem" class="on" href="#poem">El poema</a></li>
+    <li><a data-sec="metode" href="#metode">Metodologia</a></li>
+  </ul></nav>
 
-<div class="wrap"><div class="site">
-  <nav class="index">
-    <div class="brand"><a data-target="poem" href="#poem"><b>Poema malalt</b></a>
-      <span>l'evolució d'un poema</span></div>
-    <ol class="menu">
-      <li><a data-target="poem" href="#poem" class="on">Res no és mesquí</a></li>
-      <li class="meto"><a data-target="metode" href="#metode">Metodologia</a></li>
-    </ol>
-  </nav>
-  <main class="view">
-    <section class="entry" id="poem">
-      <p class="kicker">{{AUTHOR}}</p>
-      <h2 class="title">{{SEED}}</h2>
-      <p class="dims" id="dims"></p>
-      <div class="poem" id="poemtext"></div>
-    </section>
-    <section class="entry" id="metode" hidden>
-      <h1 class="title">Metodologia</h1>
-      <p class="prose">El poema és un genoma i cada paraula, un gen. A cada pas, una
+  <section id="poem">
+    <p class="dims" id="dims" aria-live="off"></p>
+    <div class="verse" id="poemtext"></div>
+  </section>
+  <section id="metode" hidden>
+    <div class="prose">
+      <p>El poema és un genoma i cada paraula, un gen. A cada pas, una
         paraula muta per una sola lletra —substitució, inserció o deleció—, tal com
         les mutacions somàtiques del càncer. La mutació només sobreviu si (1) dona una
         paraula catalana real, (2) manté la categoria gramatical i la concordança, i
-        (3) el poema encara té sentit. Cada mot mutat s'encén en <span class="rd" style="color:var(--red)">vermell</span>.</p>
-      <p class="prose">{{CONSERVED}}</p>
-    </section>
-  </main>
-</div></div>
+        (3) el poema encara té sentit. Cada mot mutat s'encén en <span class="mut">blau</span>.</p>
+      <p>{{CONSERVED}}</p>
+    </div>
+  </section>
+</div>
 
 <script>
   var DATA = {{DATA}};
   (function(){
-    var links = [].slice.call(document.querySelectorAll('[data-target]'));
-    var entries = [].slice.call(document.querySelectorAll('.entry'));
+    var links = [].slice.call(document.querySelectorAll('[data-sec]'));
+    var entries = [].slice.call(document.querySelectorAll('section[id]'));
     var N = DATA.steps.length, timer = null, s = 0;
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     // Adaptive pace: whole loop ~90s regardless of how many mutations there are.
@@ -198,10 +156,10 @@ _TEMPLATE = r"""<title>Poema malalt</title>
       if(s>=1){
         var st = DATA.steps[s-1];
         box.children[st.line].innerHTML = st.hi;
-        dims.innerHTML = 'Mutació '+st.n+' / '+N+' &nbsp; <b>'+st.before+'</b> <span class="arrow">→</span> <b>'+
-          st.after+'</b> &nbsp; '+st.pos+' · '+st.edit;
+        dims.innerHTML = 'Mutació '+st.n+' de '+N+' &nbsp; <i>'+st.before+'</i> <span class="arrow">→</span> <i>'+
+          st.after+'</i> &nbsp; '+st.pos+', '+st.edit;
       } else {
-        dims.innerHTML = (DATA.source.author||'');
+        dims.innerHTML = 'Poema original';
       }
     }
     function loop(){
@@ -212,19 +170,23 @@ _TEMPLATE = r"""<title>Poema malalt</title>
     }
 
     function show(id){
+      if(!document.getElementById(id)) id = 'poem';
       entries.forEach(function(e){ e.hidden = e.id !== id; });
-      links.forEach(function(a){ a.classList.toggle('on', a.dataset.target===id); });
+      links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec===id); });
       if(timer){ clearTimeout(timer); timer=null; }
       if(id==='poem'){ s=0; if(reduce){ s=N; paint(); } else { loop(); } }
       window.scrollTo({top:0});
     }
     links.forEach(function(a){
       a.addEventListener('click', function(ev){ ev.preventDefault();
-        history.replaceState(null,'','#'+a.dataset.target); show(a.dataset.target); });
+        history.replaceState(null,'','#'+a.dataset.sec); show(a.dataset.sec); });
     });
     show((location.hash||'#poem').slice(1) || 'poem');
   })();
 </script>
+{{NAV}}
+</body>
+</html>
 """
 
 

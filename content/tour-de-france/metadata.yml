@@ -5,6 +5,7 @@ slug: tour-de-france
 author: Miquel Duran-Frigola
 date: 2026-07-13
 order: 6
+summary: Els Tours des del 1985 dibuixats en un sol mapa.
 language: ca
 # A self-contained animated map is served verbatim instead of poem.md.
 page: index.html

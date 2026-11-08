@@ -5,6 +5,7 @@ slug: versos-proteics
 author: Miquel Duran-Frigola
 date: 2026-07-11
 order: 1
+summary: Cada poema es reescriu com una proteïna i es plega amb ESMFold.
 language: ca
 # A self-contained interactive gallery is served verbatim instead of poem.md.
 page: index.html

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Build the *poemes computacionals* static website into ``_site/``.
+"""Build the *La causa científica* static website into ``_site/``.
 
 The single source of truth is each ``content/<slug>/`` folder: this reads every
 ``metadata.yml``. A piece with a ``page:`` key is served from its self-contained
-``results/index.html`` verbatim; otherwise ``poem.md`` is rendered. The index is a
-left-sidebar shell that shows each piece in an iframe. Authors never edit HTML.
+``index.html`` verbatim; otherwise ``poem.md`` is rendered. The home page is a
+catalogue; a piece opens in an iframe under a slim bar (see DESIGN.md). Authors
+never edit HTML.
 
 Poetry-aware rendering (the important part)
 -------------------------------------------
@@ -28,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import json
 import re
 import shutil
 from dataclasses import dataclass
@@ -41,6 +43,15 @@ REPO_ROOT = SITE_DIR.parent
 POEMS_DIR = REPO_ROOT / "content"
 TEMPLATES_DIR = SITE_DIR / "templates"
 STATIC_DIR = SITE_DIR / "static"
+DESIGN_DIR = REPO_ROOT / "shared" / "design"
+
+SITE_TITLE = "La causa científica"
+SITE_AUTHOR = "Miquel Duran-Frigola"
+SITE_INTRO = (
+    "Poemes en català escrits amb l’ajuda de l’ordinador. "
+    "Cada peça va acompanyada del codi que la va produir."
+)
+REPO_URL = "https://github.com/miquelduranfrigola/la-causa-cientifica"
 
 _COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
 _TITLE_RE = re.compile(r"^\s*#\s+.*$", re.MULTILINE)
@@ -54,6 +65,7 @@ class Poem:
     order: int | None
     author: str
     language: str
+    summary: str
     description_html: str
     tools: list[dict]
     tags: list[str]
@@ -156,6 +168,7 @@ def load_poem(folder: Path) -> Poem | None:
         order=int(order) if order is not None else None,
         author=str(meta.get("author", "")),
         language=str(meta.get("language", "ca")),
+        summary=str(meta.get("summary") or "").strip(),
         description_html=render_paragraphs(meta.get("description")),
         tools=list(meta.get("tools") or []),
         tags=list(meta.get("tags") or []),
@@ -194,15 +207,26 @@ def build(out_dir: Path) -> None:
         shutil.rmtree(out_dir)
     out_dir.mkdir(parents=True)
 
-    # Static assets.
+    # Static assets: the shell's own CSS plus the shared design layer.
     if STATIC_DIR.exists():
         shutil.copytree(STATIC_DIR, out_dir / "static")
+    for name in ("fonts.css", "tokens.css", "base.css"):
+        shutil.copyfile(DESIGN_DIR / name, out_dir / "static" / name)
 
-    site_title = "Poemes in silico"
+    common = {
+        "site_title": SITE_TITLE,
+        "site_author": SITE_AUTHOR,
+        "site_intro": SITE_INTRO,
+        "site_description": SITE_INTRO,
+        "repo_url": REPO_URL,
+    }
+    poems_json = json.dumps(
+        [{"slug": p.slug, "title": p.title} for p in poems], ensure_ascii=False
+    ).replace("</", "<\\/")
 
     index_tmpl = env.get_template("index.html")
     (out_dir / "index.html").write_text(
-        index_tmpl.render(site_title=site_title, poems=poems, root=""),
+        index_tmpl.render(poems=poems, poems_json=poems_json, root="", **common),
         encoding="utf-8",
     )
 
@@ -215,7 +239,7 @@ def build(out_dir: Path) -> None:
             shutil.copyfile(poem.page_src, poem_out / "index.html")
         else:
             (poem_out / "index.html").write_text(
-                poem_tmpl.render(site_title=site_title, poem=poem, root="../"),
+                poem_tmpl.render(poem=poem, root="../", **common),
                 encoding="utf-8",
             )
 
@@ -223,7 +247,7 @@ def build(out_dir: Path) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build the poemes-computacionals website.")
+    parser = argparse.ArgumentParser(description="Build the La causa científica website.")
     parser.add_argument("--out", type=Path, default=REPO_ROOT / "_site", help="output directory")
     args = parser.parse_args()
     build(args.out)

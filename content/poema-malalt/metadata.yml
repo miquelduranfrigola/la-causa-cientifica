@@ -5,6 +5,7 @@ slug: poema-malalt
 author: Miquel Duran-Frigola
 date: 2026-07-11
 order: 2
+summary: Una paraula que muta com un tumor i continua sent una paraula.
 language: ca
 # Self-contained page served as this poem's website page (the mutation animation),
 # built by code/build_web.py. Overrides the default poem.md rendering.

@@ -3,8 +3,8 @@
 # downloads each entry to its `path`. Downloaded files under assets/ are gitignored.
 #
 # This poem has NO large assets: the originals and despoetized texts are small
-# plain-text files (tracked in git), and the Space Mono webfont is inlined into
-# results/despoetitzacio.html. The list below is intentionally empty.
+# plain-text files (tracked in git), and the shared design fonts are inlined into
+# index.html. The list below is intentionally empty.
 #
 # Example entry:
 # - name: raw-audio

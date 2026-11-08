@@ -1,4 +1,4 @@
-# Poemes in silico
+# La causa científica
 
 Recull de poemes en català assistits per eines computacionals. Cada poema té la
 seva pròpia carpeta amb el text, les metadades i el codi (en Python) que l'ha
@@ -18,7 +18,8 @@ Cada poema viu a `content/<slug>/` amb sempre els mateixos fitxers:
 - `assets/drive-manifest.yml` — enllaços als fitxers grans a Google Drive
 
 L'especificació completa i compartida entre repositoris és a
-[`CONVENTIONS.md`](CONVENTIONS.md).
+[`CONVENTIONS.md`](CONVENTIONS.md); el disseny del web (tipografia, color, maquetació)
+és a [`DESIGN.md`](DESIGN.md).
 
 ## Afegir un poema
 

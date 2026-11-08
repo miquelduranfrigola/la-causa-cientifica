@@ -1,24 +1,31 @@
 """Assemble the self-contained "Tour de França" page (index.html).
 
 An animated map that plays through every edition of the Tour de France from 1985
-to 2026. Europe is drawn once as a faint outline; a 1985->2026 timeline scrubs the
-years, and for each year the day's stages trace onto the map as bowed arcs between
-their start and finish towns. Prior years can accumulate as faint ghosts (a
-palimpsest of four decades) or clear.
+to 2026. Europe is drawn once as a hairline ink outline on paper; a 1985->2026
+timeline scrubs the years, and for each year the day's stages trace onto the map as
+bowed arcs between their start and finish towns. The route being drawn and the
+year readout are in the single blue accent; earlier years either accumulate as
+faint ink ghosts (a palimpsest of four decades) or clear.
 
-Everything is inlined -- the Space Mono webfont, the computed routes
-(results/routes.json) and the simplified basemap (data/europe.geojson) -- so the
-page makes no external requests. Same cream / ink / Space Mono language as the rest
-of the gallery. The shared keyboard-nav snippet is appended at the end.
+Editorial look (DESIGN.md): shared tokens and base styles are inlined from
+shared/design/; only the map figure and its controls (square, 1px ink borders, sans
+labels) are styled here. The year readout is serif with tabular figures. Three
+views under a text menu: "El mapa", "El poema", "Metodologia". Everything is inlined
+-- the computed routes (results/routes.json) and the simplified basemap
+(data/europe.geojson) -- so the page makes no external requests.
 """
 
 from __future__ import annotations
 
+import html as _html
 import json
+import sys
 from pathlib import Path
 
 POEM_ROOT = Path(__file__).resolve().parent.parent
-SHARED = POEM_ROOT.parent.parent / "shared" / "vendor"
+REPO = POEM_ROOT.parent.parent
+sys.path.insert(0, str(REPO / "shared" / "design"))
+from inline import design_css, nav_script, standalone_bar  # noqa: E402
 
 ROUTES = POEM_ROOT / "results" / "routes.json"
 GEOJSON = POEM_ROOT / "data" / "europe.geojson"
@@ -26,7 +33,7 @@ POEM_MD = POEM_ROOT / "poem.md"
 
 
 def _poem_html() -> str:
-    """Render poem.md (skipping its H1 title) as simple verse/stanza HTML."""
+    """Render poem.md (skipping its H1 title) as verse/stanza HTML."""
     lines = POEM_MD.read_text(encoding="utf-8").splitlines()
     out, seen_title = [], False
     for line in lines:
@@ -36,189 +43,132 @@ def _poem_html() -> str:
         if not line.strip():
             out.append('<span class="br"></span>')
         else:
-            import html as _html
             out.append('<span class="v">' + _html.escape(line.strip()) + "</span>")
     return "\n".join(out)
 
 
 def build() -> Path:
-    font_css = (SHARED / "spacemono.css").read_text(encoding="utf-8")
-    nav = (SHARED / "menu-nav.html").read_text(encoding="utf-8")
     routes = json.loads(ROUTES.read_text(encoding="utf-8"))
     geo = json.loads(GEOJSON.read_text(encoding="utf-8"))
     meta = routes["meta"]
 
     page = (_TEMPLATE
-            .replace("{{FONT}}", font_css)
             .replace("{{FIRST}}", str(meta["first_year"]))
             .replace("{{LAST}}", str(meta["last_year"]))
             .replace("{{NYEARS}}", str(meta["n_years"]))
             .replace("{{NSTAGES}}", str(meta["n_stages"]))
             .replace("{{POEM}}", _poem_html())
             .replace("{{ROUTES}}", json.dumps(routes, ensure_ascii=False, separators=(",", ":")))
-            .replace("{{GEO}}", json.dumps(geo, ensure_ascii=False, separators=(",", ":"))))
+            .replace("{{GEO}}", json.dumps(geo, ensure_ascii=False, separators=(",", ":")))
+            .replace("{{DESIGN}}", design_css())
+            .replace("{{STANDALONE}}", standalone_bar())
+            .replace("{{NAV}}", nav_script()))
 
     out = POEM_ROOT / "index.html"
-    out.write_text(page + nav, encoding="utf-8")
+    out.write_text(page, encoding="utf-8")
     return out
 
 
-_TEMPLATE = r"""<title>Tour de França</title>
+_TEMPLATE = r"""<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tour de França</title>
 <style>
-{{FONT}}
-  :root{
-    --ground:#f0ebe6; --ink:#282828; --muted:#8f887d; --line:#ddd6cb; --hair:#e7e1d7;
-    --land:#e5ded3; --landline:#d3cabb; --ghost:rgba(40,40,40,.07);
-    --accent:#2f7d68; --red:#c7513b;
-    --mono:"Space Mono", ui-monospace, Menlo, Consolas, monospace;
-  }
-  *{ scrollbar-width:none; -ms-overflow-style:none; box-sizing:border-box; }
-  *::-webkit-scrollbar{ display:none; width:0; height:0; }
-  html{ overflow-x:hidden; }
-  html, body{ margin:0; padding:0; background:var(--ground); }
-  .wrap{ background:var(--ground); color:var(--ink); font-family:var(--mono);
-         font-size:14px; line-height:1.65; min-height:100vh; -webkit-font-smoothing:antialiased; }
-  .wrap a{ color:var(--ink); text-decoration:none; transition:opacity .15s ease; }
-  .wrap a:hover{ opacity:.55; }
-  .site{ display:flex; align-items:flex-start; min-height:100vh; }
-
-  .index{ width:220px; flex:none; position:sticky; top:0; align-self:flex-start;
-          height:100vh; overflow:auto; padding:30px 22px; border-right:1px solid var(--line); }
-  .brand{ margin-bottom:26px; line-height:1.35; }
-  .brand b{ font-weight:700; font-size:14px; display:block; letter-spacing:-.01em; }
-  .brand span{ display:block; color:var(--muted); font-size:11px; margin-top:4px;
-               text-transform:uppercase; letter-spacing:.08em; }
-  .menu{ list-style:none; margin:0; padding:0; font-size:14px; }
-  .menu li a{ display:block; padding:3px 0; }
-  .menu li a.on{ text-decoration:underline; text-underline-offset:3px; }
-
-  .view{ flex:1; min-width:0; }
-  .entry{ display:none; }
-  .entry.on{ display:block; }
-
-  /* ---- MAP ---- */
-  .map-entry.on{ display:flex; flex-direction:column; height:100vh; }
-  .maphead{ padding:clamp(20px,3vw,34px) clamp(22px,4vw,52px) 6px; display:flex;
-            align-items:baseline; gap:22px; flex-wrap:wrap; }
-  .yr{ font-weight:700; font-size:clamp(40px,7vw,74px); letter-spacing:-.03em; line-height:1;
-       font-variant-numeric:tabular-nums; }
-  .stat{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); }
-  .stat b{ color:var(--ink); font-weight:700; }
-  .stat .dep{ text-transform:none; letter-spacing:0; }
-  .mapbox{ flex:1; min-height:0; position:relative; padding:0 clamp(14px,3vw,40px); }
-  svg.map{ width:100%; height:100%; display:block; }
-  .land{ fill:var(--land); stroke:var(--landline); stroke-width:.6; }
-  .route{ fill:none; stroke:var(--ink); stroke-width:1.4; stroke-linecap:round;
-          stroke-linejoin:round; vector-effect:non-scaling-stroke; }
-  .route.ghost{ stroke:var(--ghost); stroke-width:1; }
-  .route.live{ stroke:var(--ink); }
-  .route.head{ stroke:var(--accent); stroke-width:2.2; }
+{{DESIGN}}
+  .readout{ display:flex; align-items:baseline; gap:8px 32px; flex-wrap:wrap; padding:clamp(20px,3vw,32px) 0 8px; }
+  .yr{ font-size:clamp(3rem,8vw,5.5rem); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums lining-nums; color:var(--accent); }
+  .stat{ margin:0; font-size:1.125rem; line-height:1.4; }
+  .stat i{ font-style:italic; }
+  .mapbox{ margin:0 calc(-1 * var(--edge) + 8px); padding:0; }
+  svg.map{ width:100%; height:auto; max-height:78vh; display:block; }
+  .land path{ fill:rgba(17,17,17,.035); stroke:var(--ink); stroke-opacity:.45; stroke-width:.6; vector-effect:non-scaling-stroke; }
+  .route{ fill:none; stroke:var(--ink); stroke-width:1.2; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+  .route.ghost{ stroke:rgba(17,17,17,.12); stroke-width:1; }
+  .route.head{ stroke:var(--accent); stroke-width:2; }
   .draw{ transition:stroke-dashoffset var(--dur,.5s) ease; }
 
-  .controls{ padding:10px clamp(22px,4vw,52px) clamp(18px,3vw,30px); display:flex;
-             align-items:center; gap:18px; border-top:1px solid var(--hair); flex-wrap:wrap; }
-  .play{ font:inherit; font-size:12px; letter-spacing:.08em; text-transform:uppercase;
-         background:var(--ink); color:var(--ground); border:0; border-radius:2px;
-         padding:8px 16px; cursor:pointer; }
-  .play:hover{ opacity:.8; }
-  input[type=range]{ flex:1; min-width:180px; accent-color:var(--ink); cursor:pointer; }
-  .rail{ font-size:11px; color:var(--muted); letter-spacing:.1em; font-variant-numeric:tabular-nums; }
-  .toggle{ font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);
-           display:flex; align-items:center; gap:7px; cursor:pointer; user-select:none; }
-  .toggle input{ accent-color:var(--accent); }
+  .controls{ display:flex; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:16px 0 0; border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
+  .play{ font:inherit; background:var(--paper); color:var(--ink); border:1px solid var(--ink); border-radius:0; padding:6px 16px; min-width:7.5em; cursor:pointer; }
+  .play:hover{ background:var(--ink); color:var(--paper); }
+  .rail{ font-variant-numeric:tabular-nums; }
+  input[type=range]{ flex:1; min-width:160px; height:24px; margin:0; background:transparent; accent-color:var(--accent); cursor:pointer; }
+  input[type=range]{ -webkit-appearance:none; appearance:none; }
+  input[type=range]::-webkit-slider-runnable-track{ height:1px; background:var(--ink); }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:12px; height:20px; margin-top:-10px; background:var(--accent); border:0; border-radius:0; }
+  input[type=range]::-moz-range-track{ height:1px; background:var(--ink); }
+  input[type=range]::-moz-range-thumb{ width:12px; height:20px; background:var(--accent); border:0; border-radius:0; }
+  .toggle{ display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+  .toggle input{ width:16px; height:16px; margin:0; accent-color:var(--accent); border-radius:0; }
 
-  /* ---- TEXT PAGES ---- */
-  .prosewrap{ max-width:1000px; margin:0 auto; padding:clamp(40px,7vw,104px) clamp(22px,6vw,80px); }
-  .kicker{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
-  .title{ font-weight:400; font-size:clamp(24px,3.4vw,32px); line-height:1.1; letter-spacing:-.02em; margin:0; }
-  .poem{ font-size:15px; line-height:2.0; margin-top:clamp(28px,5vw,48px); }
-  .poem .v{ display:block; }
-  .poem .br{ display:block; height:.9em; }
-  .prose{ max-width:64ch; }
-  .prose p{ margin:0 0 16px; }
-  .prose .seclab{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--muted); margin:34px 0 12px; }
-  .prose .note{ border-left:2px solid var(--red); padding-left:16px; color:var(--muted); }
-
-  @media (max-width:900px){
-    .site{ display:block; }
-    .index{ width:auto; position:static; height:auto; overflow:visible; padding:20px 22px;
-            border-right:0; border-bottom:1px solid var(--line);
-            display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; }
-    .brand{ margin:0 14px 0 0; }
-    .menu{ display:flex; flex-wrap:wrap; gap:4px 16px; }
-    .map-entry.on{ height:auto; }
-    .mapbox{ height:60vh; }
-  }
-  @media (prefers-reduced-motion: reduce){ .draw{ transition:none; } }
+  .verse{ margin-top:clamp(8px,2vw,16px); }
+  .note{ margin-top:2em; padding-top:12px; border-top:1px solid var(--rule); }
+  .note p{ margin:0; }
+  section[hidden]{ display:none; }
+  @media (max-width:600px){ .mapbox{ margin:0 -16px; } }
 </style>
+</head>
+<body>
+{{STANDALONE}}
+<div class="page">
+  <header class="head">
+    <h1 class="title">Tour de França</h1>
+    <p class="by">Miquel Duran-Frigola</p>
+    <p class="sub">{{NYEARS}} edicions, de {{FIRST}} a {{LAST}}, traçades etapa a etapa</p>
+  </header>
+  <nav><ul class="subnav">
+    <li><a data-sec="map" class="on" href="#map">El mapa</a></li>
+    <li><a data-sec="poem" href="#poem">El poema</a></li>
+    <li><a data-sec="method" href="#method">Metodologia</a></li>
+  </ul></nav>
 
-<div class="wrap"><div class="site">
-  <nav class="index">
-    <div class="brand"><a data-target="map" href="#map"><b>Tour de França</b></a>
-      <span>{{NYEARS}} edicions · {{FIRST}}–{{LAST}}</span></div>
-    <ol class="menu">
-      <li><a data-target="map" href="#map">El mapa</a></li>
-      <li><a data-target="poem" href="#poem">El poema</a></li>
-      <li><a data-target="method" href="#method">Metodologia</a></li>
-    </ol>
-  </nav>
+  <section id="map">
+    <div class="readout">
+      <div class="yr" id="yr" aria-live="off">{{FIRST}}</div>
+      <p class="stat"><span id="ns">0</span> etapes · <span id="km">0</span> km</p>
+      <p class="stat"><i>Gran Sortida</i> <span id="dep">—</span></p>
+    </div>
+    <div class="mapbox"><svg class="map" id="svg" role="img" aria-label="Mapa d'Europa amb els recorreguts del Tour de França" preserveAspectRatio="xMidYMid meet">
+      <g class="land" id="land"></g>
+      <g id="routes"></g>
+    </svg></div>
+    <div class="controls">
+      <button class="play" id="play" type="button">Reprodueix</button>
+      <span class="rail" id="y0">{{FIRST}}</span>
+      <input type="range" id="slider" min="0" value="0" step="1" aria-label="Any">
+      <span class="rail" id="y1">{{LAST}}</span>
+      <label class="toggle"><input type="checkbox" id="acc" checked> Acumula els anys</label>
+    </div>
+  </section>
 
-  <main class="view">
-    <section class="entry map-entry on" id="map">
-      <div class="maphead">
-        <div class="yr" id="yr">{{FIRST}}</div>
-        <div>
-          <div class="stat"><b id="ns">0</b> etapes · <b id="km">0</b> km</div>
-          <div class="stat dep">Gran Sortida: <b id="dep">—</b></div>
-        </div>
+  <section id="poem" hidden style="margin-top:clamp(24px,4vw,40px)">
+    <div class="verse">{{POEM}}</div>
+  </section>
+
+  <section id="method" hidden style="margin-top:clamp(24px,4vw,40px)">
+    <div class="prose">
+      <p>Cada dia de cada Tour, de {{FIRST}} a {{LAST}} —{{NSTAGES}} etapes en
+         total—, es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
+      <p class="label" style="margin-top:2em">Com es fa</p>
+      <p>Les etapes s'extreuen dels articles de la Viquipèdia de cada edició
+         (vila de sortida, vila d'arribada, distància i tipus). Cada vila es
+         geocodifica amb OpenStreetMap (<i>Nominatim</i>) i el traçat de cada etapa és
+         una corba de Bézier quadràtica entre els dos punts, corbada lleugerament
+         perquè els recorreguts repetits se superposin i el mapa sembli un
+         palimpsest. Les contrarellotges i pròlegs en circuit es dibuixen com un
+         petit bucle al voltant de la vila.</p>
+      <div class="note">
+        <p class="label">Una advertència honesta</p>
+        <p>Els arcs són reconstruccions que uneixen la sortida i
+           l'arribada, <i>no</i> les carreteres reals. Els traçats GPS només
+           existeixen a partir del 2014 aproximadament; per als anys anteriors mai
+           es van registrar. El que veus és la forma d'un record, no un mapa de
+           ruta.</p>
       </div>
-      <div class="mapbox"><svg class="map" id="svg" preserveAspectRatio="xMidYMid meet">
-        <g class="land" id="land"></g>
-        <g id="routes"></g>
-      </svg></div>
-      <div class="controls">
-        <button class="play" id="play">▶ Reprodueix</button>
-        <span class="rail" id="y0">{{FIRST}}</span>
-        <input type="range" id="slider" min="0" value="0" step="1">
-        <span class="rail" id="y1">{{LAST}}</span>
-        <label class="toggle"><input type="checkbox" id="acc" checked> Acumula els anys</label>
-      </div>
-    </section>
-
-    <section class="entry" id="poem">
-      <div class="prosewrap">
-        <p class="kicker">Miquel Duran-Frigola</p>
-        <h1 class="title">Tour de França</h1>
-        <div class="poem">{{POEM}}</div>
-      </div>
-    </section>
-
-    <section class="entry" id="method">
-      <div class="prosewrap">
-        <h1 class="title">Metodologia</h1>
-        <div class="prose" style="margin-top:28px">
-          <p>Cada dia de cada Tour, de {{FIRST}} a {{LAST}} —{{NSTAGES}} etapes en
-             total—, es dibuixa com un arc entre la vila de sortida i la d'arribada.</p>
-          <p class="seclab">Com es fa</p>
-          <p>Les etapes s'extreuen dels articles de la Viquipèdia de cada edició
-             (vila de sortida, vila d'arribada, distància i tipus). Cada vila es
-             geocodifica amb OpenStreetMap (Nominatim) i el traçat de cada etapa és
-             una corba de Bézier quadràtica entre els dos punts, corbada lleugerament
-             perquè els recorreguts repetits se superposin i el mapa sembli un
-             palimpsest. Les contrarellotges i pròlegs en circuit es dibuixen com un
-             petit bucle al voltant de la vila.</p>
-          <p class="seclab">Una advertència honesta</p>
-          <p class="note">Els arcs són reconstruccions que uneixen la sortida i
-             l'arribada, <b>no</b> les carreteres reals. Els traçats GPS només
-             existeixen a partir del 2014 aproximadament; per als anys anteriors mai
-             es van registrar. El que veus és la forma d'un record, no un mapa de
-             ruta.</p>
-        </div>
-      </div>
-    </section>
-  </main>
-</div></div>
-
+    </div>
+  </section>
+</div>
 <script>
   var ROUTES = {{ROUTES}};
   var GEO = {{GEO}};
@@ -311,9 +261,9 @@ _TEMPLATE = r"""<title>Tour de França</title>
     }
 
     function stop(){ playing=false; clearTimeout(timer);
-      document.getElementById('play').textContent='▶ Reprodueix'; }
+      document.getElementById('play').textContent='Reprodueix'; }
     function play(){
-      playing=true; document.getElementById('play').textContent='❙❙ Pausa';
+      playing=true; document.getElementById('play').textContent='Pausa';
       if(cur >= years.length-1) showYear(0, true); else showYear(cur, true);
       function tick(){
         if(!playing) return;
@@ -336,24 +286,26 @@ _TEMPLATE = r"""<title>Tour de França</title>
       accumulate = e.target.checked; showYear(cur, false);
     });
 
-    // ---- section routing (menu) ----
-    var links = [].slice.call(document.querySelectorAll('[data-target]'));
-    var entries = [].slice.call(document.querySelectorAll('.entry'));
+    // ---- views (text menu) ----
+    var links = [].slice.call(document.querySelectorAll('[data-sec]'));
+    var secs = [].slice.call(document.querySelectorAll('section[id]'));
     function route(id){
-      var found=false;
-      entries.forEach(function(e){ var on=e.id===id; e.classList.toggle('on',on); if(on)found=true; });
-      if(!found){ id='map'; document.getElementById('map').classList.add('on'); }
-      links.forEach(function(a){ a.classList.toggle('on', a.dataset.target===id); });
-      if(id!=='map') stop();
+      if(!document.getElementById(id)) id = 'map';
+      secs.forEach(function(s){ s.hidden = s.id !== id; });
+      links.forEach(function(a){ a.classList.toggle('on', a.dataset.sec === id); });
+      if(id !== 'map') stop();
     }
     links.forEach(function(a){ a.addEventListener('click', function(ev){
-      ev.preventDefault(); history.replaceState(null,'','#'+a.dataset.target); route(a.dataset.target);
+      ev.preventDefault(); route(a.dataset.sec); window.scrollTo(0,0);
     }); });
 
     showYear(0, false);
-    route(location.hash ? location.hash.slice(1) : 'map');
+    route('map');
   })();
 </script>
+{{NAV}}
+</body>
+</html>
 """
 
 
