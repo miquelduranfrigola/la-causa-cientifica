@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Pàgina no trobada — {{ site_title }}{% endblock %}
+
+{% block body %}
+<div class="app">
+  <header class="mast">
+    <a class="word" href="{{ root }}">{{ site_title }}</a>
+    <nav aria-label="Principal"><a href="{{ root }}#sobre">Sobre el projecte</a></nav>
+  </header>
+  <main id="main">
+    <div class="wrap">
+      <h1 class="title" style="margin-top: clamp(40px, 8vw, 96px)">No hem trobat aquesta pàgina</h1>
+      <p class="intro" style="margin-top: 24px">L’adreça no existeix o la peça ha canviat de lloc. <a class="textlink" href="{{ root }}">Torna a la llista de peces.</a></p>
+    </div>
+  </main>
+</div>
+{% endblock %}

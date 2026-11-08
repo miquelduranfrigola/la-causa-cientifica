@@ -24,6 +24,10 @@ Hierarchy comes from size, weight, spacing and hairlines. There are no icons, ca
 Near-white paper, near-black ink, one ultramarine blue. The blue marks the one thing that is active or numbered: a link, the current view, an index numeral, a live reading in a figure.
 *In practice:* if you reach for a second colour, the structure is wrong.
 
+### 3b. State is shown with the accent or an underline, never by dimming
+Text is never paler than ink. A word being read, a language already crossed, a view that is current: mark them with the blue or a 1px underline. Faint grey for "not yet" or "done" fails contrast (4.5:1) and breaks Principle 9.
+*In practice:* if a reveal effect needs a "before" state, the "before" state is ink.
+
 ### 4. Roman by default; italics always mean something
 Italics are not a style layer. They are for scientific names (*Podarcis muralis*), titles of cited works (*Veinte poemas de amor…*), a word the sentence stresses, or a quoted foreign phrase. Summaries, subtitles, credit lines, captions, glosses, labels, language names and software names are roman. Never bold for emphasis in running text.
 *In practice:* before italicising anything, name which of the four reasons applies. If none does, leave it roman.
@@ -163,9 +167,12 @@ Generated, never hand-made: `python scripts/make_social.py` renders HTML cards i
 ## Part IV. How to work with this design
 
 ### Adding or changing a piece
-1. Copy `_template/poem/` or run `python scripts/new_poem.py "Títol"`. Fill `metadata.yml` including `summary:` (and `excerpt:` if you want a verse card).
-2. Build the page with the shared pieces: `design_css()`, `nav_script()` and `standalone_bar()` from `shared/design/inline.py`, in a `_TEMPLATE` string with `{{DESIGN}}`, `{{STANDALONE}}`, `{{NAV}}`. See `content/llangardaix-extingit/code/build_web.py` for the smallest example.
+1. Run `python scripts/new_poem.py "Títol"`. Fill `metadata.yml` including `summary:` (and `excerpt:` if you want a verse card). The scaffold includes a working `code/build_web.py`.
+2. Extend that page, built from the shared pieces: `design_css()`, `nav_script()` and `standalone_bar()` from `shared/design/inline.py`, in a `_TEMPLATE` string with `{{DESIGN}}`, `{{STANDALONE}}`, `{{NAV}}`. See `content/llangardaix-extingit/code/build_web.py` for the smallest example.
 3. Rebuild the page (`code/build_web.py`), the site (`python site/build_site.py`) and, if titles changed, the social cards.
+
+### Automatic guard
+`python scripts/check_design.py` enforces the mechanical rules: forbidden colours and fonts, rounded corners, shadows, gradients, uppercase labels, italic used as a style, external requests, `<html lang="ca">`, one `<h1>`, a `<main>` landmark, and, per piece, a `summary:` and a share card. It runs in CI before every deploy. Run it locally before pushing.
 
 ### Before you ship: checklist
 - [ ] No horizontal scroll at 320, 390, 768, 1024, 1440, 2560 px, portrait and landscape.
@@ -178,7 +185,8 @@ Generated, never hand-made: `python scripts/make_social.py` renders HTML cards i
 - [ ] No external requests; the file works opened from disk.
 - [ ] Catalan glyphs render (`l·l`, `ŀ`, `« »`, accents); apostrophes are ’.
 - [ ] Back button, `j`/`k`/`Esc` and the previous/next links behave inside the shell.
-- [ ] No console errors.
+- [ ] No console errors, and `python scripts/check_design.py` passes.
+- [ ] Lighthouse accessibility is 100 for the shell and for each piece, in its animated state too.
 
 ### Where things live
 `shared/design/` tokens, base, fonts, nav script, inliner · `site/` shell templates and build · `content/<slug>/code/build_web.py` each piece · `scripts/make_social.py` and `social/` the share cards · `CONVENTIONS.md` the repo-level contract.

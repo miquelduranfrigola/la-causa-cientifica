@@ -223,6 +223,29 @@ def share_head(poem: Poem, poem_url: str) -> str:
 # --------------------------------------------------------------------------- #
 # Building
 # --------------------------------------------------------------------------- #
+def write_crawler_files(out_dir: Path, poems: list[Poem], env: Environment, common: dict) -> None:
+    """Write robots.txt, sitemap.xml, llms.txt and the 404 page."""
+    (out_dir / "robots.txt").write_text(
+        f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf-8"
+    )
+    urls = [f"{SITE_URL}/"] + [f"{SITE_URL}/{p.slug}/" for p in poems]
+    entries = "\n".join(f"  <url><loc>{u}</loc></url>" for u in urls)
+    (out_dir / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"{entries}\n</urlset>\n",
+        encoding="utf-8",
+    )
+    lines = [f"# {SITE_TITLE}", "", f"> {SITE_INTRO}", "", "## Peces", ""]
+    lines += [f"- [{p.title}]({SITE_URL}/{p.slug}/): {p.summary}".rstrip(": ") for p in poems]
+    lines += ["", "## Codi", "", f"- [Repositori a GitHub]({REPO_URL}): textos, dades i codi en Python de totes les peces", ""]
+    (out_dir / "llms.txt").write_text("\n".join(lines), encoding="utf-8")
+    (out_dir / "404.html").write_text(
+        env.get_template("notfound.html").render(root=f"{SITE_URL}/", page_url=f"{SITE_URL}/", page_image=f"{SITE_URL}/og.png", **common),
+        encoding="utf-8",
+    )
+
+
 def build(out_dir: Path) -> None:
     poems = discover_poems()
 
@@ -299,7 +322,12 @@ def build(out_dir: Path) -> None:
     for poem in poems:
         poem_out = out_dir / poem.slug
         poem_out.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(SOCIAL_DIR / "og" / f"{poem.slug}.png", poem_out / "og.png")
+        card = SOCIAL_DIR / "og" / f"{poem.slug}.png"
+        if not card.exists():
+            print(f"warning: no share card for {poem.slug}; using the collection card "
+                  "(run scripts/make_social.py)")
+            card = SOCIAL_DIR / "og" / "index.png"
+        shutil.copyfile(card, poem_out / "og.png")
         poem_url = f"{SITE_URL}/{poem.slug}/"
         if poem.page_src is not None:
             # Serve the poem's self-contained page, adding only link-preview tags and a
@@ -323,6 +351,7 @@ def build(out_dir: Path) -> None:
                 encoding="utf-8",
             )
 
+    write_crawler_files(out_dir, poems, env, common)
     print(f"Built {len(poems)} poem(s) into {out_dir}/")
 
 

@@ -204,6 +204,7 @@ _TEMPLATE = r"""<!doctype html>
     <li><a data-sec="poema" class="on" href="#poema">El poema</a></li>
     <li><a data-sec="metode" href="#metode">Metodologia</a></li>
   </ul></nav>
+<main>
 
   <section id="poema">
     <div class="prose"><p>Cada vers, un hexasíl·lab; cada estrofa, la seva rima. El plafó va passant les molècules de cada edat.</p></div>
@@ -220,6 +221,7 @@ _TEMPLATE = r"""<!doctype html>
         Recompte de síl·labes amb el motor de Softcatalà.</p>
     </div>
   </section>
+</main>
 </div>
 
 <script>

@@ -88,7 +88,8 @@ _TEMPLATE = r"""<!doctype html>
   .route.head{ stroke:var(--accent); stroke-width:2; }
   .draw{ transition:stroke-dashoffset var(--dur,.5s) ease; }
 
-  .controls{ position:sticky; bottom:0; z-index:2; background:var(--paper); box-shadow:-2rem 0 0 var(--paper), 2rem 0 0 var(--paper); display:flex; align-items:center; gap:8px 16px; flex-wrap:wrap; padding:12px 0 calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
+  .controls::before{ content:""; position:absolute; inset:0 -2rem; background:var(--paper); z-index:-1; }
+  .controls{ position:sticky; bottom:0; z-index:2; background:var(--paper); display:flex; align-items:center; gap:8px 16px; flex-wrap:wrap; padding:12px 0 calc(12px + env(safe-area-inset-bottom)); border-top:1px solid var(--rule); font:400 .875rem/1.4 var(--sans); }
   .play{ font:inherit; background:var(--paper); color:var(--ink); border:1px solid var(--ink); border-radius:0; padding:6px 16px; min-width:7.5em; cursor:pointer; }
   @media (hover:hover){ .play:hover{ background:var(--ink); color:var(--paper); } }
   .play:active{ background:var(--ink); color:var(--paper); }
@@ -113,11 +114,11 @@ _TEMPLATE = r"""<!doctype html>
     .readout{ grid-column:1; grid-row:1; flex-direction:column; align-items:flex-start; gap:8px; padding-top:clamp(8px,2vw,24px); }
     .mapbox{ grid-column:2; grid-row:1 / span 3; margin:0; position:sticky; top:1rem; }
     svg.map{ max-height:calc(100vh - 2rem); max-height:calc(100svh - 2rem); }
-    .controls{ grid-column:1; grid-row:2; position:static; box-shadow:none; flex-direction:column; align-items:stretch; margin-top:16px; }
+    .controls{ grid-column:1; grid-row:2; position:static; flex-direction:column; align-items:stretch; margin-top:16px; }
     .controls .tl{ flex-basis:auto; }
     .play{ align-self:flex-start; }
   }
-  @media (max-height:32rem){ .controls{ position:static; box-shadow:none; } svg.map{ max-height:none; } }
+  @media (max-height:32rem){ .controls{ position:static; } svg.map{ max-height:none; } }
   @media (prefers-reduced-motion:reduce){ .draw{ transition:none; } }
   @media (pointer:coarse){   /* finger-sized controls */
     .play{ min-height:44px; padding:10px 20px; }
@@ -142,6 +143,7 @@ _TEMPLATE = r"""<!doctype html>
     <li><a data-sec="poem" href="#poem">El poema</a></li>
     <li><a data-sec="method" href="#method">Metodologia</a></li>
   </ul></nav>
+<main>
 
   <section id="map">
     <div class="readout">
@@ -190,6 +192,7 @@ _TEMPLATE = r"""<!doctype html>
       </div>
     </div>
   </section>
+</main>
 </div>
 <script>
   var ROUTES = {{ROUTES}};

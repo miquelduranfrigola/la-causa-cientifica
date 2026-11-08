@@ -127,6 +127,7 @@ _TEMPLATE = r"""<!doctype html>
     <li><a data-sec="poem" class="on" href="#poem">El poema</a></li>
     <li><a data-sec="metode" href="#metode">Metodologia</a></li>
   </ul></nav>
+<main>
 
   <section id="poem">
     <p class="dims" id="dims" aria-live="off"></p>
@@ -142,6 +143,7 @@ _TEMPLATE = r"""<!doctype html>
       <p>{{CONSERVED}}</p>
     </div>
   </section>
+</main>
 </div>
 
 <script>

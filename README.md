@@ -35,6 +35,15 @@ python site/build_site.py
 # obre _site/index.html
 ```
 
+## Disseny, previsualitzacions i comprovacions
+
+```bash
+python scripts/check_design.py   # comprova les regles de DESIGN.md (també s'executa a CI)
+python scripts/make_social.py    # regenera les targetes per a xarxes i les icones a social/
+```
+
+`DESIGN.md` explica els principis; `social/` conté les imatges ja generades.
+
 ## Fitxers grans
 
 Els fitxers grans (àudio, vídeo, dades) no es guarden a git: es referencien a un

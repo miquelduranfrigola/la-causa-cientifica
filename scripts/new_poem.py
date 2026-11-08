@@ -74,7 +74,8 @@ def main() -> None:
 
     dest = create_poem(args.title, slug)
     print(f"Created {dest.relative_to(REPO_ROOT)}")
-    print("Next: edit poem.md, metadata.yml, code/main.py and install.sh")
+    print("Next: edit poem.md, metadata.yml (title, summary), code/main.py and install.sh")
+    print("Then run `python code/build_web.py` inside the folder and uncomment `page:` in metadata.yml")
 
 
 if __name__ == "__main__":

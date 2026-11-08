@@ -117,7 +117,7 @@ def _poem_payload(text: str, stem: str, embedded: dict):
                     d += 1
                 words.append({"dom": d, "a": a - cum[d] + 1, "b": b - cum[d], "n": L, "eol": eol})
                 hue = round(240 * ((a + b) / 2) / tot)  # N-term red -> C-term blue
-                style = f' style="--c:hsl({hue},62%,48%)"'
+                style = f' style="--c:hsl({hue},62%,36%)"'
             else:
                 words.append({"dom": -1, "a": 0, "b": 0, "n": 0, "eol": eol})
                 style = ""
@@ -247,12 +247,13 @@ _TEMPLATE = r"""<!doctype html>
     .verse{ max-width:none; overflow-x:auto; }
     .verse .v{ white-space:nowrap; }
   }
-  .wd{ color:rgba(17,17,17,.25); transition:color .25s ease; }   /* grows: faint -> ink */
-  .wd.on{ color:var(--ink); }
+  /* Every word stays in full ink (readable at rest); the words reached turn blue. */
+  .wd{ color:var(--ink); transition:color .25s ease; }
+  .wd.on{ color:var(--accent); }
 
   /* the sequence is machine text: mono, filling in the N-to-C rainbow */
   .seq{ line-height:2; word-break:break-all; letter-spacing:.02em; }
-  .res{ color:rgba(17,17,17,.2); transition:color .25s ease; }
+  .res{ color:rgba(17,17,17,.62); transition:color .25s ease; }
   .res.on{ color:var(--c); }
 
   .prose{ font-size:1.25rem; }
@@ -261,6 +262,7 @@ _TEMPLATE = r"""<!doctype html>
   @media (prefers-reduced-motion:reduce){
     .entry{ animation:none; }
     .wd,.res{ transition:none; }
+    .wd.on{ color:var(--ink); }
   }
 </style>
 </head>

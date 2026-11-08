@@ -44,7 +44,9 @@ itself — never buried among the outputs. Heavy intermediates (`cache/`,
 committed page is `index.html`.
 
 Start a new poem by copying `_template/poem/`, or run
-`python scripts/new_poem.py "Títol en català"`.
+`python scripts/new_poem.py "Títol en català"`. The template ships a working
+`code/build_web.py` in the shared design; `python scripts/check_design.py` checks
+the rules in `DESIGN.md`.
 
 ## `metadata.yml` schema
 

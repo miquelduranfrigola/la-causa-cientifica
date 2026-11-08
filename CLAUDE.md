@@ -42,6 +42,9 @@ python scripts/fetch_assets.py content/<slug>/assets/drive-manifest.yml
 # Regenerate social cards and icons into social/ (needs Chrome, pyyaml, fonttools)
 NEWSREADER_TTF=/path/to/Newsreader.ttf python scripts/make_social.py
 
+# Check the design rules from DESIGN.md (also runs in CI)
+python scripts/check_design.py
+
 # Build the website locally into ./_site
 pip install -r site/requirements.txt
 python site/build_site.py            # add --out DIR to change output

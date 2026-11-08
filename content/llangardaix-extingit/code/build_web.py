@@ -60,6 +60,7 @@ _TEMPLATE = r"""<!doctype html>
     <li><a data-sec="obra" class="on" href="#obra">El genoma</a></li>
     <li><a data-sec="meto" href="#meto">Metodologia</a></li>
   </ul></nav>
+<main>
 
   <section id="obra" style="margin-top:clamp(24px,4vw,40px)">
     <p class="label">{{LEN}} parells de bases · reconstrucció per màxima versemblança</p>
@@ -71,6 +72,7 @@ _TEMPLATE = r"""<!doctype html>
   <section id="meto" hidden style="margin-top:clamp(24px,4vw,40px)">
     <div class="prose">{{METHOD}}</div>
   </section>
+</main>
 </div>
 <script>
 (function(){

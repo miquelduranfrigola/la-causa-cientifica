@@ -49,8 +49,8 @@ UNICODES = (
 
 # family, source file, CSS weight (or range), style, axis limits for variable fonts
 FONTS = [
-    ("Newsreader", "Newsreader.ttf", "300 600", "normal", {"wght": (300, 600)}),
-    ("Newsreader", "Newsreader-Italic.ttf", "300 600", "italic", {"wght": (300, 600)}),
+    ("Newsreader", "Newsreader.ttf", "400 500", "normal", {"wght": (400, 500)}),
+    ("Newsreader", "Newsreader-Italic.ttf", "400", "italic", {"wght": 400}),
     ("Hanken Grotesk", "HankenGrotesk.ttf", "400 600", "normal", {"wght": (400, 600)}),
     ("IBM Plex Mono", "PlexMono-Regular.ttf", "400", "normal", None),
 ]

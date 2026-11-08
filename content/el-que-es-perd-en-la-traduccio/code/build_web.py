@@ -130,7 +130,7 @@ _TEMPLATE = r"""<!doctype html>
   .how>.label{ position:sticky; top:0; z-index:1; margin:0; padding:.5rem 0; background:var(--paper); }
   .maps{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr)); gap:.25rem 1rem; max-width:60rem; }
   .map{ font-size:1rem; line-height:1.4; white-space:nowrap; transition:color .14s ease; }
-  .map.done{ opacity:.5; }
+  .map.done{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:.22em; }   /* crossed: underlined, never paler */
   @media (prefers-reduced-motion:reduce){ .map{ transition:none; } }
   .map.now{ color:var(--accent); }
   section[hidden]{ display:none; }
@@ -148,6 +148,7 @@ _TEMPLATE = r"""<!doctype html>
     <li><a data-sec="poemes" class="on" href="#poemes">Els poemes</a></li>
     <li><a data-sec="meto" href="#meto">Metodologia</a></li>
   </ul></nav>
+<main>
 
   <section id="poemes" style="margin-top:clamp(32px,5vw,56px)">
     <p class="epigraph">«Poetry is what gets lost in translation.» <span style="white-space:nowrap">— Robert Frost</span></p>
@@ -156,6 +157,7 @@ _TEMPLATE = r"""<!doctype html>
   <section id="meto" hidden style="margin-top:clamp(24px,4vw,40px)">
     {{METHOD}}
   </section>
+</main>
 </div>
 <script>
   var CHAIN = {{CHAIN}};           // [[code, name], ...] es ... es

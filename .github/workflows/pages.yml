@@ -29,6 +29,9 @@ jobs:
       - name: Install site dependencies
         run: pip install -r site/requirements.txt
 
+      - name: Check design rules (DESIGN.md)
+        run: python scripts/check_design.py
+
       - name: Build site
         run: python site/build_site.py --out _site
 

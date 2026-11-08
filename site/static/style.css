@@ -128,3 +128,7 @@ html.mode-piece .app { height: 100dvh; min-height: 0; }
 .skip { position: absolute; left: var(--edge); top: -4rem; z-index: 10; padding: 8px 12px; background: var(--ink); color: var(--paper); font: 400 .875rem/1.4 var(--sans); }
 .skip:focus { top: 8px; color: var(--paper); }
 main:focus { outline: none; }
+
+/* ---------- Utilities ---------- */
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.textlink { border-bottom: 1px solid currentColor; }
