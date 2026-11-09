@@ -117,10 +117,10 @@ _TEMPLATE = r"""<!doctype html>
 {{DESIGN}}
   .epigraph{ margin:0 0 clamp(24px,3.5vw,40px); max-width:var(--measure-prose); }
   /* the poems are short: they fill the width in columns, each under its own hairline */
-  .poems{ display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr)); gap:0 clamp(32px,4vw,64px); align-items:start; }
-  .entry{ padding:clamp(18px,2.4vw,28px) 0 clamp(24px,3vw,36px); border-top:1px solid var(--rule); }
+  .poems{ display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr)); gap:0 clamp(32px,4vw,64px); }
+  .entry{ display:flex; flex-direction:column; padding:clamp(18px,2.4vw,28px) 0 clamp(24px,3vw,36px); border-top:1px solid var(--rule); }
   .etitle{ margin:0 0 clamp(16px,2.4vw,24px); font-weight:400; font-size:clamp(1.5rem,3vw,2rem); line-height:1.15; letter-spacing:-.01em; text-wrap:balance; }
-  .orig{ margin-top:clamp(14px,2vw,22px); }
+  .orig{ margin-top:auto; padding-top:clamp(14px,2vw,22px); }
   .otoggle{ cursor:pointer; background:none; border:0; padding:0; color:inherit; font:400 .875rem/1.4 var(--sans); border-bottom:1px solid transparent; transition:color .25s ease; }
   .otoggle::after{ content:" +"; }
   .otoggle[aria-expanded=true]::after{ content:" –"; }
@@ -134,7 +134,7 @@ _TEMPLATE = r"""<!doctype html>
   .orig .original{ margin-top:16px; }
   .chaincount{ display:inline-block; vertical-align:bottom; max-width:calc(100% - 6rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
   .how>.label{ position:sticky; top:0; z-index:1; margin:0; padding:.5rem 0; background:var(--paper); }
-  .maps{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr)); gap:.25rem 1rem; max-width:60rem; }
+  .maps{ list-style:none; margin:.5rem 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr)); gap:.25rem 1rem; }
   .map{ font-size:1rem; line-height:1.4; white-space:nowrap; transition:color .14s ease; }
   .map.done{ text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:.22em; }   /* crossed: underlined, never paler */
   @media (prefers-reduced-motion:reduce){ .map{ transition:none; } }

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -47,8 +48,14 @@ def _highlight(prev_line: str, new_line: str) -> str:
     return " ".join(out)
 
 
+def _curl(t: str) -> str:
+    """Typographic apostrophes between letters (l'aire -> l’aire), as the poem is repainted too fast for the page script."""
+    return re.sub(r"(?<=\w)'(?=\w)", "\u2019", t)
+
+
 def _payload():
-    data = json.loads((POEM_ROOT / "data" / "evolution.json").read_text(encoding="utf-8"))
+    raw = (POEM_ROOT / "data" / "evolution.json").read_text(encoding="utf-8")
+    data = json.loads(_curl(raw))
     cur = list(data["original"])
     steps = []
     for st in data["steps"]:

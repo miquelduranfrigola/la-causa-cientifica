@@ -178,7 +178,7 @@ _TEMPLATE = r"""<!doctype html>
 
   .split{ display:grid; grid-template-columns:clamp(13rem,26vw,17.5rem) minmax(0,1fr);
           gap:clamp(28px,4.5vw,64px); align-items:center; }
-  @media (max-width:45rem){ .split{ grid-template-columns:1fr; gap:20px; } }
+  @media (max-width:45rem){ .split{ grid-template-columns:1fr; gap:12px; } .viewer{ max-width:11rem; } }
 
   .viewer{ position:relative; width:100%; max-width:17.5rem; aspect-ratio:1; }
   .slide{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
