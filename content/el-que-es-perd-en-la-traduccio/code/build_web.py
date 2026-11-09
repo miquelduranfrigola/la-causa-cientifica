@@ -60,10 +60,10 @@ def _entry(m: dict) -> str:
     <article class="entry" id="p-{pid}">
       <h2 class="etitle">{html.escape(title)}</h2>
       <div class="verse despo">{despo}</div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original">{original}</div>
-      </details>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-{pid}">Original</button>
+        <div class="obody" id="o-{pid}" inert><div class="oin"><div class="verse original">{original}</div></div></div>
+      </div>
     </article>"""
 
 
@@ -121,12 +121,16 @@ _TEMPLATE = r"""<!doctype html>
   .entry{ padding:clamp(18px,2.4vw,28px) 0 clamp(24px,3vw,36px); border-top:1px solid var(--rule); }
   .etitle{ margin:0 0 clamp(16px,2.4vw,24px); font-weight:400; font-size:clamp(1.5rem,3vw,2rem); line-height:1.15; letter-spacing:-.01em; text-wrap:balance; }
   .orig{ margin-top:clamp(14px,2vw,22px); }
-  .orig>summary{ cursor:pointer; list-style:none; font:400 .875rem/1.4 var(--sans); display:inline-block; border-bottom:1px solid transparent; }
-  .orig>summary::-webkit-details-marker{ display:none; }
-  .orig>summary::after{ content:" +"; }
-  .orig[open]>summary::after{ content:" –"; }
-  .orig>summary:hover{ color:var(--accent); }
-  @media (pointer:coarse){ .orig>summary{ padding:13px 0; } }
+  .otoggle{ cursor:pointer; background:none; border:0; padding:0; color:inherit; font:400 .875rem/1.4 var(--sans); border-bottom:1px solid transparent; transition:color .25s ease; }
+  .otoggle::after{ content:" +"; }
+  .otoggle[aria-expanded=true]::after{ content:" –"; }
+  .otoggle:hover{ color:var(--accent); }
+  @media (pointer:coarse){ .otoggle{ padding:13px 0; } }
+  .obody{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.3,.7,.2,1); }
+  .orig.open>.obody{ grid-template-rows:1fr; }
+  .oin{ min-height:0; overflow:hidden; opacity:0; transition:opacity .35s ease; }
+  .orig.open .oin{ opacity:1; transition-delay:.1s; }
+  @media (prefers-reduced-motion:reduce){ .obody,.oin{ transition:none; } }
   .orig .original{ margin-top:16px; }
   .chaincount{ display:inline-block; vertical-align:bottom; max-width:calc(100% - 6rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
   .how>.label{ position:sticky; top:0; z-index:1; margin:0; padding:.5rem 0; background:var(--paper); }
@@ -163,6 +167,13 @@ _TEMPLATE = r"""<!doctype html>
 </div>
 <script>
   var CHAIN = {{CHAIN}};           // [[code, name], ...] es ... es
+  [].forEach.call(document.querySelectorAll('.orig'), function(o){
+    var b = o.querySelector('.otoggle'), body = o.querySelector('.obody');
+    b.addEventListener('click', function(){
+      var on = o.classList.toggle('open');
+      b.setAttribute('aria-expanded', on); body.inert = !on;
+    });
+  });
   (function(){
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

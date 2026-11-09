@@ -223,6 +223,9 @@ _TEMPLATE = r"""<!doctype html>
 <style>
 {{DESIGN}}
   .entry[hidden]{ display:none; }
+  @keyframes efade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+  .sw .entry:not([hidden]){ animation:efade .45s cubic-bezier(.3,.7,.2,1); }
+  @media (prefers-reduced-motion:reduce){ .sw .entry:not([hidden]){ animation:none; } }
   .entry{ padding-top:clamp(20px,3vw,32px); animation:appear .25s ease both; }
   @keyframes appear{ from{ opacity:0; } to{ opacity:1; } }
 
@@ -395,6 +398,7 @@ _TEMPLATE = r"""<!doctype html>
     links.forEach(function(a){
       a.addEventListener('click', function(ev){
         ev.preventDefault();
+        document.documentElement.classList.add('sw');
         history.replaceState(null, '', '#' + a.dataset.sec);
         show(a.dataset.sec);
         window.scrollTo(0, 0);

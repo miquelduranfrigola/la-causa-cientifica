@@ -258,12 +258,16 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
   .entry{ padding:clamp(18px,2.4vw,28px) 0 clamp(24px,3vw,36px); border-top:1px solid var(--rule); }
   .etitle{ margin:0 0 clamp(16px,2.4vw,24px); font-weight:400; font-size:clamp(1.5rem,3vw,2rem); line-height:1.15; letter-spacing:-.01em; text-wrap:balance; }
   .orig{ margin-top:clamp(14px,2vw,22px); }
-  .orig>summary{ cursor:pointer; list-style:none; font:400 .875rem/1.4 var(--sans); display:inline-block; border-bottom:1px solid transparent; }
-  .orig>summary::-webkit-details-marker{ display:none; }
-  .orig>summary::after{ content:" +"; }
-  .orig[open]>summary::after{ content:" –"; }
-  .orig>summary:hover{ color:var(--accent); }
-  @media (pointer:coarse){ .orig>summary{ padding:13px 0; } }
+  .otoggle{ cursor:pointer; background:none; border:0; padding:0; color:inherit; font:400 .875rem/1.4 var(--sans); border-bottom:1px solid transparent; transition:color .25s ease; }
+  .otoggle::after{ content:" +"; }
+  .otoggle[aria-expanded=true]::after{ content:" –"; }
+  .otoggle:hover{ color:var(--accent); }
+  @media (pointer:coarse){ .otoggle{ padding:13px 0; } }
+  .obody{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s cubic-bezier(.3,.7,.2,1); }
+  .orig.open>.obody{ grid-template-rows:1fr; }
+  .oin{ min-height:0; overflow:hidden; opacity:0; transition:opacity .35s ease; }
+  .orig.open .oin{ opacity:1; transition-delay:.1s; }
+  @media (prefers-reduced-motion:reduce){ .obody,.oin{ transition:none; } }
   .orig .original{ margin-top:16px; }
   .chaincount{ display:inline-block; vertical-align:bottom; max-width:calc(100% - 6rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font:400 .875rem/1.4 var(--sans); margin-left:12px; font-variant-numeric:tabular-nums; color:var(--accent); }
   .how>.label{ position:sticky; top:0; z-index:1; margin:0; padding:.5rem 0; background:var(--paper); }
@@ -298,9 +302,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
       <div class="verse despo"><span class="v">Pienso cómo manejar estas imágenes. ¡Bienvenido!</span>
 <span class="v">Por desgracia, mi esposa e hijos.</span>
 <span class="v">Me encanta la India.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Cuerpo de mujer, blancas colinas, muslos blancos,</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema01">Original</button>
+        <div class="obody" id="o-poema01" inert><div class="oin"><div class="verse original"><span class="v">Cuerpo de mujer, blancas colinas, muslos blancos,</span>
 <span class="v">te pareces al mundo en tu actitud de entrega.</span>
 <span class="v">Mi cuerpo de labriego salvaje te socava</span>
 <span class="v">y hace saltar el hijo del fondo de la tierra.</span>
@@ -318,17 +322,17 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Cuerpo de mujer mía, persistiré en tu gracia.</span>
 <span class="v">Mi sed, mi ansia sin límite, mi camino indeciso!</span>
 <span class="v">Oscuros cauces donde la sed eterna sigue,</span>
-<span class="v">y la fatiga sigue, y el dolor infinito.</span></div>
-      </details>
+<span class="v">y la fatiga sigue, y el dolor infinito.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema02">
       <h2 class="etitle">Poema 2</h2>
       <div class="verse despo"><span class="v">Señor, amigo y montañas, cambios negros.</span>
 <span class="v">Azul y otros.</span>
 <span class="v">Políticas de desarrollo económico y, en octubre, el oro.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">En su llama mortal la luz te envuelve.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema02">Original</button>
+        <div class="obody" id="o-poema02" inert><div class="oin"><div class="verse original"><span class="v">En su llama mortal la luz te envuelve.</span>
 <span class="v">Absorta, pálida doliente, así situada</span>
 <span class="v">contra las viejas hélices del crepúsculo</span>
 <span class="v">que en torno a ti da vueltas.</span>
@@ -348,16 +352,16 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Oh grandiosa y fecunda y magnética esclava</span>
 <span class="v">del círculo que en negro y dorado sucede:</span>
 <span class="v">erguida, trata y logra una creación tan viva</span>
-<span class="v">que sucumben sus flores, y llena es de tristeza.</span></div>
-      </details>
+<span class="v">que sucumben sus flores, y llena es de tristeza.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema03">
       <h2 class="etitle">Poema 3</h2>
       <div class="verse despo"><span class="v">Montenegro sigue siendo incorrecto a lo largo de la costa de presión.</span>
 <span class="v">Aunque la boda…</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Ah vastedad de pinos, rumor de olas quebrándose,</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema03">Original</button>
+        <div class="obody" id="o-poema03" inert><div class="oin"><div class="verse original"><span class="v">Ah vastedad de pinos, rumor de olas quebrándose,</span>
 <span class="v">lento juego de luces, campana solitaria,</span>
 <span class="v">crepúsculo cayendo en tus ojos, muñeca,</span>
 <span class="v">caracola terrestre, en ti la tierra canta!</span>
@@ -375,15 +379,15 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Ah tu voz misteriosa que el amor tiñe y dobla</span>
 <span class="v">en el atardecer resonante y muriendo!</span>
 <span class="v">Así en horas profundas sobre los campos he visto</span>
-<span class="v">doblarse las espigas en la boca del viento.</span></div>
-      </details>
+<span class="v">doblarse las espigas en la boca del viento.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema04">
       <h2 class="etitle">Poema 4</h2>
       <div class="verse despo"><span class="v">El proceso de hígado o el posible río Ravi.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Es la mañana llena de tempestad</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema04">Original</button>
+        <div class="obody" id="o-poema04" inert><div class="oin"><div class="verse original"><span class="v">Es la mañana llena de tempestad</span>
 <span class="v">en el corazón del verano.</span>
 <span class="br"></span>
 <span class="v">Como pañuelos blancos de adiós viajan las nubes,</span>
@@ -402,16 +406,16 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">y sustancia sin peso, y fuegos inclinados.</span>
 <span class="br"></span>
 <span class="v">Se rompe y se sumerge su volumen de besos</span>
-<span class="v">combatido en la puerta del viento del verano.</span></div>
-      </details>
+<span class="v">combatido en la puerta del viento del verano.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema05">
       <h2 class="etitle">Poema 5</h2>
       <div class="verse despo"><span class="v">La ventilación de la pared de climatización, oí nada más que los precios del vino.</span>
 <span class="v">No antes, Maliyili trató de detenerme, pero no lo hice.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Para que tú me oigas</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema05">Original</button>
+        <div class="obody" id="o-poema05" inert><div class="oin"><div class="verse original"><span class="v">Para que tú me oigas</span>
 <span class="v">mis palabras</span>
 <span class="v">se adelgazan a veces</span>
 <span class="v">como las huellas de las gaviotas en las playas.</span>
@@ -447,17 +451,17 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Todo lo ocupas tú, todo lo ocupas.</span>
 <span class="br"></span>
 <span class="v">Voy haciendo de todas un collar infinito</span>
-<span class="v">para tus blancas manos, suaves como las uvas.</span></div>
-      </details>
+<span class="v">para tus blancas manos, suaves como las uvas.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema06">
       <h2 class="etitle">Poema 6</h2>
       <div class="verse despo"><span class="v">Apoyar el medio ambiente y el resultado y el Banco Mundial.</span>
 <span class="v">El daño a los antecedentes históricos: limpio, ordenado y pájaros cambió.</span>
 <span class="v">Se encuentra ahora la luz amarilla y caída.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Te recuerdo como eras en el último otoño.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema06">Original</button>
+        <div class="obody" id="o-poema06" inert><div class="oin"><div class="verse original"><span class="v">Te recuerdo como eras en el último otoño.</span>
 <span class="v">Eras la boina gris y el corazón en calma.</span>
 <span class="v">En tus ojos peleaban las llamas del crepúsculo.</span>
 <span class="v">Y las hojas caían en el agua de tu alma.</span>
@@ -475,17 +479,17 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Cielo desde un navío. Campo desde los cerros.</span>
 <span class="v">Tu recuerdo es de luz, de humo, de estanque en calma!</span>
 <span class="v">Más allá de tus ojos ardían los crepúsculos.</span>
-<span class="v">Hojas secas de otoño giraban en tu alma.</span></div>
-      </details>
+<span class="v">Hojas secas de otoño giraban en tu alma.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema07">
       <h2 class="etitle">Poema 7</h2>
       <div class="verse despo"><span class="v">Arena, amarilla, hermosa.</span>
 <span class="v">O roja, y los investigadores</span>
 <span class="v">quieren ver la destrucción de las paredes en blanco y negro.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Inclinado en las tardes tiro mis tristes redes</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema07">Original</button>
+        <div class="obody" id="o-poema07" inert><div class="oin"><div class="verse original"><span class="v">Inclinado en las tardes tiro mis tristes redes</span>
 <span class="v">a tus ojos oceánicos.</span>
 <span class="br"></span>
 <span class="v">Allí se estira y arde en la más alta hoguera</span>
@@ -504,17 +508,17 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">que centellean como mi alma cuando te amo.</span>
 <span class="br"></span>
 <span class="v">Galopa la noche en su yegua sombría</span>
-<span class="v">desparramando espigas azules sobre el campo.</span></div>
-      </details>
+<span class="v">desparramando espigas azules sobre el campo.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema08">
       <h2 class="etitle">Poema 8</h2>
       <div class="verse despo"><span class="v">Explosión, condiciones, corrección de pruebas. ¡La gente!</span>
 <span class="v">Qatar, ¡el agua es mala!</span>
 <span class="v">Mientras tanto, cinco etíopes para que me ayuden, pero lo harán. ¡De verdad!</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Abeja blanca zumbas -ebria de miel- en mi alma</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema08">Original</button>
+        <div class="obody" id="o-poema08" inert><div class="oin"><div class="verse original"><span class="v">Abeja blanca zumbas -ebria de miel- en mi alma</span>
 <span class="v">y te tuerces en lentas espirales de humo.</span>
 <span class="br"></span>
 <span class="v">Soy el desesperado, la palabra sin ecos,</span>
@@ -545,8 +549,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Abeja blanca, ausente, aún zumbas en mi alma.</span>
 <span class="v">Revives en el tiempo, delgada y silenciosa.</span>
 <span class="br"></span>
-<span class="v">Ah silenciosa!</span></div>
-      </details>
+<span class="v">Ah silenciosa!</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema09">
       <h2 class="etitle">Poema 9</h2>
@@ -555,9 +559,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Esta enfermedad (amor, amor y respeto)</span>
 <span class="v">juega un papel importante en la física de las noches.</span>
 <span class="v">Pero era, pero es demasiado mala.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Ebrio de trementina y largos besos,</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema09">Original</button>
+        <div class="obody" id="o-poema09" inert><div class="oin"><div class="verse original"><span class="v">Ebrio de trementina y largos besos,</span>
 <span class="v">estival, el velero de las rosas dirijo,</span>
 <span class="v">torcido hacia la muerte del delgado día,</span>
 <span class="v">cimentado en el sólido frenesí marino.</span>
@@ -580,16 +584,16 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Aguas arriba, en medio de las olas externas,</span>
 <span class="v">tu paralelo cuerpo se sujeta en mis brazos</span>
 <span class="v">como un pez infinitamente pegado a mi alma</span>
-<span class="v">rápido y lento en la energía subceleste.</span></div>
-      </details>
+<span class="v">rápido y lento en la energía subceleste.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema10">
       <h2 class="etitle">Poema 10</h2>
       <div class="verse despo"><span class="v">Cuatro autobuses Midnight Blue Mountains.</span>
 <span class="v">Hook murió, sin embargo.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Hemos perdido aun este crepúsculo.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema10">Original</button>
+        <div class="obody" id="o-poema10" inert><div class="oin"><div class="verse original"><span class="v">Hemos perdido aun este crepúsculo.</span>
 <span class="v">Nadie nos vio esta tarde con las manos unidas</span>
 <span class="v">mientras la noche azul caía sobre el mundo.</span>
 <span class="br"></span>
@@ -612,8 +616,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">y como un perro herido rodó a mis pies mi capa.</span>
 <span class="br"></span>
 <span class="v">Siempre, siempre te alejas en las tardes</span>
-<span class="v">hacia donde el crepúsculo corre borrando estatuas.</span></div>
-      </details>
+<span class="v">hacia donde el crepúsculo corre borrando estatuas.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema11">
       <h2 class="etitle">Poema 11</h2>
@@ -622,9 +626,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">De manera diferente, en la familia, Jiuao quiere escuchar la canción.</span>
 <span class="v">Las condiciones climáticas, como el verde y el blanco.</span>
 <span class="v">De hielo, del cáncer a la revelación.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Casi fuera del cielo ancla entre dos montañas</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema11">Original</button>
+        <div class="obody" id="o-poema11" inert><div class="oin"><div class="verse original"><span class="v">Casi fuera del cielo ancla entre dos montañas</span>
 <span class="v">la mitad de la luna.</span>
 <span class="v">Girante, errante noche, la cavadora de ojos.</span>
 <span class="v">A ver cuántas estrellas trizadas en la charca.</span>
@@ -649,15 +653,15 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">para qué tocarla ahora, para qué entristecerla.</span>
 <span class="v">Ay seguir el camino que se aleja de todo,</span>
 <span class="v">donde no esté atajando la angustia, la muerte, el invierno,</span>
-<span class="v">con sus ojos abiertos entre el rocío.</span></div>
-      </details>
+<span class="v">con sus ojos abiertos entre el rocío.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema12">
       <h2 class="etitle">Poema 12</h2>
       <div class="verse despo"><span class="v">Creo que va a ser esta vez: comunidad.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Para mi corazón basta tu pecho,</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema12">Original</button>
+        <div class="obody" id="o-poema12" inert><div class="oin"><div class="verse original"><span class="v">Para mi corazón basta tu pecho,</span>
 <span class="v">para tu libertad bastan mis alas.</span>
 <span class="v">Desde mi boca llegará hasta el cielo</span>
 <span class="v">lo que estaba dormido sobre tu alma.</span>
@@ -675,17 +679,17 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Acogedora como un viejo camino.</span>
 <span class="v">Te pueblan ecos y voces nostálgicas.</span>
 <span class="v">Yo desperté y a veces emigran y huyen</span>
-<span class="v">pájaros que dormían en tu alma.</span></div>
-      </details>
+<span class="v">pájaros que dormían en tu alma.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema13">
       <h2 class="etitle">Poema 13</h2>
       <div class="verse despo"><span class="v">La esperanza, la luz, la música, casi todas las tormentas.</span>
 <span class="v">La palabra significa</span>
 <span class="v">para ocultar la evidencia de salud.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">He ido marcando con cruces de fuego</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema13">Original</button>
+        <div class="obody" id="o-poema13" inert><div class="oin"><div class="verse original"><span class="v">He ido marcando con cruces de fuego</span>
 <span class="v">el atlas blanco de tu cuerpo.</span>
 <span class="v">Mi boca era una araña que cruzaba escondiéndose.</span>
 <span class="v">En ti, detrás de ti, temerosa, sedienta.</span>
@@ -710,8 +714,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Cantar, arder, huir, como un campanario en las manos de un loco.</span>
 <span class="v">Triste ternura mía, qué te haces de repente?</span>
 <span class="v">Cuando he llegado al vértice más atrevido y frío</span>
-<span class="v">mi corazón se cierra como una flor nocturna.</span></div>
-      </details>
+<span class="v">mi corazón se cierra como una flor nocturna.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema14">
       <h2 class="etitle">Poema 14</h2>
@@ -720,9 +724,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Había un hombre en mi corazón.</span>
 <span class="v">Ira, enojo, y el trabajo.</span>
 <span class="v">Pero ponen las flores en primavera, y el verano es fácil de limpiar.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Juegas todos los días con la luz del universo.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema14">Original</button>
+        <div class="obody" id="o-poema14" inert><div class="oin"><div class="verse original"><span class="v">Juegas todos los días con la luz del universo.</span>
 <span class="v">Sutil visitadora, llegas en la flor y en el agua.</span>
 <span class="v">Eres más que esta blanca cabecita que aprieto</span>
 <span class="v">como un racimo entre mis manos cada día.</span>
@@ -765,8 +769,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">avellanas oscuras, y cestas silvestres de besos.</span>
 <span class="br"></span>
 <span class="v">Quiero hacer contigo</span>
-<span class="v">lo que la primavera hace con los cerezos.</span></div>
-      </details>
+<span class="v">lo que la primavera hace con los cerezos.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema15">
       <h2 class="etitle">Poema 15</h2>
@@ -774,9 +778,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">sabor de la sangre y plumas.</span>
 <span class="v">Buena pregunta, corrupto.</span>
 <span class="v">Vi el cuerpo de su esposa.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Me gustas cuando callas porque estás como ausente,</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema15">Original</button>
+        <div class="obody" id="o-poema15" inert><div class="oin"><div class="verse original"><span class="v">Me gustas cuando callas porque estás como ausente,</span>
 <span class="v">y me oyes desde lejos, y mi voz no te toca.</span>
 <span class="v">Parece que los ojos se te hubieran volado</span>
 <span class="v">y parece que un beso te cerrara la boca.</span>
@@ -799,16 +803,16 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Me gustas cuando callas porque estás como ausente.</span>
 <span class="v">Distante y dolorosa como si hubieras muerto.</span>
 <span class="v">Una palabra entonces, una sonrisa bastan.</span>
-<span class="v">Y estoy alegre, alegre de que no sea cierto.</span></div>
-      </details>
+<span class="v">Y estoy alegre, alegre de que no sea cierto.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema16">
       <h2 class="etitle">Poema 16</h2>
       <div class="verse despo"><span class="v">De hecho, el sueño por la noche es mejor que el vino.</span>
 <span class="v">Licencia en lugar de alcohol para matarla.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">En mi cielo al crepúsculo eres como una nube</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema16">Original</button>
+        <div class="obody" id="o-poema16" inert><div class="oin"><div class="verse original"><span class="v">En mi cielo al crepúsculo eres como una nube</span>
 <span class="v">y tu color y forma son como yo los quiero.</span>
 <span class="v">Eres mía, eres mía, mujer de labios dulces,</span>
 <span class="v">y viven en tu vida mis infinitos sueños.</span>
@@ -826,8 +830,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">En la red de mi música estás presa, amor mío,</span>
 <span class="v">y mis redes de música son anchas como el cielo.</span>
 <span class="v">Mi alma nace a la orilla de tus ojos de luto.</span>
-<span class="v">En tus ojos de luto comienza el país del sueño.</span></div>
-      </details>
+<span class="v">En tus ojos de luto comienza el país del sueño.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema17">
       <h2 class="etitle">Poema 17</h2>
@@ -838,9 +842,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Amo la química: siete o nueve equipos, el agua puede ser entregada,</span>
 <span class="v">es un problema en la primera ronda de Roland Garros.</span>
 <span class="v">Todos ellos tienen una historia de la vida eterna. Pero ¿por qué?</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Pensando, enredando sombras en la profunda soledad.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema17">Original</button>
+        <div class="obody" id="o-poema17" inert><div class="oin"><div class="verse original"><span class="v">Pensando, enredando sombras en la profunda soledad.</span>
 <span class="v">Tú también estás lejos, ah más lejos que nadie.</span>
 <span class="v">Pensando, soltando pájaros, desvaneciendo imágenes,</span>
 <span class="v">enterrando lámparas.</span>
@@ -874,8 +878,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Rodaba, alegre, triste, interminable, mi alma.</span>
 <span class="br"></span>
 <span class="v">Pensando, enterrando lámparas en la profunda soledad.</span>
-<span class="v">Quién eres tú, quién eres?</span></div>
-      </details>
+<span class="v">Quién eres tú, quién eres?</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema18">
       <h2 class="etitle">Poema 18</h2>
@@ -883,9 +887,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Árabe podrido, en junio,</span>
 <span class="v">con una mano para el dinero.</span>
 <span class="v">En muchos casos dijo Jiuao.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Aquí te amo.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema18">Original</button>
+        <div class="obody" id="o-poema18" inert><div class="oin"><div class="verse original"><span class="v">Aquí te amo.</span>
 <span class="v">En los oscuros pinos se desenreda el viento.</span>
 <span class="v">Fosforece la luna sobre las aguas errantes.</span>
 <span class="v">Andan días iguales persiguiéndose.</span>
@@ -916,8 +920,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">La luna hace girar su rodaje de sueño.</span>
 <span class="br"></span>
 <span class="v">Me miran con tus ojos las estrellas más grandes.</span>
-<span class="v">Y como yo te amo, los pinos en el viento, quieren cantar tu nombre con sus hojas de alambre.</span></div>
-      </details>
+<span class="v">Y como yo te amo, los pinos en el viento, quieren cantar tu nombre con sus hojas de alambre.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema19">
       <h2 class="etitle">Poema 19</h2>
@@ -925,9 +929,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Canales en inglés y miel,</span>
 <span class="v">agua y aire incómodo.</span>
 <span class="v">Sol, la Luna y Luxemburgo.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Niña morena y ágil, el sol que hace las frutas,</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema19">Original</button>
+        <div class="obody" id="o-poema19" inert><div class="oin"><div class="verse original"><span class="v">Niña morena y ágil, el sol que hace las frutas,</span>
 <span class="v">el que cuaja los trigos, el que tuerce las algas,</span>
 <span class="v">hizo tu cuerpo alegre, tus luminosos ojos</span>
 <span class="v">y tu boca que tiene la sonrisa del agua.</span>
@@ -945,8 +949,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Mi corazón sombrío te busca, sin embargo,</span>
 <span class="v">y amo tu cuerpo alegre, tu voz suelta y delgada.</span>
 <span class="v">Mariposa morena dulce y definitiva</span>
-<span class="v">como el trigal y el sol, la amapola y el agua.</span></div>
-      </details>
+<span class="v">como el trigal y el sol, la amapola y el agua.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-poema20">
       <h2 class="etitle">Poema 20</h2>
@@ -954,9 +958,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Copa en invierno, por lo menos tres porciones,</span>
 <span class="v">cuestiones relacionadas con el SIDA.</span>
 <span class="v">El tiempo… y el crédito a las mujeres.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Puedo escribir los versos más tristes esta noche.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-poema20">Original</button>
+        <div class="obody" id="o-poema20" inert><div class="oin"><div class="verse original"><span class="v">Puedo escribir los versos más tristes esta noche.</span>
 <span class="br"></span>
 <span class="v">Escribir, por ejemplo: «La noche está estrellada,</span>
 <span class="v">y tiritan, azules, los astros, a lo lejos.»</span>
@@ -1003,8 +1007,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Mi alma no se contenta con haberla perdido.</span>
 <span class="br"></span>
 <span class="v">Aunque éste sea el último dolor que ella me causa,</span>
-<span class="v">y éstos sean los últimos versos que yo le escribo.</span></div>
-      </details>
+<span class="v">y éstos sean los últimos versos que yo le escribo.</span></div></div></div>
+      </div>
     </article>
     <article class="entry" id="p-cancion">
       <h2 class="etitle">La canción desesperada</h2>
@@ -1021,9 +1025,9 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="v">Hay otras opciones por Pascua.</span>
 <span class="v">Problemas griegos o de temporada.</span>
 <span class="v">Yo tenía miedo.</span></div>
-      <details class="orig">
-        <summary>Original</summary>
-        <div class="verse original"><span class="v">Emerge tu recuerdo de la noche en que estoy.</span>
+      <div class="orig">
+        <button type="button" class="otoggle" aria-expanded="false" aria-controls="o-cancion">Original</button>
+        <div class="obody" id="o-cancion" inert><div class="oin"><div class="verse original"><span class="v">Emerge tu recuerdo de la noche en que estoy.</span>
 <span class="v">El río anuda al mar su lamento obstinado.</span>
 <span class="br"></span>
 <span class="v">Abandonado como los muelles en el alba.</span>
@@ -1109,8 +1113,8 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 <span class="br"></span>
 <span class="v">Ah más allá de todo. Ah más allá de todo.</span>
 <span class="br"></span>
-<span class="v">Es la hora de partir. Oh abandonado!</span></div>
-      </details>
+<span class="v">Es la hora de partir. Oh abandonado!</span></div></div></div>
+      </div>
     </article></div>
   </section>
   <section id="meto" class="sec"><h2 class="label">Metodologia</h2>
@@ -1137,6 +1141,13 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 </div>
 <script>
   var CHAIN = [["es", "Castellà"], ["et", "Estonià"], ["eu", "Basc"], ["fa", "Persa"], ["fi", "Finès"], ["fr", "Francès"], ["fy", "Frisó"], ["ga", "Irlandès"], ["gd", "Gaèlic escocès"], ["gl", "Gallec"], ["gu", "Gujarati"], ["ha", "Hausa"], ["haw", "Hawaià"], ["hi", "Hindi"], ["hmn", "Hmong"], ["hr", "Croat"], ["ht", "Crioll haitià"], ["hu", "Hongarès"], ["hy", "Armeni"], ["id", "Indonesi"], ["ig", "Igbo"], ["is", "Islandès"], ["it", "Italià"], ["iw", "Hebreu"], ["ja", "Japonès"], ["jw", "Javanès"], ["ka", "Georgià"], ["kk", "Kazakh"], ["km", "Khmer"], ["kn", "Kannada"], ["ko", "Coreà"], ["ku", "Kurd"], ["ky", "Kirguís"], ["la", "Llatí"], ["lb", "Luxemburguès"], ["lo", "Laosià"], ["lt", "Lituà"], ["lv", "Letó"], ["mg", "Malgaix"], ["mi", "Maori"], ["mk", "Macedoni"], ["ml", "Malaiàlam"], ["mn", "Mongol"], ["mr", "Marathi"], ["ms", "Malai"], ["mt", "Maltès"], ["my", "Birmà"], ["ne", "Nepalès"], ["nl", "Neerlandès"], ["no", "Noruec"], ["ny", "Chichewa"], ["pa", "Panjabi"], ["pl", "Polonès"], ["ps", "Paixtu"], ["pt", "Portuguès"], ["ro", "Romanès"], ["ru", "Rus"], ["sd", "Sindi"], ["si", "Singalès"], ["sk", "Eslovac"], ["sl", "Eslovè"], ["sm", "Samoà"], ["sn", "Xona"], ["so", "Somali"], ["sq", "Albanès"], ["sr", "Serbi"], ["st", "Sotho"], ["su", "Sondanès"], ["sv", "Suec"], ["sw", "Suahili"], ["ta", "Tàmil"], ["te", "Telugu"], ["tg", "Tadjik"], ["th", "Tai"], ["tl", "Filipí"], ["tr", "Turc"], ["uk", "Ucraïnès"], ["ur", "Urdú"], ["uz", "Uzbek"], ["vi", "Vietnamita"], ["xh", "Xosa"], ["yi", "Ídix"], ["yo", "Ioruba"], ["zh", "Xinès"], ["zh-TW", "Xinès trad."], ["zu", "Zulu"], ["af", "Afrikaans"], ["am", "Amhàric"], ["ar", "Àrab"], ["az", "Azerbaidjanès"], ["be", "Bielorús"], ["bg", "Búlgar"], ["bn", "Bengalí"], ["bs", "Bosnià"], ["ca", "Català"], ["ceb", "Cebuà"], ["co", "Cors"], ["cs", "Txec"], ["cy", "Gal·lès"], ["da", "Danès"], ["de", "Alemany"], ["el", "Grec"], ["en", "Anglès"], ["eo", "Esperanto"], ["es", "Castellà"]];           // [[code, name], ...] es ... es
+  [].forEach.call(document.querySelectorAll('.orig'), function(o){
+    var b = o.querySelector('.otoggle'), body = o.querySelector('.obody');
+    b.addEventListener('click', function(){
+      var on = o.classList.toggle('open');
+      b.setAttribute('aria-expanded', on); body.inert = !on;
+    });
+  });
   (function(){
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
