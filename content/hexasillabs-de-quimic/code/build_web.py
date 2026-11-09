@@ -167,10 +167,10 @@ _TEMPLATE = r"""<!doctype html>
 {{DESIGN}}
   .stanza{ padding:clamp(20px,3vw,32px) 0; border-top:1px solid var(--rule); }
   /* on wide screens the eight ages sit two by two, the molecule above the lines it names */
-  @media (min-width:72rem){
+  @media (min-width:66rem){
     .stanzas{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 clamp(40px,5vw,80px); }
-    .stanza .split{ grid-template-columns:11rem minmax(0,1fr); gap:clamp(20px,2.4vw,32px); align-items:start; }
-    .stanza .viewer{ max-width:11rem; }
+    .stanza .split{ grid-template-columns:9.5rem minmax(0,1fr); gap:clamp(20px,2.4vw,32px); align-items:start; }
+    .stanza .viewer{ max-width:9.5rem; }
     .stanza .verses{ grid-template-columns:minmax(0,1fr); }
     .stanza .name{ padding:6px 0 0; } .stanza .gloss{ padding:0 0 4px; }
   }
@@ -190,7 +190,7 @@ _TEMPLATE = r"""<!doctype html>
            column-gap:clamp(18px,3vw,34px); align-items:baseline; }
   .line{ display:contents; }
   .name{ font-size:1.375rem; line-height:1.3; padding:4px 0; overflow-wrap:anywhere; transition:color .4s ease; }
-  .gloss{ font-size:1rem; line-height:1.35; padding:4px 0; }
+  .gloss{ font-size:1rem; line-height:1.35; padding:4px 0; text-wrap:pretty; hyphens:none; }
   .line.on .name{ color:var(--accent); }
   @media (max-width:60rem){
     .verses{ grid-template-columns:minmax(0,1fr); }
