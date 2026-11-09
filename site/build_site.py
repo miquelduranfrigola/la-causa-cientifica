@@ -51,6 +51,7 @@ SOCIAL_DIR = REPO_ROOT / "social"
 FRAME_HEIGHTS = SITE_DIR / "frame_heights.json"  # from scripts/measure_frames.py
 
 SITE_TITLE = "La causa científica"
+FULL_TITLE = "La causa científica, Miquel Duran"   # tab and share-card title
 SITE_AUTHOR = "Miquel Duran-Frigola"
 SITE_INTRO = (
     "Poemes i imatges fets amb codi, que amplien el llibre La causa científica. "
@@ -202,7 +203,7 @@ def discover_poems() -> list[Poem]:
 
 def share_head(poem: Poem, poem_url: str, prev: Poem | None, nxt: Poem | None) -> str:
     """Return the link-preview tags and the prev/next/up links for a piece page."""
-    title = html.escape(f"{poem.title} — {SITE_TITLE}", quote=True)
+    title = html.escape(f"{poem.title} — {FULL_TITLE}", quote=True)
     desc = html.escape(poem.summary or SITE_INTRO, quote=True)
     image = f"{poem_url}og.png"
     links = '<link rel="up" href="../">\n'
@@ -322,6 +323,7 @@ def build(out_dir: Path) -> None:
 
     common = {
         "site_title": SITE_TITLE,
+        "full_title": FULL_TITLE,
         "site_author": SITE_AUTHOR,
         "site_intro": SITE_INTRO,
         "site_description": SITE_INTRO,
@@ -337,7 +339,7 @@ def build(out_dir: Path) -> None:
             poems=poems,
             heights=json.loads(FRAME_HEIGHTS.read_text(encoding="utf-8")) if FRAME_HEIGHTS.exists() else {},
             root="",
-            page_title=SITE_TITLE,
+            page_title=FULL_TITLE,
             page_description=SITE_INTRO,
             page_url=f"{SITE_URL}/",
             page_image=f"{SITE_URL}/og.png",
@@ -375,7 +377,7 @@ def build(out_dir: Path) -> None:
             if "<head>" not in page:
                 raise SystemExit(f"{poem.page_src}: no <head> to add share tags to")
             page = page.replace("<head>", "<head>\n" + share_head(poem, poem_url, prev, nxt), 1)
-            page = re.sub(r"<title>[^<]*</title>", f"<title>{html.escape(poem.title)} — {SITE_TITLE}</title>", page, count=1)
+            page = re.sub(r"<title>[^<]*</title>", f"<title>{html.escape(poem.title)} — {FULL_TITLE}</title>", page, count=1)
             ending = next_tmpl.render(others=others, root_up="../")
             page, n = re.subn(r"(</main>\s*)(</div>)", lambda m: m.group(1) + ending + m.group(2), page, count=1)
             if n != 1:
@@ -388,7 +390,7 @@ def build(out_dir: Path) -> None:
                     others=others,
                     root="../",
                     root_up="../",
-                    page_title=f"{poem.title} — {SITE_TITLE}",
+                    page_title=f"{poem.title} — {FULL_TITLE}",
                     page_description=poem.summary or SITE_INTRO,
                     page_url=poem_url,
                     page_image=f"{poem_url}og.png",
