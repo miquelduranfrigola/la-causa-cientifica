@@ -203,7 +203,7 @@ def discover_poems() -> list[Poem]:
 
 def share_head(poem: Poem, poem_url: str, prev: Poem | None, nxt: Poem | None) -> str:
     """Return the link-preview tags and the prev/next/up links for a piece page."""
-    title = html.escape(f"{poem.title} — {FULL_TITLE}", quote=True)
+    title = html.escape(f"{poem.title} — {SITE_TITLE}", quote=True)
     desc = html.escape(poem.summary or SITE_INTRO, quote=True)
     image = f"{poem_url}og.png"
     links = '<link rel="up" href="../">\n'
@@ -377,7 +377,7 @@ def build(out_dir: Path) -> None:
             if "<head>" not in page:
                 raise SystemExit(f"{poem.page_src}: no <head> to add share tags to")
             page = page.replace("<head>", "<head>\n" + share_head(poem, poem_url, prev, nxt), 1)
-            page = re.sub(r"<title>[^<]*</title>", f"<title>{html.escape(poem.title)} — {FULL_TITLE}</title>", page, count=1)
+            page = re.sub(r"<title>[^<]*</title>", f"<title>{html.escape(poem.title)} — {SITE_TITLE}</title>", page, count=1)
             ending = next_tmpl.render(others=others, root_up="../")
             page, n = re.subn(r"(</main>\s*)(</div>)", lambda m: m.group(1) + ending + m.group(2), page, count=1)
             if n != 1:
@@ -390,7 +390,7 @@ def build(out_dir: Path) -> None:
                     others=others,
                     root="../",
                     root_up="../",
-                    page_title=f"{poem.title} — {FULL_TITLE}",
+                    page_title=f"{poem.title} — {SITE_TITLE}",
                     page_description=poem.summary or SITE_INTRO,
                     page_url=poem_url,
                     page_image=f"{poem_url}og.png",
