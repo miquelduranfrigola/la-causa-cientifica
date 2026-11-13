@@ -178,6 +178,7 @@ pre { margin: 0; overflow-x: auto; }
   background: var(--paper);
 }
 .mast .word { font-size: 1.375rem; font-weight: 500; letter-spacing: -.005em; line-height: 1.2; }
+.mast .by { margin-left: 12px; font: 400 .875rem/1.4 var(--sans); }
 .mast nav { display: flex; gap: 24px; font: 400 .875rem/1.4 var(--sans); }
 .mast nav a { border-bottom: 1px solid transparent; padding: 2px 0; }
 .mast nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
@@ -186,6 +187,7 @@ pre { margin: 0; overflow-x: auto; }
 @media (max-width: 640px) {
   .mast { padding-top: 14px; padding-bottom: 10px; gap: 12px; }
   .mast .word { font-size: 1.125rem; white-space: nowrap; }
+  .mast .by { margin-left: 8px; font-size: .75rem; }
   .mast nav { gap: 14px; font-size: .8125rem; white-space: nowrap; }
 }
 @media (max-width: 380px) { .mast nav a:first-child { display: none; } }   /* the wordmark already links home */
@@ -276,7 +278,7 @@ section[id] { scroll-margin-top: calc(var(--nav-h, 56px) + 12px); }
 </style>
 </head>
 <body>
-<script>try{if(window.top!==window)document.documentElement.classList.add('is-embedded')}catch(e){document.documentElement.classList.add('is-embedded')}</script><header class="mast"><a class="word" href="../"><em>La causa científica</em>, Miquel Duran</a><nav aria-label="Principal"><a href="../">Peces</a><a href="../#llibre">El llibre</a></nav></header>
+<script>try{if(window.top!==window)document.documentElement.classList.add('is-embedded')}catch(e){document.documentElement.classList.add('is-embedded')}</script><header class="mast"><a class="word" href="../"><em>La causa científica</em><span class="by">Miquel Duran</span></a><nav aria-label="Principal"><a href="../">Peces</a><a href="../#llibre">El llibre</a></nav></header>
 <div class="page">
   <header class="head">
     <h1 class="title">Poema malalt</h1>
