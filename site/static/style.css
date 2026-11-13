@@ -21,7 +21,7 @@ main:focus { outline: none; }
 @media (min-width: 640px) { .live { height: var(--h-wide, 70vh); } }
 .js .live { opacity: 0; transition: opacity .5s ease; }
 .js .live.ready { opacity: 1; }
-section.piece[id] { scroll-margin-top: var(--idx-h, 46px); }
+section.piece[id] { scroll-margin-top: calc(var(--idx-h, 46px) - 1px); }
 main > .wrap { padding-top: 0; }
 @media (max-width: 640px) { .ptitle { gap: 12px; font-size: clamp(2rem, 9.5vw, 2.75rem); } }
 

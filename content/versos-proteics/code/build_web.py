@@ -156,15 +156,14 @@ def _entry(stem, glob, meta, data_out, embedded) -> str:
 
 def _rubric_section() -> str:
     directs = "".join(
-        f'<span class="map"><b class="code">{html.escape(k)}</b> → {v} {AA_CA[v]}</span>'
+        f'<span class="map"><b>{html.escape(k)}</b> → <span class="code">{v}</span> {AA_CA[v]}</span>'
         for k, v in SINGLES.items())
-    escapes = "".join(f'<span class="map"><b class="code">{html.escape(k)}</b> → {v}</span>'
+    escapes = "".join(f'<span class="map"><b>{html.escape(k)}</b> → <span class="code">{v}</span></span>'
                       for k, v in PAIRS.items())
     return f"""
     <section class="sec" id="rubric"><h2 class="label">Metodologia</h2>
       <div class="prose">
-        <p>Cada lletra que ja és un codi d’aminoàcid es mapa a si mateixa;
-        la resta s’escapa amb <b class="code">{ESCAPE}</b> seguida d’un aminoàcid.</p>
+        <p>Vint de les lletres de l’abecedari són ja un codi d’aminoàcid. La resta es denota amb un triptòfan (<b class="code">{ESCAPE}</b>) seguit d’un aminoàcid.</p>
       </div>
 
       <div class="how">
@@ -219,7 +218,7 @@ _TEMPLATE = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Versos proteics</title>
+<title>Textos proteics</title>
 <style>
 {{DESIGN}}
   .entry[hidden]{ display:none; }
@@ -282,9 +281,9 @@ _TEMPLATE = r"""<!doctype html>
 {{HEADER}}
 <div class="page">
   <header class="head">
-    <h1 class="title">Versos proteics</h1>
-    <p class="sub">Cada poema, plegat com una proteïna amb ESMFold</p>
-    <p class="cue">Cada paraula s’il·lumina mentre es llegeix, i la proteïna que dibuixa el poema gira al costat. Tria un poema aquí a sota.</p>
+    <h1 class="title">Textos proteics</h1>
+    <p class="sub">Plegament biomolecular d’un pergamí de Can Sotirà, i del primer poema que recordo haver memoritzat.</p>
+    <p class="cue">El text, llegible en la seqüència d’aminoàcids, esdevé microscòpic, comestible.</p>
   </header>
   <nav><ul class="subnav">{{MENU}}</ul></nav>
   <main>

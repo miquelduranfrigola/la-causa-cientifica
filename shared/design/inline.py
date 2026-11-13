@@ -35,7 +35,7 @@ def site_header() -> str:
     return (
         "<script>try{if(window.top!==window)document.documentElement.classList.add('is-embedded')}"
         "catch(e){document.documentElement.classList.add('is-embedded')}</script>"
-        '<header class="mast"><a class="word" href="../"><em>La causa científica</em></a>'
+        '<header class="mast"><a class="word" href="../"><em>La causa científica</em>, Miquel Duran</a>'
         '<nav aria-label="Principal"><a href="../">Peces</a><a href="../#llibre">El llibre</a></nav></header>'
     )
 

@@ -1,5 +1,5 @@
 <!-- Method notes for this poem. Written in ENGLISH (code-facing documentation). -->
-# Versos proteics — method
+# Textos proteics — method
 
 Catalan poems are rewritten as **proteins**. Each character is mapped to an
 amino acid (or a two-letter escape code) by a fixed rubric, the resulting sequence

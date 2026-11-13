@@ -77,7 +77,7 @@
   function target(el, how) { pin = el; fixes = 0; el.scrollIntoView({ behavior: how }); }
   function recheck() {
     if (!pin) return;
-    var off = pin.getBoundingClientRect().top - idxH();
+    var off = pin.getBoundingClientRect().top - (idxH() - 1);
     if (Math.abs(off) > 3 && fixes++ < 3) pin.scrollIntoView({ behavior: 'smooth' }); else pin = null;
   }
   if ('onscrollend' in window) window.addEventListener('scrollend', recheck);

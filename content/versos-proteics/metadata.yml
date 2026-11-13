@@ -1,6 +1,6 @@
 # Metadata for a single poem. All user-facing text (title, description) in Catalan.
 # This file is parsed by site/build_site.py to build the website.
-title: Versos proteics
+title: Textos proteics
 slug: versos-proteics
 author: Miquel Duran-Frigola
 date: 2026-07-11
